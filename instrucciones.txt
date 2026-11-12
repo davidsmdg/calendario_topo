@@ -1,0 +1,423 @@
+# PROMPT MAESTRO Y ESPECIFICACIÓN TÉCNICA PARA AGENTE IA (ANTIGRAVITY)
+# PROYECTO: PLANIFICADOR PEDAGÓGICO Y CALENDARIO INTERACTIVO 2027 - ESCUELA POPULAR EL TOPO
+
+Actúa como un Desarrollador Full-Stack Senior y Diseñador UI/UX especializado en aplicaciones React/Next.js interactivas y lúdicas. Tu tarea es construir desde cero un aplicativo web completo, modular, estéticamente cálido y altamente interactivo, pensado para la organización pedagógica del colectivo comunitario "Escuela Popular El Topo".
+
+El aplicativo debe funcionar de inmediato en local (`npm run dev`), estar preparado para desplegarse en Vercel con cero configuración adicional y soportar sincronización con Google Sheets (con respaldo automático en `localStorage`).
+
+---
+
+## 1. OBJETIVOS Y PRINCIPIOS DEL SISTEMA
+
+1. **Interactividad Lúdica vs. Rigidez de Excel:** Sustituir la edición manual de hojas de cálculo por una experiencia visual basada en tableros dinámicos, tarjetas arrastrables (drag-and-drop), edición rápida en línea (inline-editing) y retroalimentación inmediata.
+2. **Tolerancia y Opcionalidad Total:** Ningún campo es obligatorio. Cualquier fecha, hora, responsable, tema o texto puede dejarse en blanco, modificarse después o reordenarse libremente.
+3. **Identidad Visual Comunitaria:** Inspirada en el mural de la "Escuela Popular El Topo" (tonos tierra, mostaza cálido, crema, terracota, toques de verde y el personaje del topo como anfitrión amigable), combinada con el orden y contraste azul de la matriz pedagógica institucional.
+4. **Exportación Fiel:** Capacidad de descargar un archivo `.xlsx` idéntico en estructura, combinación de celdas y colores a la matriz histórica de jornadas.
+5. **Cuidado Colectivo (Pausa Activa):** Temporizador que a los 30 minutos de sesión continua lanza un recordatorio amigable para pausar, estirarse e hidratarse.
+
+---
+
+## 2. STACK TECNOLÓGICO Y PAQUETES RECOMENDADOS
+
+- **Framework:** Next.js (App Router) o React 18+ con Vite y TypeScript.
+- **Estilos:** Tailwind CSS con `@tailwindcss/forms` y animaciones suaves.
+- **Componentes Base e Iconos:** `lucide-react` para iconos limpios y amigables.
+- **Drag & Drop:** `@dnd-kit/core` y `@dnd-kit/sortable` (o `framer-motion`) para reordenamiento fluido de bloques y tarjetas.
+- **Exportación Excel:** `exceljs` y `file-saver` para dar estilo exacto a las celdas (colores hexadecimales, bordes, alineación y fuentes).
+- **Persistencia:** Capa de abstracción `StorageService`:
+  - Modo Offline/Local: `localStorage`.
+  - Modo Conectado: Google Apps Script Web App (API REST JSON con `doGet` y `doPost`) o Google Sheets API v4.
+
+---
+
+## 3. SISTEMA DE DISEÑO Y PALETA DE COLORES
+
+```css
+:root {
+  /* Lienzo y Fondos */
+  --bg-canvas: #FAF8F5;          /* Blanco cálido / papel craft suave */
+  --bg-card: #FFFFFF;            /* Blanco puro para tarjetas */
+  --bg-sidebar: #F4EFEA;         /* Crema suave para paneles laterales */
+
+  /* Identidad El Topo (Mural) */
+  --topo-dark: #2D2A26;          /* Gris tierra oscuro para tipografía */
+  --topo-mustard: #E9A83B;       /* Amarillo sol / mostaza para botones y acentos */
+  --topo-terracotta: #C85A32;    /* Naranja terracota para festivos y alertas */
+  --topo-green: #3D7A5A;         /* Verde botánico para estados listos y naturaleza */
+
+  /* Matriz Pedagógica (Estructura de Horarios) */
+  --matrix-blue-header: #1B365D; /* Azul marino institucional para cabeceras */
+  --matrix-blue-sub: #2A4D7D;    /* Azul secundario para subencabezados */
+  --matrix-blue-light: #EBF2FA;  /* Azul glaciar para franjas horarias */
+  --matrix-border: #CBD5E1;      /* Borde sutil de cuadrícula */
+}
+La interfaz debe incluir bordes redondeados (rounded-xl y rounded-2xl), tipografía legible y acogedora (como Nunito, Quicksand o Inter), microinteracciones al pasar el cursor y la presencia de la ilustración o avatar de "El Topo" en estados vacíos, cabeceras y avisos de pausa activa.
+
+4. MODELOS DE DATOS (TYPESCRIPT)
+TypeScript
+// 1. Hito o Evento del Cronograma General (Vistas 'con_tareas' y 'sin_tareas')
+export interface EventoCronograma {
+  id: string;
+  fecha?: string;                 // Ej: "15/12/2026", "22/01/2027", "nov-27" o texto libre
+  evento?: string;                // Ej: "Apertura de formulario de inscripción estudiantes"
+  compromiso?: string;            // Detalle, lista de tareas o acuerdos
+  personasEncargadas?: string;    // Nombres libres o vacíos
+  completado?: boolean;
+}
+
+// 2. Bloque temático de clase dentro de una jornada
+export interface BloqueClase {
+  id: string;
+  hora?: string;                  // Ej: "8:00 AM - 9:30 AM"
+  componente?: string;            // Ej: "ORIENTACIÓN VOCACIONAL", "MATEMÁTICAS", "FILOSOFÍA"
+  temaDelDia?: string;            // Ej: "¿Cómo leer textos desde la filosofía?"
+  talleristas?: string;           // Ej: "Cane, Cata y David"
+}
+
+// 3. Jornada Pedagógica Completa (Estructura Matricial Horizontal)
+export interface JornadaPedagogica {
+  id: string;
+  numeroJornada?: number | string;// Ej: 1, 2, 3...
+  fecha?: string;                 // Ej: "24 de enero de 2026", "06 de febrero de 2027"
+  encargadxDelDia?: string;       // Ej: "Todos", "Camilo Torres", "David Guáqueta"
+  horasJornada?: string;          // Ej: "8:00 AM - 3:00 PM" o "8:00 AM - 12:00 M"
+  tipoJornada?: 'unificada' | 'clases'; // Unificada para inducción/inauguración; Clases para slots normales
+  descripcionUnificada?: string;  // Ej: "REUNIÓN DE COORDINACIÓN #1 / ESCUELA DE FORMACIÓN #1"
+  bloques: BloqueClase[];         // Típicamente 4 franjas horarias por jornada
+  comentarios?: string;           // Ej: "Primer simulacro - 08 de febrero"
+}
+
+// 4. Festivo Oficial de Colombia
+export interface FestivoColombia {
+  fecha: string;                  // Formato YYYY-MM-DD
+  nombre: string;
+  tipo: 'fijo' | 'emiliani' | 'pascua';
+}
+5. MÓDULOS Y FUNCIONALIDADES DETALLADAS
+MÓDULO 1: Calendario Anual 2027 y Festivos de Colombia
+Visualizador Anual y Mensual: Cuadrícula con los 12 meses de 2027. Posibilidad de alternar entre vista completa del año y vista expandida de mes.
+
+Resaltado de Fines de Semana: Sábados y domingos claramente diferenciados visualmente, ya que son los días clave para las jornadas populares y talleres.
+
+Cálculo de Festivos Oficiales de Colombia 2027 (Ley Emiliani preconfigurada):
+
+01/01/2027: Año Nuevo
+
+11/01/2027: Reyes Magos (traslado Ley Emiliani)
+
+22/03/2027: Día de San José (traslado)
+
+25/03/2027: Jueves Santo
+
+26/03/2027: Viernes Santo
+
+28/03/2027: Domingo de Pascua
+
+01/05/2027: Día del Trabajo
+
+10/05/2027: Día de la Ascensión (traslado)
+
+31/05/2027: Corpus Christi (traslado)
+
+07/06/2027: Sagrado Corazón de Jesús (traslado)
+
+05/07/2027: San Pedro y San Pablo (traslado)
+
+20/07/2027: Día de la Independencia de Colombia
+
+07/08/2027: Batalla de Boyacá
+
+16/08/2027: Asunción de la Virgen (traslado)
+
+18/10/2027: Día de la Raza (traslado)
+
+01/11/2027: Día de Todos los Santos (traslado)
+
+15/11/2027: Independencia de Cartagena (traslado)
+
+08/12/2027: Inmaculada Concepción
+
+25/12/2027: Navidad
+
+Interacción con Fechas:
+
+Hacer clic en cualquier día abre un modal o menú rápido para asignar un evento general o vincularlo como fecha de una Jornada Pedagógica.
+
+Panel lateral o flotante con "Eventos sin fecha asignada" para arrastrar directamente hacia el calendario.
+
+MÓDULO 2: Organizador Dinámico de Eventos e Hitos (Cronograma General)
+Vistas Duales:
+
+Vista Tablero / Tarjetas: Tarjetas organizadas por meses o estado que se pueden reordenar por drag-and-drop.
+
+Vista Tabla Rápida: Tabla interactiva editable con las 4 columnas clásicas:Fecha | Evento | Compromiso / Tareas | Personas encargadas
+
+Edición sin Bloqueos:
+
+Clic en cualquier celda o tarjeta para editar texto directamente.
+
+Botón + Agregar Evento rápido que añade una fila o tarjeta vacía editable.
+
+Botón para duplicar o eliminar eventos con confirmación amigable.
+
+Campo de búsqueda por texto libre y filtro rápido por personas o categorías.
+
+MÓDULO 3: Matriz Visual de Jornadas Pedagógicas
+Diseñada para reflejar fielmente la estructura horizontal de la matriz de formación:
+
+Diseño de Cuadrícula Horizontal:
+
+Cada jornada se visualiza como una columna estructurada.
+
+Encabezados Principales:
+
+Número de Jornada (JORNADA 1, JORNADA 2, etc.)
+
+FECHA
+
+ENCARGADX DEL DÍA
+
+HORAS (Rango horario total)
+
+Cuerpo de la Jornada:
+
+Si es Jornada Especial/Unificada (ej. Inauguración, Asamblea, Inducción): Celda unificada que abarca toda la altura con su descripción y responsables.
+
+Si es Jornada de Clases: 4 franjas horarias claramente divididas. Cada franja contiene:
+
+Subbarra horaria (ej. 8:00 AM - 9:30 AM).
+
+Etiqueta de Componente con color distintivo (ej. Matemáticas, Filosofía, Lenguaje, Inglés, Biología, Química, Contexto, Orientación Vocacional).
+
+Campo editable para el TEMA DEL DÍA.
+
+Campo editable para TALLERISTA(S).
+
+Pie de Jornada: Fila de COMENTARIOS para alertas, entregas de simulacros o anuncios especiales.
+
+Reorganización Ágil:
+
+Posibilidad de arrastrar bloques entre diferentes franjas horarias o entre jornadas.
+
+Botón + Nueva Jornada para sumar columnas al final del cronograma.
+
+MÓDULO 4: Generador y Exportador de Excel (exceljs)
+Debe incluir una función utilitaria exportarJornadasAExcel(jornadas: JornadaPedagogica[]) que construya un archivo descargable .xlsx:
+
+Estilos de Celda:
+
+Encabezados superiores con fondo azul marino (#1B365D), texto blanco en negrita, centrado vertical y horizontal.
+
+Subencabezados de horas con azul tenue (#EAF0F6) y texto azul oscuro.
+
+Bordes negros delgados (thin) en todas las celdas para mantener la retícula clásica.
+
+Combinación de celdas (mergeCells) automática cuando una jornada sea de tipo unificada (ej. Inauguración).
+
+Descarga Directa: Nombre generado automáticamente: Cronograma_Jornadas_2027_El_Topo.xlsx.
+
+MÓDULO 5: Alerta de Bienestar y Pausa Activa
+Temporizador de Sesión: Hook usePausaActiva que lleva el conteo de tiempo en segundo plano (30 minutos = 1800 segundos).
+
+Modal Amigable y Cálido:
+
+Al cumplirse los 30 minutos, aparece un modal con animación suave (no bloquea el trabajo de golpe).
+
+Ilustración amigable del Topo saludando.
+
+Mensaje: "¡Hola compa! Llevas 30 minutos organizando el cronograma. ¿Qué tal si nos regalamos una pausa activa?"
+
+Sugerencias rotativas:
+
+"Gira suavemente los hombros hacia atrás y relaja el cuello."
+
+"Momento sagrado: ve por un vasito de agua o un café."
+
+"Parpadea y mira un punto lejano por la ventana durante 20 segundos."
+
+"Estira los brazos hacia arriba y respira profundo."
+
+Acciones:
+
+Botón Hacer Pausa (Recordar en 5 min): pospone la alarma 5 minutos.
+
+Botón ¡Listo, con toda!: reinicia el contador de 30 minutos y cierra el modal.
+
+MÓDULO 6: Capa de Persistencia y Conexión con Google Sheets
+Estrategia Híbrida Inteligente:
+
+Al iniciar, la aplicación verifica si existen variables de entorno o una URL configurada en los ajustes para Google Sheets.
+
+Si no está configurada, utiliza localStorage con clave el_topo_cronograma_2027. La app funciona al 100% sin configurar servicios externos.
+
+En la interfaz, un botón discreto de "Configuración de Base de Datos" permite pegar la URL del Web App de Google Apps Script.
+
+Código de Google Apps Script para Google Sheets (Listo para copiar y desplegar):
+Genera dentro de la documentación del proyecto un archivo google-apps-script.js con el siguiente contenido para que el usuario solo tenga que pegarlo en su hoja de cálculo:
+
+JavaScript
+// CÓDIGO PARA PEGAR EN: Extensiones > Apps Script en Google Sheets
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetHitos = ss.getSheetByName("Hitos") || ss.getSheets()[0];
+  var sheetJornadas = ss.getSheetByName("Jornadas");
+
+  var dataHitos = sheetHitos.getDataRange().getValues();
+  var dataJornadas = sheetJornadas ? sheetJornadas.getDataRange().getValues() : [];
+
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "success",
+    hitos: dataHitos,
+    jornadas: dataJornadas
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  try {
+    var contents = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // Guardar Hitos
+    if (contents.hitos) {
+      var sheetHitos = ss.getSheetByName("Hitos");
+      if (!sheetHitos) sheetHitos = ss.insertSheet("Hitos");
+      sheetHitos.clear();
+      sheetHitos.getRange(1, 1, contents.hitos.length, contents.hitos[0].length).setValues(contents.hitos);
+    }
+
+    // Guardar Jornadas
+    if (contents.jornadasJson) {
+      var sheetMeta = ss.getSheetByName("Jornadas_Data");
+      if (!sheetMeta) sheetMeta = ss.insertSheet("Jornadas_Data");
+      sheetMeta.clear();
+      sheetMeta.getRange(1, 1).setValue(contents.jornadasJson);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "saved" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+6. DATOS INICIALES PRECISIONADOS (MOCK / SEED DATA)
+Para que el proyecto inicie con vida desde el primer comando, incluye este conjunto inicial de datos extraído directamente de los registros históricos del colectivo:
+
+A. Hitos Cronograma General:
+15/12/2026 | Apertura de formulario de inscripción estudiantes | Crear, ajustar y empezar a difundir en colegios | (Sin asignar)
+
+21/11/2026 | Inicio convocatoria talleristas | 1. Diseño y difusión de piezas gráficas.\n2. Videos difusión de convocatoria (15 dic).\n3. Recolección de datos aspirantes.\n4. Entrevistas por componentes | (Sin asignar)
+
+10/01/2027 | Cierre de inscripciones de estudiantes | Cierre de formulario | (Sin asignar)
+
+11/01/2027 | Inicio evaluación de formularios de inscripción | Consolidación del grupo aspirante (Excel). Filtrado automático de criterios excluyentes. Actualizar porcentajes. Asignación de puntajes. Asignación de entrevistas (tope de 8 por tallerista) | (Sin asignar)
+
+13/01/2027 | Fin de evaluación de formularios | Revisión y cierre de puntuación | (Sin asignar)
+
+14/01/2027 | Inicio citación y desarrollo de entrevistas | Comunicación directa por WhatsApp, correo o teléfono. Realización de entrevistas vía telefónica o Meet. Puntuación de cada entrevista | (Sin asignar)
+
+19/01/2027 | Fin citación y desarrollo de entrevistas | Cierre de entrevistas | (Sin asignar)
+
+21/01/2027 | Fin convocatoria talleristas | Consolidación equipo pedagógico | (Sin asignar)
+
+22/01/2027 | Inducción de manejo de recursos físicos y digitales de El Topo | Uso Drive. Organigrama al interior del colectivo. Socialización de acuerdos de funcionamiento | (Sin asignar)
+
+22/01/2027 | Organización de resultados | Organizar excel según puntaje y definir personas seleccionadas, en espera y no seleccionadas. Revisión de casos particulares | (Sin asignar)
+
+23/01/2027 | Reunión de coordinación #01 y escuela de formación #01 | Inducción del proceso pedagógico | (Sin asignar)
+
+24/01/2027 | Publicación de resultados | Publicación en redes y contacto directo | (Sin asignar)
+
+30/01/2027 | Inauguración y revisión de simulacros | Bienvenida a estudiantes y familias | (Sin asignar)
+
+06/02/2027 | Inicio de clases | Jornada 1 oficial de componentes | (Sin asignar)
+
+21/03/2027 | Salida pedagógica #1 | Actividad de campo con estudiantes | (Sin asignar)
+
+24/04/2027 | Simulacro #02 | Aplicación de prueba tipo Saber 11 | (Sin asignar)
+
+26/06/2027 | Vacaciones Topo | Receso de mitad de año | (Sin asignar)
+
+25/09/2027 | Final de sesiones de componentes | Fecha estimada sujeta a examen Unal | (Sin asignar)
+
+nov-27 | Asamblea general de talleristas | Balance anual y cierre colectivo | (Sin asignar)
+
+B. Muestra de Jornadas Pedagógicas:
+Jornada 1 (Especial):
+
+Fecha: "24 de enero de 2027" | Encargadx: "Todos" | Horario: "8:00 AM - 3:00 PM"
+
+Tipo: Unificada (REUNIÓN DE COORDINACIÓN #1 / ESCUELA DE FORMACIÓN #1)
+
+Jornada 2 (Especial):
+
+Fecha: "31 de enero de 2027" | Encargadx: "Todos" | Horario: "8:00 AM - 12:00 M"
+
+Tipo: Unificada (INAUGURACIÓN - Daniela, Tatiana, David Díaz, Óscar)
+
+Jornada 3 (Clases):
+
+Fecha: "07 de febrero de 2027" | Encargadx: "Camilo Torres" | Horario: "8:00 AM - 3:00 PM"
+
+Bloque 1 (8:00 AM - 9:50 AM): Componente ORIENTACIÓN VOCACIONAL | Tema: Sesión de bienvenida | Talleristas: Aleja y David G.
+
+Bloque 2 (10:10 AM - 12:00 PM): Componente ORIENTACIÓN VOCACIONAL | Tema: Sesión de bienvenida | Talleristas: Aleja y David G.
+
+Bloque 3 (1:30 PM - 3:00 PM): Componente BIOLOGÍA | Tema: Sesión 1. Lo vivo & la vida - Biomoléculas | Talleristas: Sebas, Johan, Nico & Lesley
+
+Comentarios: "Primer simulacro - 08 de febrero"
+
+Jornada 4 (Clases):
+
+Fecha: "14 de febrero de 2027" | Encargadx: "Yarid" | Horario: "8:00 AM - 3:00 PM"
+
+Bloque 1 (8:00 AM - 9:30 AM): Componente CONTEXTO | Tema: Introducción: ¿Para qué las Ciencias Sociales? | Talleristas: Camilo & Alexandra
+
+Bloque 2 (9:30 AM - 11:00 AM): Componente MATEMÁTICAS | Tema: Qué es matemáticas. Operaciones y jerarquía | Talleristas: Óscar & Yarid
+
+Bloque 3 (11:15 AM - 12:45 PM): Componente LENGUAJE | Tema: La importancia de la lectura | Talleristas: Camilo & Miguel
+
+Bloque 4 (1:30 PM - 3:00 PM): Componente FÍSICA | Tema: Fenómenos físicos, variables y unidades | Talleristas: Diego & Miguel R.
+
+7. PLAN DE ACCIÓN PASO A PASO PARA EL AGENTE IA
+Ejecuta el desarrollo siguiendo este orden riguroso:
+
+Fase 1: Configuración del Proyecto y Estilos Base
+
+Inicializar el proyecto con TypeScript, Tailwind CSS y Lucide Icons.
+
+Definir en tailwind.config.ts los colores personalizados de la paleta El Topo y Matriz Pedagógica.
+
+Configurar la estructura de carpetas: /components, /hooks, /services, /types, /utils.
+
+Fase 2: Utilidades de Fecha y Festivos
+
+Crear utils/festivosColombia.ts con la función para obtener festivos de 2027 y el cálculo de la Ley Emiliani.
+
+Crear helpers para formatear fechas comunitarias (ej. "24 de enero de 2027").
+
+Fase 3: Módulo de Calendario y Cronograma General
+
+Construir el componente CalendarioAnual interactivo con fines de semana resaltados y badges de festivos.
+
+Construir el componente TablaEventos y TarjetasEventos con edición en línea rápida y botón de creación de eventos sin restricciones.
+
+Fase 4: Módulo de Matriz de Jornadas y Drag & Drop
+
+Construir el componente MatrizJornadas con scroll horizontal optimizado, tarjetas de bloques por componente y soporte de jornadas unificadas.
+
+Implementar la capacidad de reordenar o mover bloques de clase con arrastre suave.
+
+Fase 5: Exportación a Excel Profesional
+
+Implementar services/excelExporter.ts con exceljs. Configurar anchos de columna, rellenos azules #1B365D, texto blanco, bordes y celdas combinadas para igualar la imagen original.
+
+Fase 6: Sistema de Pausa Activa
+
+Crear el hook hooks/usePausaActiva.ts y el componente de modal ModalPausaActiva con el Topo y mensajes de cuidado colectivo.
+
+Fase 7: Persistencia y Ajustes Finales
+
+Configurar services/storageService.ts con sincronización a localStorage y soporte para URL de Web App de Google Sheets.
+
+Probar que npm run build no arroje errores de tipo TypeScript y que la aplicación sea 100% responsiva y fluida.

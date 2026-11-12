@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Lienzo claro inspirado en el fondo blanco/crema luminoso del mural */
+  --bg-canvas: #FCFBF7;          /* Blanco mural cálido y luminoso */
+  --bg-card: #FFFFFF;            /* Blanco puro para tarjetas */
+  --bg-sidebar: #F6F2E9;         /* Crema escolar suave */
+
+  /* Identidad El Topo (Mural) */
+  --topo-dark: #2B2623;          /* Trazo café/negro orgánico del mural */
+  --topo-mustard: #E5A93B;       /* Amarillo sol / flores mostaza del mural */
+  --topo-terracotta: #C83E2B;    /* Rojo/terracota de la estrella del Topo */
+  --topo-green: #2E6F4E;         /* Verde enredadera y hojas del mural */
+
+  /* Matriz Pedagógica (Clara, escolar y amigable) */
+  --matrix-blue-header: #2B4C7E; /* Azul pizarrón escolar amigable */
+  --matrix-blue-sub: #3B629B;    /* Azul secundario suave */
+  --matrix-blue-light: #EEF4FA;  /* Azul cielo muy claro para franjas */
+  --matrix-border: #E2DCCE;      /* Borde cálido estilo cuaderno */
+}
+
+body {
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(rgba(229, 169, 59, 0.12) 1px, transparent 1px),
+    radial-gradient(rgba(46, 111, 78, 0.08) 1px, var(--bg-canvas) 1px);
+  background-size: 36px 36px;
+  background-position: 0 0, 18px 18px;
+  color: var(--topo-dark);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Borde punteado artesanal estilo caminito de abejas del mural */
+.mural-dashed-border {
+  border-style: dashed;
+  border-width: 2px;
+  border-color: #D5CBB8;
+}
+
+/* Scrollbar amigable y cálido */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F6F2E9;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D5CBB8;
+  border-radius: 9999px;
+  border: 2px solid #F6F2E9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8AA93;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
