@@ -17,6 +17,7 @@ import {
   Clock,
   UserCheck,
   Search,
+  Calendar,
   CalendarPlus,
   Pin,
   Gamepad2,
@@ -34,12 +35,15 @@ import {
   EventoCronograma,
   JornadaPedagogica,
   MallaComponente,
+  EstructuraCalendarioConfig,
 } from "@/types";
 import {
   obtenerEstiloComponente,
   ddmmyyyyToISO,
   isoToFechaComunitaria,
   obtenerNombreDiaSemana,
+  ESTILOS_BLOQUES_PERIODO,
+  ESTILOS_EXAMENES_CLAVE,
 } from "@/utils/festivosColombia";
 import { obtenerTalleristasDeComponente } from "@/utils/seedData";
 import { exportarJornadasAExcel } from "@/services/excelExporter";
@@ -50,10 +54,13 @@ interface MatrizJornadasProps {
   mallaCurricular: MallaComponente[];
   hitos: EventoCronograma[];
   talleristas: string[];
+  estructura?: EstructuraCalendarioConfig;
   jornadaDestacadaId?: string | null;
+  modoInicial?: "juego" | "matriz" | "lista";
   onActualizarJornada: (jornada: JornadaPedagogica) => void;
   onReemplazarJornadas: (nuevas: JornadaPedagogica[]) => void;
   onActualizarMalla: (nuevaMalla: MallaComponente[]) => void;
+  onVolverAlMenu?: () => void;
 }
 
 const COMPONENTES_LISTA = [
@@ -81,14 +88,34 @@ export function MatrizJornadas({
   mallaCurricular,
   hitos,
   talleristas,
+  estructura,
   jornadaDestacadaId,
+  modoInicial = "juego",
   onActualizarJornada,
   onReemplazarJornadas,
   onActualizarMalla,
+  onVolverAlMenu,
 }: MatrizJornadasProps) {
-  // Por defecto abrimos en el Modo Juego de Tarjetas para que sea súper claro e interactivo
-  const [modoVisualizacion, setModoVisualizacion] = useState<"juego" | "matriz">("juego");
-  const [juegoIniciado, setJuegoIniciado] = useState<boolean>(false);
+  // Mapear período temporal por fecha ISO
+  const obtenerPeriodoFecha = (iso?: string | null) => {
+    if (!iso || !estructura?.periodosTemporales) return null;
+    return estructura.periodosTemporales.find(
+      (p) => iso >= p.fechaInicio && iso <= p.fechaFin
+    );
+  };
+
+  // Mapear examen clave por fecha ISO
+  const obtenerExamenFecha = (iso?: string | null) => {
+    if (!iso || !estructura?.fechasClaveExamenes) return null;
+    return estructura.fechasClaveExamenes.find((e) => {
+      const eIso = ddmmyyyyToISO(e.fecha);
+      return eIso === iso;
+    });
+  };
+
+  // Modo de visualización: "lista" (Tarjetas en listado jornada a jornada), "juego" (Enfoque individual), "matriz" (Sábana horizontal)
+  const [modoVisualizacion, setModoVisualizacion] = useState<"juego" | "matriz" | "lista">("lista");
+  const [juegoIniciado, setJuegoIniciado] = useState<boolean>(true);
   const [indiceTarjetaActual, setIndiceTarjetaActual] = useState<number>(0);
   const [animacionTarjeta, setAnimacionTarjeta] = useState<"entrando" | "aceptada" | "normal">("normal");
   const [filtroJuego, setFiltroJuego] = useState<"todas" | "clases" | "con_evento">("todas");
@@ -491,20 +518,32 @@ export function MatrizJornadas({
           </div>
         </div>
 
-        {/* Conmutador grande: Modo Juego de Tarjetas vs Vista Matriz Completa */}
+        {/* Conmutador de vista y utilidades locales */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="inline-flex rounded-2xl bg-[#F6F2E9] p-1.5 border-2 border-[#E2DCCE]">
+            <button
+              type="button"
+              onClick={() => setModoVisualizacion("lista")}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${
+                modoVisualizacion === "lista"
+                  ? "bg-topo-mustard text-topo-dark shadow-sm"
+                  : "text-stone-600 hover:text-topo-dark"
+              }`}
+            >
+              <Calendar className="w-4 h-4 text-topo-terracotta" />
+              Tarjetas en Listado
+            </button>
             <button
               type="button"
               onClick={() => setModoVisualizacion("juego")}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${
                 modoVisualizacion === "juego"
-                  ? "bg-topo-mustard text-topo-dark shadow-sm"
+                  ? "bg-[#7A3EBE] text-white shadow-sm"
                   : "text-stone-600 hover:text-topo-dark"
               }`}
             >
-              <Gamepad2 className="w-4 h-4 text-topo-terracotta" />
-              Modo Juego (Tarjetas Paso a Paso)
+              <ArrowLeftRight className="w-4 h-4" />
+              Enfoque 1 a 1
             </button>
             <button
               type="button"
@@ -516,7 +555,7 @@ export function MatrizJornadas({
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
-              Ver Sábana Completa ({jornadasOrdenadas.length})
+              Sábana Horizontal
             </button>
           </div>
 
@@ -526,16 +565,7 @@ export function MatrizJornadas({
             className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-2xl border-2 border-[#D5CBB8] bg-white hover:bg-[#F6F2E9] text-topo-dark font-extrabold text-xs transition"
           >
             <BookOpen className="w-4 h-4 text-topo-green" />
-            {mostrarMalla ? "Ocultar Materias y Talleristas" : "Ver Materias y Talleristas"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => exportarJornadasAExcel(jornadasOrdenadas, mallaCurricular, hitos)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-topo-green hover:bg-emerald-800 text-white font-extrabold text-xs shadow-sm transition"
-          >
-            <Download className="w-4 h-4 text-amber-200" />
-            Descargar Excel (.xlsx)
+            {mostrarMalla ? "Ocultar Materias" : "Ver Materias y Banco"}
           </button>
         </div>
       </div>
@@ -655,117 +685,262 @@ export function MatrizJornadas({
       )}
 
       {/* =====================================================================
-          MODO 1: JUEGO INTERACTIVO DE TARJETAS PASO A PASO
+          NUEVA VISTA: JORNADA A JORNADA EN FORMA DE TARJETAS EN LISTADO
+         ===================================================================== */}
+      {modoVisualizacion === "lista" && (
+        <div className="space-y-4 animate-fadeIn">
+          {/* Barra de Filtro Rápido del Listado */}
+          <div className="bg-white p-4 rounded-3xl border-2 border-[#E2DCCE] shadow-warm flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-black uppercase text-stone-500">Filtrar por Carácter:</span>
+              <button
+                type="button"
+                onClick={() => setFiltroDia("todos")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                  filtroDia === "todos" ? "bg-[#1B365D] text-white" : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+                }`}
+              >
+                Todas las Jornadas ({jornadasOrdenadas.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setFiltroDia("sabados")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                  filtroDia === "sabados" ? "bg-emerald-600 text-white" : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+                }`}
+              >
+                📚 Clases
+              </button>
+              <button
+                type="button"
+                onClick={() => setFiltroDia("otros")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                  filtroDia === "otros" ? "bg-amber-500 text-stone-900" : "bg-stone-100 text-stone-700 hover:bg-stone-200"
+                }`}
+              >
+                🏖️ Recesos y Vacaciones
+              </button>
+            </div>
+
+            <div className="text-xs font-bold text-stone-500">
+              Mostrando {jornadasVisibles.length} jornadas cronológicas
+            </div>
+          </div>
+
+          {/* Parrilla de Tarjetas en Listado Completo */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {jornadasVisibles.map((jornada) => {
+              const iso = jornada.fechaISO || ddmmyyyyToISO(jornada.fecha);
+              const periodo = obtenerPeriodoFecha(iso);
+              const examen = obtenerExamenFecha(iso);
+
+              // Días faltantes
+              const diasFaltantes = (() => {
+                if (!iso) return null;
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                const [y, m, d] = iso.split("-").map(Number);
+                const fechaObj = new Date(y, m - 1, d);
+                return Math.round((fechaObj.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24));
+              })();
+
+              const caracterEfectivo =
+                jornada.caracter ||
+                (examen
+                  ? "examen"
+                  : periodo
+                  ? (periodo.tipo as any)
+                  : jornada.tipoJornada === "unificada"
+                  ? "coordinacion"
+                  : "clases");
+
+              return (
+                <div
+                  key={jornada.id}
+                  className={`rounded-3xl bg-white border-2 shadow-warm hover:shadow-xl transition-all duration-200 flex flex-col justify-between overflow-hidden ${
+                    caracterEfectivo === "examen"
+                      ? "border-purple-500 ring-2 ring-purple-300"
+                      : caracterEfectivo === "vacaciones"
+                      ? "border-amber-300 bg-amber-50/20"
+                      : caracterEfectivo === "coordinacion"
+                      ? "border-indigo-300 bg-indigo-50/20"
+                      : "border-[#E2DCCE]"
+                  }`}
+                >
+                  {/* Cabecera de la Tarjeta */}
+                  <div>
+                    <div className="p-4 bg-gradient-to-r from-matrix-header to-matrix-sub text-white flex items-center justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <span className="px-2 py-0.5 rounded-full bg-amber-300 text-topo-dark text-[10px] font-black uppercase">
+                            JORNADA #{jornada.numeroJornada}
+                          </span>
+                          {diasFaltantes !== null && (
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                              diasFaltantes > 0
+                                ? "bg-emerald-400 text-topo-dark"
+                                : diasFaltantes === 0
+                                ? "bg-amber-400 text-topo-dark animate-pulse"
+                                : "bg-white/20 text-white"
+                            }`}>
+                              {diasFaltantes > 0
+                                ? `⏳ Faltan ${diasFaltantes}d`
+                                : diasFaltantes === 0
+                                ? "🎯 ¡Hoy!"
+                                : `Pasó`}
+                            </span>
+                          )}
+                        </div>
+                        <h4 className="text-base font-black capitalize">{jornada.fecha}</h4>
+                        <span className="text-xs text-blue-100 font-bold">{jornada.diaSemana}</span>
+                      </div>
+
+                      {/* Selector directo de carácter en la tarjeta */}
+                      <select
+                        value={caracterEfectivo}
+                        onChange={(e) => {
+                          const nuevoCar = e.target.value as any;
+                          const esUnif = nuevoCar !== "clases";
+                          onActualizarJornada({
+                            ...jornada,
+                            caracter: nuevoCar,
+                            tipoJornada: esUnif ? "unificada" : "clases",
+                            descripcionUnificada:
+                              nuevoCar === "vacaciones"
+                                ? "RECESO ESCOLAR / VACACIONES"
+                                : nuevoCar === "coordinacion"
+                                ? "REUNIÓN DE COORDINACIÓN PEDAGÓGICA"
+                                : nuevoCar === "examen"
+                                ? "EVALUACIÓN / SIMULACRO OFICIAL"
+                                : "",
+                            bloques: asegurarCuatroBloques(jornada.bloques, jornada.id),
+                          });
+                        }}
+                        className="text-[11px] font-black px-2 py-1 rounded-xl bg-white text-topo-dark cursor-pointer shadow-xs border-0"
+                      >
+                        <option value="clases">📚 Clases</option>
+                        <option value="vacaciones">🏖️ Vacación</option>
+                        <option value="coordinacion">👥 Coordinación</option>
+                        <option value="examen">🎓 Examen</option>
+                      </select>
+                    </div>
+
+                    {/* Cuerpo de la Tarjeta */}
+                    <div className="p-4 space-y-3 text-xs">
+                      {/* Responsable */}
+                      <div className="flex items-center justify-between text-stone-600 bg-stone-50 p-2 rounded-xl">
+                        <span className="font-bold">👤 Encargadx:</span>
+                        <input
+                          type="text"
+                          value={jornada.encargadxDelDia || ""}
+                          placeholder="Nombre responsable..."
+                          onChange={(e) =>
+                            onActualizarJornada({
+                              ...jornada,
+                              encargadxDelDia: e.target.value,
+                            })
+                          }
+                          className="text-right text-xs font-black bg-transparent border-0 focus:ring-0 p-0 text-topo-dark"
+                        />
+                      </div>
+
+                      {/* Contenido según carácter */}
+                      {caracterEfectivo === "clases" ? (
+                        <div className="space-y-2">
+                          <span className="text-[10px] font-black uppercase text-stone-500 block">
+                            4 Franjas Horarias:
+                          </span>
+                          {asegurarCuatroBloques(jornada.bloques, jornada.id).slice(0, 4).map((b, bIdx) => {
+                            const estComp = obtenerEstiloComponente(b.componente);
+                            return (
+                              <div
+                                key={b.id || bIdx}
+                                className={`p-2 rounded-xl border flex items-center justify-between gap-2 ${
+                                  b.componente ? `${estComp.bg} ${estComp.border}` : "bg-white border-stone-200"
+                                }`}
+                              >
+                                <div className="truncate flex-1">
+                                  <span className="font-black text-xs block truncate text-topo-dark">
+                                    {b.componente || `B${bIdx + 1}: Sin materia`}
+                                  </span>
+                                  <span className="text-[10px] text-stone-500 truncate block">
+                                    {b.talleristas ? `👥 ${b.talleristas}` : b.temaDelDia || "Sin tema"}
+                                  </span>
+                                </div>
+                                <span className="text-[10px] font-mono font-bold text-stone-400 shrink-0">
+                                  {b.hora ? b.hora.split("-")[0] : ""}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className={`p-3 rounded-2xl border-2 space-y-2 ${
+                          caracterEfectivo === "vacaciones"
+                            ? "bg-amber-50 border-amber-300 text-amber-950"
+                            : caracterEfectivo === "coordinacion"
+                            ? "bg-indigo-50 border-indigo-300 text-indigo-950"
+                            : "bg-purple-50 border-purple-300 text-purple-950"
+                        }`}>
+                          <span className="font-black uppercase text-[10px] block">
+                            {caracterEfectivo === "vacaciones"
+                              ? "🏖️ Sin Clases - Receso Escolar"
+                              : caracterEfectivo === "coordinacion"
+                              ? "👥 Jornada de Coordinación"
+                              : "🎓 Examen / Evaluación"}
+                          </span>
+                          <textarea
+                            rows={3}
+                            value={jornada.descripcionUnificada || ""}
+                            onChange={(e) =>
+                              onActualizarJornada({
+                                ...jornada,
+                                descripcionUnificada: e.target.value,
+                              })
+                            }
+                            placeholder="Descripción de la actividad o acuerdos..."
+                            className="w-full text-xs font-bold bg-white/90 p-2 rounded-xl border border-current/20 resize-none"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Pie de Tarjeta con botón de acción */}
+                  <div className="p-3 bg-stone-50 border-t border-stone-200 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const idx = jornadasOrdenadas.findIndex((x) => x.id === jornada.id);
+                        if (idx !== -1) {
+                          setIndiceTarjetaActual(idx);
+                          setModoVisualizacion("juego");
+                        }
+                      }}
+                      className="text-xs font-black text-topo-terracotta hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>Abrir Detalle Completo 👉</span>
+                    </button>
+                    {jornada.comentarios && (
+                      <span className="text-[10px] text-stone-500 font-bold" title={jornada.comentarios}>
+                        💬 Con notas
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          MODO 2: ENFOQUE 1 A 1 (DETALLE COMPLETO JORNADA A JORNADA)
          ===================================================================== */}
       {modoVisualizacion === "juego" && (
         <div className="space-y-4">
-          {!juegoIniciado ? (
-            /* PANTALLA DE BIENVENIDA DEL JUEGO CON BOTÓN "¡EMPEZAR!" */
-            <div className="relative rounded-3xl bg-white border-4 border-topo-mustard p-8 sm:p-12 text-center flex flex-col items-center justify-center shadow-warm-lg overflow-hidden">
-              <SolMuralSVG className="w-24 h-24 absolute top-4 right-6 opacity-90" />
-              <AbejitaMuralSVG className="w-10 h-10 absolute top-10 left-10" />
-
-              <TopoAvatar size="xl" variant="completo" className="mb-4" />
-
-              <span className="px-4 py-1 rounded-full bg-amber-100 border-2 border-topo-mustard text-xs font-black uppercase tracking-wider text-topo-dark mb-3">
-                🎲 Modo Juego • Armemos el Cronograma 2027
-              </span>
-
-              <h3 className="text-2xl sm:text-3xl font-black text-topo-dark max-w-2xl leading-tight">
-                ¡Vamos a llenar las fechas y clases de 2027 tarjeta por tarjeta!
-              </h3>
-              <p className="text-sm sm:text-base text-stone-600 mt-3 max-w-xl leading-relaxed">
-                En lugar de perderte en una tabla gigante, aquí irá apareciendo{" "}
-                <strong>una tarjeta a la vez en orden cronológico</strong>. Eliges la materia con un
-                clic (ya trae sus <strong>talleristas y temas listos</strong>), le das en{" "}
-                <strong className="text-topo-green">¡Aceptar y Siguiente!</strong> y pasa a la
-                próxima fecha.
-              </p>
-
-              {/* Resumen de tarjetas por tipo */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl mt-6">
-                <div className="p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-200 text-left">
-                  <span className="text-xs font-black uppercase text-amber-900">
-                    📅 Total Fechas 2027
-                  </span>
-                  <p className="text-2xl font-black text-topo-dark mt-0.5">
-                    {jornadasOrdenadas.length} tarjetas
-                  </p>
-                  <p className="text-[11px] text-stone-600">
-                    52 sábados + 14 fechas con tareas
-                  </p>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-blue-50 border-2 border-blue-200 text-left">
-                  <span className="text-xs font-black uppercase text-matrix-header">
-                    🎓 Sábados de Clases
-                  </span>
-                  <p className="text-2xl font-black text-matrix-header mt-0.5">
-                    {jornadasOrdenadas.filter((j) => j.tipoJornada === "clases").length} sábados
-                  </p>
-                  <p className="text-[11px] text-stone-600">
-                    Con 4 bloques listos para elegir materia
-                  </p>
-                </div>
-                <div className="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-left">
-                  <span className="text-xs font-black uppercase text-topo-green">
-                    ★ Fechas con Tarea 2027
-                  </span>
-                  <p className="text-2xl font-black text-topo-green mt-0.5">
-                    {
-                      jornadasOrdenadas.filter(
-                        (j) =>
-                          Boolean(j.comentarios?.trim()) ||
-                          Boolean(j.tareasDelDia?.trim()) ||
-                          j.tipoJornada === "unificada"
-                      ).length
-                    }{" "}
-                    hitos
-                  </p>
-                  <p className="text-[11px] text-stone-600">
-                    Convocatoria, reuniones, simulacros y salidas
-                  </p>
-                </div>
-              </div>
-
-              {/* Botones para Empezar el Juego */}
-              <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFiltroJuego("todas");
-                    setIndiceTarjetaActual(0);
-                    setJuegoIniciado(true);
-                  }}
-                  className="inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-topo-mustard hover:bg-amber-500 text-topo-dark font-black text-base shadow-warm-lg hover:scale-[1.02] transition"
-                >
-                  <Play className="w-5 h-5 fill-current" />
-                  ¡Empezar desde la Tarjeta #1!
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFiltroJuego("clases");
-                    setIndiceTarjetaActual(0);
-                    setJuegoIniciado(true);
-                  }}
-                  className="inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-matrix-header hover:bg-matrix-sub text-white font-black text-sm shadow-warm transition"
-                >
-                  <Wand2 className="w-4 h-4 text-amber-300" />
-                  Ir directo a los Sábados de Clases (06 Feb)
-                </button>
-              </div>
-
-              <div className="flex items-end justify-center gap-4 mt-8 opacity-90">
-                <FlorMuralSVG className="w-9 h-9" />
-                <FlorMuralSVG className="w-7 h-7" />
-                <FlorMuralSVG className="w-10 h-10" />
-                <FlorMuralSVG className="w-8 h-8" />
-              </div>
-            </div>
-          ) : (
-            /* TABLERO ACTIVO DEL JUEGO DE TARJETAS */
-            <div className="space-y-4">
+          {/* TABLERO ACTIVO DEL PLANIFICADOR DE TARJETAS 1 A 1 */}
+          <div className="space-y-4">
               {/* Barra de Progreso y Selector de Mazo */}
               <div className="bg-white p-4 rounded-3xl border-2 border-[#E2DCCE] shadow-warm space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -864,22 +1039,71 @@ export function MatrizJornadas({
                 </div>
               </div>
 
-              {/* TARJETA CENTRAL ANIMADA DEL JUEGO */}
-              {tarjetaActual && (
+              {/* TARJETA CENTRAL ANIMADA DEL JUEGO / PLANIFICADOR DÍA POR DÍA */}
+              {tarjetaActual && (() => {
+                const isoActual = tarjetaActual.fechaISO || ddmmyyyyToISO(tarjetaActual.fecha);
+                const periodoActual = obtenerPeriodoFecha(isoActual);
+                const examenActual = obtenerExamenFecha(isoActual);
+                const estiloPeriodo = periodoActual ? ESTILOS_BLOQUES_PERIODO[periodoActual.tipo] : null;
+
+                // Cálculo de cuenta regresiva de días
+                const diasFaltantes = (() => {
+                  if (!isoActual) return null;
+                  const hoy = new Date();
+                  hoy.setHours(0, 0, 0, 0);
+                  const [y, m, d] = isoActual.split("-").map(Number);
+                  const fechaObj = new Date(y, m - 1, d);
+                  const diffTiempo = fechaObj.getTime() - hoy.getTime();
+                  return Math.round(diffTiempo / (1000 * 60 * 60 * 24));
+                })();
+
+                return (
                 <div
                   className={`rounded-3xl bg-white border-4 shadow-warm-lg overflow-hidden transition-all duration-200 ${
                     animacionTarjeta === "aceptada"
                       ? "translate-x-10 -rotate-1 opacity-20 border-topo-green bg-emerald-50"
                       : animacionTarjeta === "entrando"
                       ? "-translate-x-6 opacity-60 border-topo-mustard"
+                      : examenActual
+                      ? "translate-x-0 opacity-100 border-purple-500 ring-4 ring-purple-300"
                       : "translate-x-0 opacity-100 border-topo-mustard"
                   }`}
                 >
-                  {/* CABECERA COLORIDA DE LA TARJETA ACTUAL */}
+                  {/* CINTILLO SUPERIOR DE BLOQUE / EXAMEN SI APLICA */}
+                  {(periodoActual || examenActual) && (
+                    <div className={`px-5 py-2 flex flex-wrap items-center justify-between gap-2 text-xs font-black border-b ${
+                      examenActual
+                        ? "bg-purple-800 text-white border-purple-900"
+                        : estiloPeriodo
+                        ? `${estiloPeriodo.badgeBg} border-current/20`
+                        : "bg-stone-100 text-stone-800 border-stone-200"
+                    }`}>
+                      <div className="flex items-center gap-2">
+                        {examenActual ? (
+                          <>
+                            <span className="text-base">🎓</span>
+                            <span>HITO OFICIAL: {examenActual.titulo}</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-base">{estiloPeriodo?.icon || "📌"}</span>
+                            <span>PERÍODO: {periodoActual?.nombre} ({periodoActual?.tipo.toUpperCase()})</span>
+                          </>
+                        )}
+                      </div>
+                      {estructura?.modalidadCiclo === "dos_ciclos" && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-black/20 text-white text-[10px] font-black uppercase">
+                          {isoActual && isoActual < "2027-07-01" ? estructura.nombreCiclo1 || "Ciclo I" : estructura.nombreCiclo2 || "Ciclo II"}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* CABECERA COLORIDA DE LA JORNADA */}
                   <div className="bg-gradient-to-r from-matrix-header via-matrix-sub to-topo-green text-white p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 rounded-2xl bg-topo-mustard text-topo-dark flex flex-col items-center justify-center font-black shadow-md shrink-0">
-                        <span className="text-[10px] uppercase leading-none">TARJETA</span>
+                        <span className="text-[10px] uppercase leading-none">FECHA</span>
                         <span className="text-2xl leading-none mt-0.5">
                           #{tarjetaActual.numeroJornada}
                         </span>
@@ -890,14 +1114,24 @@ export function MatrizJornadas({
                           <span className="px-3 py-0.5 rounded-full bg-amber-300 text-topo-dark text-xs font-black uppercase">
                             📅 {tarjetaActual.diaSemana}
                           </span>
-                          <span className="px-3 py-0.5 rounded-full bg-white/20 text-white text-xs font-bold">
-                            Paso {indiceTarjetaActual + 1} de {mazoJuego.length}
-                          </span>
-                          {esJornadaLista(tarjetaActual) && (
-                            <span className="px-3 py-0.5 rounded-full bg-emerald-400 text-topo-dark text-xs font-black flex items-center gap-1">
-                              <CheckCircle2 className="w-3.5 h-3.5" /> ¡Tarjeta completada!
+                          {diasFaltantes !== null && (
+                            <span className={`px-3 py-0.5 rounded-full text-xs font-black ${
+                              diasFaltantes > 0
+                                ? "bg-emerald-400 text-topo-dark"
+                                : diasFaltantes === 0
+                                ? "bg-amber-400 text-topo-dark animate-pulse"
+                                : "bg-white/20 text-white"
+                            }`}>
+                              {diasFaltantes > 0
+                                ? `⏳ Faltan ${diasFaltantes} días`
+                                : diasFaltantes === 0
+                                ? "🎯 ¡Es hoy!"
+                                : `Pasó hace ${Math.abs(diasFaltantes)} días`}
                             </span>
                           )}
+                          <span className="px-3 py-0.5 rounded-full bg-white/20 text-white text-xs font-bold">
+                            {indiceTarjetaActual + 1} de {mazoJuego.length}
+                          </span>
                         </div>
                         <h3 className="text-2xl sm:text-3xl font-black mt-1 capitalize">
                           {tarjetaActual.fecha}
@@ -905,30 +1139,42 @@ export function MatrizJornadas({
                       </div>
                     </div>
 
-                    {/* Botón para cambiar si este día es Hito Unificado o Día de 4 Clases */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() =>
+                    {/* SELECTOR DE CARÁCTER DE LA JORNADA (CLASES, VACACIONES, COORDINACIÓN, EXAMEN) */}
+                    <div className="flex items-center gap-2 bg-black/30 p-2 rounded-2xl border border-white/20">
+                      <span className="text-xs font-bold text-amber-200 hidden sm:inline">Carácter:</span>
+                      <select
+                        value={
+                          tarjetaActual.caracter ||
+                          (tarjetaActual.tipoJornada === "unificada" ? "coordinacion" : "clases")
+                        }
+                        onChange={(e) => {
+                          const nuevoCar = e.target.value as any;
+                          const esUnif = nuevoCar !== "clases";
                           onActualizarJornada({
                             ...tarjetaActual,
-                            tipoJornada:
-                              tarjetaActual.tipoJornada === "unificada"
-                                ? "clases"
-                                : "unificada",
+                            caracter: nuevoCar,
+                            tipoJornada: esUnif ? "unificada" : "clases",
+                            descripcionUnificada:
+                              nuevoCar === "vacaciones"
+                                ? "RECESO ESCOLAR / VACACIONES DE MITAD DE AÑO"
+                                : nuevoCar === "coordinacion"
+                                ? "REUNIÓN DE COORDINACIÓN PEDAGÓGICA Y FORMACIÓN"
+                                : nuevoCar === "examen"
+                                ? "JORNADA DE EVALUACIÓN / SIMULACRO OFICIAL"
+                                : "",
                             bloques: asegurarCuatroBloques(
                               tarjetaActual.bloques,
                               tarjetaActual.id
                             ),
-                          })
-                        }
-                        className="px-3.5 py-2 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-black uppercase tracking-wide flex items-center gap-1.5 transition"
+                          });
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-white text-topo-dark text-xs font-black cursor-pointer shadow-sm"
                       >
-                        <ArrowLeftRight className="w-4 h-4 text-amber-300" />
-                        {tarjetaActual.tipoJornada === "unificada"
-                          ? "Cambiar a Sábado de 4 Clases"
-                          : "Cambiar a Evento / Hito Único"}
-                      </button>
+                        <option value="clases">📚 Sábado de Clases (4 Bloques)</option>
+                        <option value="vacaciones">🏖️ Receso Escolar / Vacaciones</option>
+                        <option value="coordinacion">👥 Reunión Coordinación / Hito</option>
+                        <option value="examen">🎓 Examen Oficial / Simulacro</option>
+                      </select>
                     </div>
                   </div>
 
@@ -1043,21 +1289,36 @@ export function MatrizJornadas({
                       </div>
                     </div>
 
-                    {/* PASO 2: SI ES EVENTO UNIFICADO vs SI ES SÁBADO DE 4 CLASES */}
+                    {/* PASO 2: CONTENIDO SEGÚN CARÁCTER (VACACIONES, REUNIÓN O CLASES) */}
                     {tarjetaActual.tipoJornada === "unificada" ? (
-                      <div className="bg-amber-50/80 border-2 border-amber-300 rounded-3xl p-5 space-y-3">
+                      <div className={`border-2 rounded-3xl p-5 space-y-3 ${
+                        tarjetaActual.caracter === "vacaciones"
+                          ? "bg-amber-50 border-amber-300"
+                          : tarjetaActual.caracter === "coordinacion"
+                          ? "bg-indigo-50 border-indigo-300"
+                          : "bg-purple-50 border-purple-300"
+                      }`}>
                         <div className="flex items-center justify-between">
-                          <span className="px-3 py-1 rounded-full bg-amber-200 text-amber-950 text-xs font-black uppercase">
-                            2️⃣ Actividad / Tarea Especial de esta Fecha
+                          <span className={`px-3 py-1 rounded-full text-xs font-black uppercase ${
+                            tarjetaActual.caracter === "vacaciones"
+                              ? "bg-amber-200 text-amber-950"
+                              : tarjetaActual.caracter === "coordinacion"
+                              ? "bg-indigo-200 text-indigo-950"
+                              : "bg-purple-200 text-purple-950"
+                          }`}>
+                            {tarjetaActual.caracter === "vacaciones"
+                              ? "🏖️ Espacio de Receso Escolar / Vacaciones"
+                              : tarjetaActual.caracter === "coordinacion"
+                              ? "👥 Agenda de Coordinación y Escuela de Formación"
+                              : "🎓 Agenda de Evaluación y Pruebas"}
                           </span>
                           <FlorMuralSVG className="w-8 h-8" />
                         </div>
                         <p className="text-xs text-stone-600">
-                          Revisa o ajusta los compromisos de este evento y dale en{" "}
-                          <strong>¡Aceptar y Siguiente Tarjeta!</strong> abajo.
+                          En este día no hay clases regulares. Utiliza este espacio para registrar la planeación, acuerdos o notas del período:
                         </p>
                         <textarea
-                          rows={5}
+                          rows={4}
                           value={tarjetaActual.descripcionUnificada || ""}
                           onChange={(e) =>
                             onActualizarJornada({
@@ -1065,8 +1326,12 @@ export function MatrizJornadas({
                               descripcionUnificada: e.target.value,
                             })
                           }
-                          placeholder="Describe la actividad, reunión, convocatoria o salida pedagógica de este día..."
-                          className="w-full rounded-2xl border-amber-300 bg-white p-4 text-sm font-bold text-topo-dark leading-relaxed"
+                          placeholder={
+                            tarjetaActual.caracter === "vacaciones"
+                              ? "Semana de descanso / sin actividades académicas sabatinas..."
+                              : "Objetivos de la reunión de coordinación, talleres formativos, responsables..."
+                          }
+                          className="w-full rounded-2xl border-stone-300 bg-white p-4 text-sm font-bold text-topo-dark leading-relaxed shadow-inner"
                         />
                       </div>
                     ) : (
@@ -1133,6 +1398,13 @@ export function MatrizJornadas({
                                         const estComp = obtenerEstiloComponente(comp);
                                         const activo =
                                           (bloque.componente || "").toUpperCase() === comp;
+                                        // Verificar si esta materia ya está usada en otro bloque de la misma tarjeta
+                                        const yaUsadaEnOtroBloque = tarjetaActual.bloques.some(
+                                          (otroB, otroIdx) =>
+                                            otroIdx !== bIdx &&
+                                            (otroB.componente || "").toUpperCase() === comp
+                                        );
+
                                         return (
                                           <button
                                             key={comp}
@@ -1144,13 +1416,25 @@ export function MatrizJornadas({
                                                 comp
                                               )
                                             }
-                                            className={`px-2.5 py-1 rounded-xl text-[11px] font-black uppercase transition border ${
+                                            title={
+                                              yaUsadaEnOtroBloque
+                                                ? `Aviso: ${comp} ya está asignado en otro bloque de este día`
+                                                : `Asignar ${comp}`
+                                            }
+                                            className={`px-2.5 py-1 rounded-xl text-[11px] font-black uppercase transition border flex items-center gap-1 ${
                                               activo
                                                 ? `${estComp.badgeBg} border-topo-dark ring-2 ring-topo-dark/40 scale-105`
+                                                : yaUsadaEnOtroBloque
+                                                ? "bg-stone-100 text-stone-400 border-dashed border-stone-300 opacity-60"
                                                 : "bg-white/90 text-stone-700 border-stone-300 hover:scale-105"
                                             }`}
                                           >
                                             {comp}
+                                            {yaUsadaEnOtroBloque && !activo && (
+                                              <span className="text-[9px] text-amber-600 font-bold">
+                                                (Rep)
+                                              </span>
+                                            )}
                                           </button>
                                         );
                                       })}
@@ -1245,41 +1529,52 @@ export function MatrizJornadas({
                                     <label className="block text-[11px] font-black uppercase text-stone-600 mb-1">
                                       👥 Tallerista(s) de {bloque.componente || "este bloque"}:
                                     </label>
-                                    {talleristasSugeridos.length > 0 && (
-                                      <div className="flex flex-wrap gap-1.5 mb-1.5">
-                                        {talleristasSugeridos.map((nom) => {
-                                          const seleccionado = (bloque.talleristas || "")
-                                            .toLowerCase()
-                                            .includes(nom.toLowerCase());
-                                          return (
-                                            <button
-                                              key={nom}
-                                              type="button"
-                                              onClick={() =>
-                                                toggleTalleristaEnBloque(
-                                                  tarjetaActual,
-                                                  bIdx,
-                                                  nom
-                                                )
-                                              }
-                                              className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold transition flex items-center gap-1 border ${
-                                                seleccionado
-                                                  ? "bg-topo-green text-white border-topo-green shadow-sm"
-                                                  : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
-                                              }`}
-                                            >
-                                              <Users className="w-3 h-3" />
-                                              {nom}
-                                              {seleccionado && <Check className="w-3 h-3" />}
-                                            </button>
-                                          );
-                                        })}
-                                      </div>
+                                    {bloque.componente ? (
+                                      talleristasSugeridos.length > 0 ? (
+                                        <div className="flex flex-wrap gap-1.5 mb-1.5">
+                                          {talleristasSugeridos.map((nom) => {
+                                            const seleccionado = (bloque.talleristas || "")
+                                              .toLowerCase()
+                                              .includes(nom.toLowerCase());
+                                            return (
+                                              <button
+                                                key={nom}
+                                                type="button"
+                                                onClick={() =>
+                                                  toggleTalleristaEnBloque(
+                                                    tarjetaActual,
+                                                    bIdx,
+                                                    nom
+                                                  )
+                                                }
+                                                className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold transition flex items-center gap-1 border ${
+                                                  seleccionado
+                                                    ? "bg-topo-green text-white border-topo-green shadow-sm"
+                                                    : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
+                                                }`}
+                                              >
+                                                <Users className="w-3 h-3" />
+                                                {nom}
+                                                {seleccionado && <Check className="w-3 h-3" />}
+                                              </button>
+                                            );
+                                          })}
+                                        </div>
+                                      ) : (
+                                        <p className="text-xs text-stone-500 italic mb-1.5">
+                                          No hay talleristas asignados a esta materia en el directorio.
+                                        </p>
+                                      )
+                                    ) : (
+                                      <p className="text-xs text-amber-800 bg-amber-50 p-2 rounded-xl mb-1.5 font-bold border border-amber-200">
+                                        👆 Selecciona primero una materia para ver a sus talleristas.
+                                      </p>
                                     )}
                                     <input
                                       type="text"
                                       list="lista-talleristas-topo"
                                       value={bloque.talleristas || ""}
+                                      placeholder={bloque.componente ? "O escribe otro nombre..." : "Selecciona una materia primero"}
                                       onChange={(e) => {
                                         const nuevos = asegurarCuatroBloques(
                                           tarjetaActual.bloques,
@@ -1294,7 +1589,6 @@ export function MatrizJornadas({
                                           bloques: nuevos,
                                         });
                                       }}
-                                      placeholder="Nombres de talleristas..."
                                       className="w-full rounded-xl border-stone-300 bg-white px-3 py-1.5 text-xs font-bold text-stone-800"
                                     />
                                   </div>
@@ -1360,9 +1654,9 @@ export function MatrizJornadas({
                     </div>
                   </div>
                 </div>
-              )}
+                );
+              })()}
             </div>
-          )}
         </div>
       )}
 
@@ -1461,13 +1755,19 @@ export function MatrizJornadas({
               const tieneTarea2027 = Boolean(
                 jornada.tareasDelDia?.trim() || jornada.comentarios?.trim()
               );
+              const isoCol = jornada.fechaISO || ddmmyyyyToISO(jornada.fecha);
+              const periodoCol = obtenerPeriodoFecha(isoCol);
+              const examenCol = obtenerExamenFecha(isoCol);
+              const estiloPeriodoCol = periodoCol ? ESTILOS_BLOQUES_PERIODO[periodoCol.tipo] : null;
 
               return (
                 <div
                   id={`col-${jornada.id}`}
                   key={jornada.id}
                   className={`w-[315px] shrink-0 rounded-3xl bg-white border-2 flex flex-col justify-between overflow-hidden shadow-warm transition snap-start ${
-                    esDestacada
+                    examenCol
+                      ? "border-purple-500 ring-4 ring-purple-300"
+                      : esDestacada
                       ? "border-topo-mustard ring-4 ring-topo-mustard/30"
                       : tieneTarea2027
                       ? "border-topo-green/60"
@@ -1475,6 +1775,26 @@ export function MatrizJornadas({
                   }`}
                 >
                   <div>
+                    {/* Badge de Bloque / Examen en la Sábana si aplica */}
+                    {(periodoCol || examenCol) && (
+                      <div className={`px-3 py-1 flex items-center justify-between text-[10px] font-black border-b ${
+                        examenCol
+                          ? "bg-purple-800 text-white border-purple-900"
+                          : estiloPeriodoCol
+                          ? `${estiloPeriodoCol.badgeBg} border-current/20`
+                          : "bg-stone-100 text-stone-800"
+                      }`}>
+                        <span className="truncate">
+                          {examenCol ? `🎓 ${examenCol.titulo}` : `${estiloPeriodoCol?.icon} ${periodoCol?.nombre}`}
+                        </span>
+                        {periodoCol && !examenCol && (
+                          <span className="uppercase tracking-wider opacity-80">
+                            {periodoCol.tipo}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     <div className="bg-matrix-header text-white px-3.5 py-2.5 flex items-center justify-between gap-2">
                       <button
                         type="button"

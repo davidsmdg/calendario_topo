@@ -223,3 +223,97 @@ export function obtenerEstiloComponente(componente?: string) {
     excelHex: "FEF3C7",
   };
 }
+
+/**
+ * Estilos y colores para Bloques Temporales del Calendario (Vacaciones, Clases, Coordinación, Exámenes)
+ */
+export interface EstiloBloquePeriodo {
+  bgLight: string;
+  border: string;
+  text: string;
+  badgeBg: string;
+  excelHex: string;
+  icon: string;
+}
+
+export const ESTILOS_BLOQUES_PERIODO: Record<string, EstiloBloquePeriodo> = {
+  vacaciones: {
+    bgLight: "bg-amber-100/60",
+    border: "border-amber-400",
+    text: "text-amber-950",
+    badgeBg: "bg-amber-200 text-amber-900",
+    excelHex: "FEF3C7", // Amber 100
+    icon: "🏖️",
+  },
+  clases: {
+    bgLight: "bg-emerald-50/70",
+    border: "border-emerald-400",
+    text: "text-emerald-950",
+    badgeBg: "bg-emerald-200 text-emerald-900",
+    excelHex: "D1FAE5", // Emerald 100
+    icon: "📚",
+  },
+  coordinacion: {
+    bgLight: "bg-indigo-50/80",
+    border: "border-indigo-400",
+    text: "text-indigo-950",
+    badgeBg: "bg-indigo-200 text-indigo-900",
+    excelHex: "E0E7FF", // Indigo 100
+    icon: "👥",
+  },
+  evaluacion: {
+    bgLight: "bg-purple-100/70",
+    border: "border-purple-400",
+    text: "text-purple-950",
+    badgeBg: "bg-purple-200 text-purple-900",
+    excelHex: "F3E8FF", // Purple 100
+    icon: "🎓",
+  },
+  salida: {
+    bgLight: "bg-teal-100/70",
+    border: "border-teal-400",
+    text: "text-teal-950",
+    badgeBg: "bg-teal-200 text-teal-900",
+    excelHex: "CCFBF1", // Teal 100
+    icon: "🚌",
+  },
+};
+
+export const ESTILOS_EXAMENES_CLAVE: Record<string, { badgeBg: string; border: string; text: string; excelHex: string; label: string }> = {
+  unal: {
+    badgeBg: "bg-purple-700 text-white",
+    border: "border-purple-600 ring-2 ring-purple-400",
+    text: "text-purple-900",
+    excelHex: "6B21A8", // Purple 800
+    label: "Examen UNAL",
+  },
+  icfes: {
+    badgeBg: "bg-blue-700 text-white",
+    border: "border-blue-600 ring-2 ring-blue-400",
+    text: "text-blue-900",
+    excelHex: "1D4ED8", // Blue 700
+    label: "Saber 11 ICFES",
+  },
+  simulacro: {
+    badgeBg: "bg-amber-600 text-white",
+    border: "border-amber-500 ring-2 ring-amber-300",
+    text: "text-amber-900",
+    excelHex: "D97706", // Amber 600
+    label: "Simulacro",
+  },
+  salida: {
+    badgeBg: "bg-teal-700 text-white",
+    border: "border-teal-500 ring-2 ring-teal-300",
+    text: "text-teal-900",
+    excelHex: "0D9488", // Teal 600
+    label: "Salida Pedagógica",
+  },
+  cierre: {
+    badgeBg: "bg-rose-700 text-white",
+    border: "border-rose-600 ring-2 ring-rose-400",
+    text: "text-rose-900",
+    excelHex: "BE123C", // Rose 700
+    label: "Cierre",
+  },
+};
+

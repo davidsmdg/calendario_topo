@@ -18,6 +18,42 @@ export interface BloqueClase {
   talleristas?: string;           // Por llenar en 2027
 }
 
+// Carácter específico pedagógico de una jornada en el calendario
+export type CaracterJornada = 'clases' | 'vacaciones' | 'coordinacion' | 'examen' | 'salida';
+
+// Estado de ejecución de un bloque en la jornada real
+export type EstadoEjecucionBloque = 'pendiente' | 'dictada' | 'reemplazo' | 'cancelada';
+
+export interface RegistroEjecucionBloque {
+  bloqueId: string;
+  estado: EstadoEjecucionBloque;
+  talleristasEfectivos?: string[]; // Uno o varios talleristas que dictaron la clase (co-docencia)
+  talleristaEfectivo?: string; // Compatibilidad con valor singular
+  temaDictado?: string;
+  observaciones?: string;
+}
+
+// 2.1. Bitácora de seguimiento operativo del Encargadx del Día
+export interface BitacoraEncargadx {
+  encargadxConfirmadx?: string;
+  horaApertura?: string;
+  aperturaLlaves?: boolean;
+  refrigerioEntregado?: boolean;
+  circuloPalabraRealizado?: boolean;
+  aseoSalonesVerificado?: boolean;
+  cierreSedeRealizado?: boolean;
+  estudiantesPresentes?: number;
+  observacionesGenerales?: string;
+  acuerdosDelDia?: string;
+  ejecucionBloques?: RegistroEjecucionBloque[];
+  asistentesCoordinacion?: string[]; // Nombres de talleristas que asistieron a la reunión de coordinación
+  asistentesEscuelaFormacion?: string[]; // Nombres de talleristas que asistieron a la escuela de formación
+  asistentesSalidaPedagogica?: string[]; // Nombres de talleristas en salidas
+  lugarSalidaPedagogica?: string;
+  jornadaFinalizada?: boolean;
+  horaCierre?: string;
+}
+
 // 3. Jornada Pedagógica Completa (Estructura Matricial Horizontal)
 export interface JornadaPedagogica {
   id: string;
@@ -25,13 +61,15 @@ export interface JornadaPedagogica {
   fechaISO?: string;              // Formato YYYY-MM-DD para ordenar cronológicamente cualquier día (sábado o no)
   fecha?: string;                 // Ej: "23 de enero de 2027"
   diaSemana?: string;             // Ej: "Sábado", "Martes", "Domingo"...
+  caracter?: CaracterJornada;     // 'clases' (4 bloques), 'vacaciones' (receso), 'coordinacion' (reunión), 'examen' (evaluación)
   encargadxDelDia?: string;       // Por llenar
   horasJornada?: string;          // Ej: "8:00 AM - 3:00 PM"
-  tipoJornada?: 'unificada' | 'clases'; // Unificada para hitos/inducción/inauguración; Clases para slots de 4 bloques
+  tipoJornada?: 'unificada' | 'clases'; // Unificada para hitos/inducción/vacaciones; Clases para slots de 4 bloques
   descripcionUnificada?: string;  // Ej: "REUNIÓN DE COORDINACIÓN #01 Y ESCUELA DE FORMACIÓN #01"
   bloques: BloqueClase[];         // 4 franjas horarias por jornada
   comentarios?: string;           // Para reuniones, simulacros y tareas adicionales de ese día (en Excel va en fila COMENTARIOS)
   tareasDelDia?: string;          // Detalle de tareas/compromisos asociados a esa fecha desde con_tareas_2027
+  bitacora?: BitacoraEncargadx;   // Registro en vivo de ejecución del Encargadx del Día
 }
 
 // 4. Festivo Oficial de Colombia
@@ -50,7 +88,62 @@ export interface MallaComponente {
   sesiones: string[];             // Array de 11 sesiones (índice 0 = Sesión 1)
 }
 
-// 6. Estado Global Persistido del Aplicativo
+// 6. Información Personal y de Contacto del Tallerista
+export interface InfoContactoTallerista {
+  nombre: string;
+  telefono?: string;
+  correo?: string;
+  rol?: string;
+  componentes?: string[];
+  notas?: string;
+}
+
+// 7. Configuración de Bloque Temporal del Calendario (Vacaciones, Clases, Coordinación, Salida)
+export type TipoBloqueCalendario = 'clases' | 'vacaciones' | 'coordinacion' | 'evaluacion' | 'salida';
+
+export interface BloquePeriodoCalendario {
+  id: string;
+  nombre: string;              // Ej: "Vacaciones de Mitad de Año", "Semana Santa", "Período Clases Semestre 1"
+  tipo: TipoBloqueCalendario;
+  fechaInicio: string;         // YYYY-MM-DD
+  fechaFin: string;           // YYYY-MM-DD
+  colorHex?: string;
+  descripcion?: string;
+}
+
+// 8. Fecha Hito Clave (Exámenes de Estado, Pruebas Institucionales y Salidas Pedagógicas)
+export type TipoHitoExamen = 'unal' | 'icfes' | 'simulacro' | 'salida' | 'cierre';
+
+export interface FechaClaveExamen {
+  id: string;
+  titulo: string;             // Ej: "Examen Admisión UNAL 2027-1", "Saber 11 ICFES Calendario A"
+  tipo: TipoHitoExamen;
+  fecha: string;              // YYYY-MM-DD o DD/MM/YYYY
+  descripcion?: string;
+}
+
+// 9. Configuración Estructural y Estratégica del Año
+export type ModalidadCiclo = 'anual' | 'dos_ciclos'; // 1 ciclo anual continuo vs 2 ciclos semestrales
+
+export interface EstructuraCalendarioConfig {
+  modalidadCiclo: ModalidadCiclo;
+  nombreCiclo1?: string;      // Ej: "Ciclo I - 2027 (UNAL 2027-2 / ICFES)"
+  nombreCiclo2?: string;      // Ej: "Ciclo II - 2027 (UNAL 2028-1)"
+  horaInicioDefecto: string;  // Ej: "8:00 AM" o "9:00 AM"
+  duracionBloqueMinutos: number; // Ej: 90
+  periodosTemporales: BloquePeriodoCalendario[];
+  fechasClaveExamenes: FechaClaveExamen[];
+}
+
+// 10. Configuración estructural de franjas horarias y clases
+export interface FranjaHorariaConfig {
+  id: string;
+  nombre: string;     // Ej: "Bloque 1", "Bloque 2"
+  hora: string;       // Ej: "8:00 AM - 9:30 AM"
+  duracionMinutos?: number;
+}
+
+// 11. Estado Global Persistido del Aplicativo
 export interface EstadoCronogramaTopo {
   version: string;
   ultimaActualizacion: string;
@@ -58,4 +151,7 @@ export interface EstadoCronogramaTopo {
   jornadas: JornadaPedagogica[];
   mallaCurricular: MallaComponente[];
   talleristas: string[];
+  directorioTalleristas?: InfoContactoTallerista[]; // Datos personales/contacto
+  franjasHorarias?: string[]; // Array de strings con las horas por defecto estructurales
+  estructuraCalendario?: EstructuraCalendarioConfig; // Configuración de ciclos, períodos y exámenes
 }

@@ -1,0 +1,3595 @@
+{
+  "version": "3.0.0",
+  "ultimaActualizacion": "2026-11-15T16:29:23.646Z",
+  "hitos": [
+    {
+      "id": "hito-2027-1",
+      "fecha": "21/11/2026",
+      "evento": "Inicio convocatoria talleristas",
+      "compromiso": "1. Diseño y difusión de piezas gráficas.\n2. Videos difusión de convocatoria (15 dic.).\n3. Recolección de datos aspirantes (crear y enviar formulario)\n4. Entrevistas por componentes",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-2",
+      "fecha": "15/12/2026",
+      "evento": "Apertura de formulario de inscripción estudiantes",
+      "compromiso": "Crear, ajustar y empezar a difundir en colegios",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Martes"
+    },
+    {
+      "id": "hito-2027-3",
+      "fecha": "10/01/2027",
+      "evento": "Cierre de inscripciones de estudiantes",
+      "compromiso": "Cierre de formulario",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Domingo"
+    },
+    {
+      "id": "hito-2027-4",
+      "fecha": "11/01/2027",
+      "evento": "Inicio evaluación de formularios de inscripción de nuevos alumnos",
+      "compromiso": "Consolidación del grupo aspirante (Excel).\nFiltrado automático de criterios excluyentes.\nActualizar porcentajes.\nAsignación de puntajes para el formulario.\nAsignación de entrevistas (tope de 8 por tallerista)",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Lunes"
+    },
+    {
+      "id": "hito-2027-5",
+      "fecha": "13/01/2027",
+      "evento": "Fin de evaluación de formularios de inscripción de nuevos alumnos",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Miércoles"
+    },
+    {
+      "id": "hito-2027-6",
+      "fecha": "14/01/2027",
+      "evento": "Inicio citación y desarrollo de entrevistas",
+      "compromiso": "Comunicación directa por whatsapp, correo o teléfono.\nRealización de entrevistas vía telefónica o meet.\nPuntuación de cada entrevista (en paralelo durante las entrevistas).",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Jueves"
+    },
+    {
+      "id": "hito-2027-7",
+      "fecha": "19/01/2027",
+      "evento": "Fin citación y desarrollo de entrevistas",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Martes"
+    },
+    {
+      "id": "hito-2027-8",
+      "fecha": "21/01/2027",
+      "evento": "Fin convocatoria talleristas",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Jueves"
+    },
+    {
+      "id": "hito-2027-9",
+      "fecha": "22/01/2027",
+      "evento": "Inducción de manejo de recursos físicos y digitales de El Topo",
+      "compromiso": "Uso Drive.\nOrganigrama al interior del colectivo.\nSocialización de acuerdos de funcionamiento (protocolos, responsabilidades, relatorías escuela de formación).",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Viernes"
+    },
+    {
+      "id": "hito-2027-10",
+      "fecha": "22/01/2027",
+      "evento": "Organización de resultados",
+      "compromiso": "Organizar excel según puntaje y definir personas seleccionadas, en espera y no seleccionadas.\nRevisión de casos particulares.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Viernes"
+    },
+    {
+      "id": "hito-2027-11",
+      "fecha": "23/01/2027",
+      "evento": "Reunión de coordinación #01 y escuela de formación #01",
+      "compromiso": "1. Inducción del proceso (enfoque pedagógico, organización del equipo, funciones, cronograma general).\n2. Escuela de formación sobre educación popular y la historia del Topo (2 horas).\n3. Escuela de formación sobre trabajo en equipo y comunicación.\n4. Construcción de cronograma (traer una propuesta previa) de temas y actividades por madrigueras y componentes, al igual que temas para las escuelas de formación.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-12",
+      "fecha": "24/01/2027",
+      "evento": "Publicación de resultados",
+      "compromiso": "Publicación para personas seleccionadas, en espera y no seleccionadas.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Domingo"
+    },
+    {
+      "id": "hito-2027-13",
+      "fecha": "25/01/2027",
+      "evento": "Publicación de resultados",
+      "compromiso": "Publicación para personas seleccionadas, en espera y no seleccionadas.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Lunes"
+    },
+    {
+      "id": "hito-2027-14",
+      "fecha": "30/01/2027",
+      "evento": "Revisión de simulacros",
+      "compromiso": "1. Revisar simulacros\n2. Crear tercer formulario",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-15",
+      "fecha": "30/01/2027",
+      "evento": "Inauguración",
+      "compromiso": "1. Solicitud de espacio.\n2. Planeación y desarrollo de la inauguración.\nUsar la estructura del año pasado como base.\nAsistencia de todo el equipo de talleristas.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-16",
+      "fecha": "06/02/2027",
+      "evento": "Inicio de clases",
+      "compromiso": "Planeación sesión inicial\nAsistencia de todo el equipo de talleristas.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-17",
+      "fecha": "06/03/2027",
+      "evento": "Reunión de coordinación #02 y escuela de formación #02",
+      "compromiso": "Planeación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.\nResultados simulacro 1.\nDefinir cómo manejar recursos con relación a la figura jurídica.\nPlanear y desarrollar escuela de formadores",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-18",
+      "fecha": "21/03/2027",
+      "evento": "Salida pedagógica #1",
+      "compromiso": "Planear y desarrollar salida pedagógica\nDistribución por énfasis (?)",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Domingo"
+    },
+    {
+      "id": "hito-2027-19",
+      "fecha": "28/03/2027",
+      "evento": "Semana Santa",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Domingo"
+    },
+    {
+      "id": "hito-2027-20",
+      "fecha": "17/04/2027",
+      "evento": "Reunión de coordinación #03 y escuela de formación #03",
+      "compromiso": "Planeación de la reunión.\nPlanear y desarrollar escuela de formadores\nSeguimiento al proceso y espacio de autocuidado.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-21",
+      "fecha": "24/04/2027",
+      "evento": "Simulacro #02",
+      "compromiso": "Envío del segundo simulacro.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-22",
+      "fecha": "29/05/2027",
+      "evento": "Reunión de coordinación #04",
+      "compromiso": "Planeación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-23",
+      "fecha": "26/06/2027",
+      "evento": "Vacaciones Topo",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-24",
+      "fecha": "10/07/2027",
+      "evento": "Reunión de coordinación #05",
+      "compromiso": "Planeación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-25",
+      "fecha": "24/07/2027",
+      "evento": "Salida pedagógica #02",
+      "compromiso": "Planear y desarrollar salida pedagógica\nDistribución por énfasis (?)",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-26",
+      "fecha": "21/08/2027",
+      "evento": "Simulacro #03",
+      "compromiso": "Envío del tercer simulacro.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-27",
+      "fecha": "21/08/2027",
+      "evento": "Reunión de coordinación #06",
+      "compromiso": "Planeación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-28",
+      "fecha": "25/09/2027",
+      "evento": "Final de sesiones de componentes (fecha estimada, depende del examen de la Unal)",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-29",
+      "fecha": "02/10/2027",
+      "evento": "Opción sin asistentes: Cierre de proceso (fecha estimada, depende del examen de la Unal); Opción con asistentes: 1ra sesión de talleres complementarios (sexualidad y género y similares)",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-30",
+      "fecha": "09/10/2027",
+      "evento": "Cierre del proceso (opción con asistentes)",
+      "compromiso": "",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-31",
+      "fecha": "16/10/2027",
+      "evento": "Escuela de formación #04",
+      "compromiso": "Planear y desarrollar escuela de formadores",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Sábado"
+    },
+    {
+      "id": "hito-2027-32",
+      "fecha": "01/11/2027",
+      "evento": "Asamblea general de talleristas",
+      "compromiso": "Evaluación 2027\nProyección 2027\nPresupuesto 2027",
+      "personasEncargadas": "",
+      "completado": false,
+      "diaSemana": "Lunes"
+    }
+  ],
+  "jornadas": [
+    {
+      "id": "jornada-2027-2026-11-21",
+      "numeroJornada": 1,
+      "fechaISO": "2026-11-21",
+      "fecha": "21 de noviembre de 2026",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Inicio convocatoria talleristas: 1. Diseño y difusión de piezas gráficas.\n2. Videos difusión de convocatoria (15 dic.).\n3. Recolección de datos aspirantes (crear y enviar formulario)\n4. Entrevistas por componentes",
+      "bloques": [
+        {
+          "id": "jornada-2027-2026-11-21-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2026-11-21-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2026-11-21-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2026-11-21-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Inicio convocatoria talleristas\n1. Diseño y difusión de piezas gráficas.\n2. Videos difusión de convocatoria (15 dic.).\n3. Recolección de datos aspirantes (crear y enviar formulario)\n4. Entrevistas por componentes"
+    },
+    {
+      "id": "jornada-2027-2026-12-15",
+      "numeroJornada": 2,
+      "fechaISO": "2026-12-15",
+      "fecha": "15 de diciembre de 2026",
+      "diaSemana": "Martes",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Apertura de formulario de inscripción estudiantes: Crear, ajustar y empezar a difundir en colegios",
+      "bloques": [
+        {
+          "id": "jornada-2027-2026-12-15-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2026-12-15-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2026-12-15-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2026-12-15-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Apertura de formulario de inscripción estudiantes\nCrear, ajustar y empezar a difundir en colegios"
+    },
+    {
+      "id": "jornada-2027-2027-01-02",
+      "numeroJornada": 3,
+      "fechaISO": "2027-01-02",
+      "fecha": "02 de enero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-02-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-02-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-02-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-02-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "",
+      "bitacora": {
+        "encargadxConfirmadx": "",
+        "aperturaLlaves": false,
+        "refrigerioEntregado": false,
+        "circuloPalabraRealizado": false,
+        "aseoSalonesVerificado": false,
+        "cierreSedeRealizado": false,
+        "observacionesGenerales": "",
+        "acuerdosDelDia": "",
+        "ejecucionBloques": [
+          {
+            "bloqueId": "jornada-2027-2027-01-02-b1",
+            "estado": "pendiente",
+            "talleristaEfectivo": "David Díaz, Mao",
+            "temaDictado": "",
+            "talleristasEfectivos": [
+              "David Díaz",
+              "Mao"
+            ]
+          },
+          {
+            "bloqueId": "jornada-2027-2027-01-02-b2",
+            "estado": "pendiente",
+            "talleristaEfectivo": "",
+            "temaDictado": ""
+          },
+          {
+            "bloqueId": "jornada-2027-2027-01-02-b3",
+            "estado": "pendiente",
+            "talleristaEfectivo": "",
+            "temaDictado": ""
+          },
+          {
+            "bloqueId": "jornada-2027-2027-01-02-b4",
+            "estado": "pendiente",
+            "talleristaEfectivo": "",
+            "temaDictado": ""
+          }
+        ],
+        "jornadaFinalizada": false
+      }
+    },
+    {
+      "id": "jornada-2027-2027-01-09",
+      "numeroJornada": 4,
+      "fechaISO": "2027-01-09",
+      "fecha": "09 de enero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-09-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-09-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-09-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-09-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-01-10",
+      "numeroJornada": 5,
+      "fechaISO": "2027-01-10",
+      "fecha": "10 de enero de 2027",
+      "diaSemana": "Domingo",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Cierre de inscripciones de estudiantes: Cierre de formulario",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-10-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-10-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-10-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-10-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Cierre de inscripciones de estudiantes\nCierre de formulario"
+    },
+    {
+      "id": "jornada-2027-2027-01-11",
+      "numeroJornada": 6,
+      "fechaISO": "2027-01-11",
+      "fecha": "11 de enero de 2027",
+      "diaSemana": "Lunes",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Inicio evaluación de formularios de inscripción de nuevos alumnos: Consolidación del grupo aspirante (Excel).\nFiltrado automático de criterios excluyentes.\nActualizar porcentajes.\nAsignación de puntajes para el formulario.\nAsignación de entrevistas (tope de 8 por tallerista)",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-11-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-11-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-11-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-11-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Inicio evaluación de formularios de inscripción de nuevos alumnos\nConsolidación del grupo aspirante (Excel).\nFiltrado automático de criterios excluyentes.\nActualizar porcentajes.\nAsignación de puntajes para el formulario.\nAsignación de entrevistas (tope de 8 por tallerista)"
+    },
+    {
+      "id": "jornada-2027-2027-01-13",
+      "numeroJornada": 7,
+      "fechaISO": "2027-01-13",
+      "fecha": "13 de enero de 2027",
+      "diaSemana": "Miércoles",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Fin de evaluación de formularios de inscripción de nuevos alumnos",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-13-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-13-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-13-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-13-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Fin de evaluación de formularios de inscripción de nuevos alumnos"
+    },
+    {
+      "id": "jornada-2027-2027-01-14",
+      "numeroJornada": 8,
+      "fechaISO": "2027-01-14",
+      "fecha": "14 de enero de 2027",
+      "diaSemana": "Jueves",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Inicio citación y desarrollo de entrevistas: Comunicación directa por whatsapp, correo o teléfono.\nRealización de entrevistas vía telefónica o meet.\nPuntuación de cada entrevista (en paralelo durante las entrevistas).",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-14-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-14-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-14-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-14-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Inicio citación y desarrollo de entrevistas\nComunicación directa por whatsapp, correo o teléfono.\nRealización de entrevistas vía telefónica o meet.\nPuntuación de cada entrevista (en paralelo durante las entrevistas)."
+    },
+    {
+      "id": "jornada-2027-2027-01-16",
+      "numeroJornada": 9,
+      "fechaISO": "2027-01-16",
+      "fecha": "16 de enero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-16-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-16-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-16-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-16-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-01-19",
+      "numeroJornada": 10,
+      "fechaISO": "2027-01-19",
+      "fecha": "19 de enero de 2027",
+      "diaSemana": "Martes",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Fin citación y desarrollo de entrevistas",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-19-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-19-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-19-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-19-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Fin citación y desarrollo de entrevistas"
+    },
+    {
+      "id": "jornada-2027-2027-01-21",
+      "numeroJornada": 11,
+      "fechaISO": "2027-01-21",
+      "fecha": "21 de enero de 2027",
+      "diaSemana": "Jueves",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Fin convocatoria talleristas",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-21-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-21-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-21-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-21-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Fin convocatoria talleristas"
+    },
+    {
+      "id": "jornada-2027-2027-01-22",
+      "numeroJornada": 12,
+      "fechaISO": "2027-01-22",
+      "fecha": "22 de enero de 2027",
+      "diaSemana": "Viernes",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Inducción de manejo de recursos físicos y digitales de El Topo: Uso Drive.\nOrganigrama al interior del colectivo.\nSocialización de acuerdos de funcionamiento (protocolos, responsabilidades, relatorías escuela de formación).\n\nOrganización de resultados: Organizar excel según puntaje y definir personas seleccionadas, en espera y no seleccionadas.\nRevisión de casos particulares.",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-22-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-22-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-22-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-22-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Inducción de manejo de recursos físicos y digitales de El Topo\nUso Drive.\nOrganigrama al interior del colectivo.\nSocialización de acuerdos de funcionamiento (protocolos, responsabilidades, relatorías escuela de formación).\n---\nOrganización de resultados\nOrganizar excel según puntaje y definir personas seleccionadas, en espera y no seleccionadas.\nRevisión de casos particulares."
+    },
+    {
+      "id": "jornada-2027-2027-01-23",
+      "numeroJornada": 13,
+      "fechaISO": "2027-01-23",
+      "fecha": "23 de enero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Reunión de coordinación #01 y escuela de formación #01: 1. Inducción del proceso (enfoque pedagógico, organización del equipo, funciones, cronograma general).\n2. Escuela de formación sobre educación popular y la historia del Topo (2 horas).\n3. Escuela de formación sobre trabajo en equipo y comunicación.\n4. Construcción de cronograma (traer una propuesta previa) de temas y actividades por madrigueras y componentes, al igual que temas para las escuelas de formación.",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-23-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-23-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-23-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-23-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Reunión de coordinación #01 y escuela de formación #01\n1. Inducción del proceso (enfoque pedagógico, organización del equipo, funciones, cronograma general).\n2. Escuela de formación sobre educación popular y la historia del Topo (2 horas).\n3. Escuela de formación sobre trabajo en equipo y comunicación.\n4. Construcción de cronograma (traer una propuesta previa) de temas y actividades por madrigueras y componentes, al igual que temas para las escuelas de formación."
+    },
+    {
+      "id": "jornada-2027-2027-01-24",
+      "numeroJornada": 14,
+      "fechaISO": "2027-01-24",
+      "fecha": "24 de enero de 2027",
+      "diaSemana": "Domingo",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Publicación de resultados: Publicación para personas seleccionadas, en espera y no seleccionadas.",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-24-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-24-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-24-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-24-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Publicación de resultados\nPublicación para personas seleccionadas, en espera y no seleccionadas."
+    },
+    {
+      "id": "jornada-2027-2027-01-25",
+      "numeroJornada": 15,
+      "fechaISO": "2027-01-25",
+      "fecha": "25 de enero de 2027",
+      "diaSemana": "Lunes",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Publicación de resultados: Publicación para personas seleccionadas, en espera y no seleccionadas.",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-25-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-25-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-25-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-25-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Publicación de resultados\nPublicación para personas seleccionadas, en espera y no seleccionadas."
+    },
+    {
+      "id": "jornada-2027-2027-01-30",
+      "numeroJornada": 16,
+      "fechaISO": "2027-01-30",
+      "fecha": "30 de enero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Revisión de simulacros: 1. Revisar simulacros\n2. Crear tercer formulario\n\nInauguración: 1. Solicitud de espacio.\n2. Planeación y desarrollo de la inauguración.\nUsar la estructura del año pasado como base.\nAsistencia de todo el equipo de talleristas.",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-01-30-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-30-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-30-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-01-30-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Revisión de simulacros\n1. Revisar simulacros\n2. Crear tercer formulario\n---\nInauguración\n1. Solicitud de espacio.\n2. Planeación y desarrollo de la inauguración.\nUsar la estructura del año pasado como base.\nAsistencia de todo el equipo de talleristas."
+    },
+    {
+      "id": "jornada-2027-2027-02-06",
+      "numeroJornada": 17,
+      "fechaISO": "2027-02-06",
+      "fecha": "06 de febrero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-02-06-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-06-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-06-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-06-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Inicio de clases\nPlaneación sesión inicial\nAsistencia de todo el equipo de talleristas.",
+      "tareasDelDia": "Inicio de clases\nPlaneación sesión inicial\nAsistencia de todo el equipo de talleristas."
+    },
+    {
+      "id": "jornada-2027-2027-02-13",
+      "numeroJornada": 18,
+      "fechaISO": "2027-02-13",
+      "fecha": "13 de febrero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-02-13-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "CONTEXTO",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-13-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "QUÍMICA",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-13-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "ORIENTACIÓN VOCACIONAL",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-13-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "BIOLOGÍA",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "",
+      "bitacora": {
+        "encargadxConfirmadx": "",
+        "aperturaLlaves": false,
+        "refrigerioEntregado": false,
+        "circuloPalabraRealizado": false,
+        "aseoSalonesVerificado": false,
+        "cierreSedeRealizado": false,
+        "observacionesGenerales": "",
+        "acuerdosDelDia": "",
+        "ejecucionBloques": [
+          {
+            "bloqueId": "jornada-2027-2027-02-13-b1",
+            "estado": "dictada",
+            "talleristaEfectivo": "Alexa",
+            "temaDictado": "",
+            "talleristasEfectivos": [
+              "Alexa"
+            ]
+          },
+          {
+            "bloqueId": "jornada-2027-2027-02-13-b2",
+            "estado": "pendiente",
+            "talleristaEfectivo": "",
+            "temaDictado": ""
+          },
+          {
+            "bloqueId": "jornada-2027-2027-02-13-b3",
+            "estado": "pendiente",
+            "talleristaEfectivo": "",
+            "temaDictado": ""
+          },
+          {
+            "bloqueId": "jornada-2027-2027-02-13-b4",
+            "estado": "pendiente",
+            "talleristaEfectivo": "",
+            "temaDictado": ""
+          }
+        ],
+        "jornadaFinalizada": false
+      }
+    },
+    {
+      "id": "jornada-2027-2027-02-20",
+      "numeroJornada": 19,
+      "fechaISO": "2027-02-20",
+      "fecha": "20 de febrero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-02-20-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-20-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-20-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-20-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-02-27",
+      "numeroJornada": 20,
+      "fechaISO": "2027-02-27",
+      "fecha": "27 de febrero de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-02-27-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-27-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-27-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-02-27-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-03-06",
+      "numeroJornada": 21,
+      "fechaISO": "2027-03-06",
+      "fecha": "06 de marzo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-03-06-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-06-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-06-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-06-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Reunión de coordinación #02 y escuela de formación #02\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.\nResultados simulacro 1.\nDefinir cómo manejar recursos con relación a la figura jurídica.\nPlanear y desarrollar escuela de formadores",
+      "tareasDelDia": "Reunión de coordinación #02 y escuela de formación #02\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.\nResultados simulacro 1.\nDefinir cómo manejar recursos con relación a la figura jurídica.\nPlanear y desarrollar escuela de formadores"
+    },
+    {
+      "id": "jornada-2027-2027-03-13",
+      "numeroJornada": 22,
+      "fechaISO": "2027-03-13",
+      "fecha": "13 de marzo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-03-13-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-13-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-13-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-13-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-03-20",
+      "numeroJornada": 23,
+      "fechaISO": "2027-03-20",
+      "fecha": "20 de marzo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-03-20-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-20-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-20-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-20-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-03-21",
+      "numeroJornada": 24,
+      "fechaISO": "2027-03-21",
+      "fecha": "21 de marzo de 2027",
+      "diaSemana": "Domingo",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Salida pedagógica #1: Planear y desarrollar salida pedagógica\nDistribución por énfasis (?)",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-03-21-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-21-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-21-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-21-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Salida pedagógica #1\nPlanear y desarrollar salida pedagógica\nDistribución por énfasis (?)"
+    },
+    {
+      "id": "jornada-2027-2027-03-27",
+      "numeroJornada": 25,
+      "fechaISO": "2027-03-27",
+      "fecha": "27 de marzo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-03-27-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-27-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-27-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-27-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-03-28",
+      "numeroJornada": 26,
+      "fechaISO": "2027-03-28",
+      "fecha": "28 de marzo de 2027",
+      "diaSemana": "Domingo",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Semana Santa",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-03-28-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-28-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-28-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-03-28-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Semana Santa"
+    },
+    {
+      "id": "jornada-2027-2027-04-03",
+      "numeroJornada": 27,
+      "fechaISO": "2027-04-03",
+      "fecha": "03 de abril de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-04-03-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-03-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-03-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-03-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-04-10",
+      "numeroJornada": 28,
+      "fechaISO": "2027-04-10",
+      "fecha": "10 de abril de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-04-10-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-10-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-10-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-10-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-04-17",
+      "numeroJornada": 29,
+      "fechaISO": "2027-04-17",
+      "fecha": "17 de abril de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-04-17-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-17-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-17-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-17-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Reunión de coordinación #03 y escuela de formación #03\nPlaneación de la reunión.\nPlanear y desarrollar escuela de formadores\nSeguimiento al proceso y espacio de autocuidado.",
+      "tareasDelDia": "Reunión de coordinación #03 y escuela de formación #03\nPlaneación de la reunión.\nPlanear y desarrollar escuela de formadores\nSeguimiento al proceso y espacio de autocuidado."
+    },
+    {
+      "id": "jornada-2027-2027-04-24",
+      "numeroJornada": 30,
+      "fechaISO": "2027-04-24",
+      "fecha": "24 de abril de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-04-24-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-24-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-24-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-04-24-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Simulacro #02\nEnvío del segundo simulacro.",
+      "tareasDelDia": "Simulacro #02\nEnvío del segundo simulacro."
+    },
+    {
+      "id": "jornada-2027-2027-05-01",
+      "numeroJornada": 31,
+      "fechaISO": "2027-05-01",
+      "fecha": "01 de mayo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-05-01-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-01-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-01-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-01-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-05-08",
+      "numeroJornada": 32,
+      "fechaISO": "2027-05-08",
+      "fecha": "08 de mayo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-05-08-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-08-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-08-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-08-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-05-15",
+      "numeroJornada": 33,
+      "fechaISO": "2027-05-15",
+      "fecha": "15 de mayo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-05-15-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-15-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-15-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-15-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-05-22",
+      "numeroJornada": 34,
+      "fechaISO": "2027-05-22",
+      "fecha": "22 de mayo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-05-22-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-22-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-22-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-22-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-05-29",
+      "numeroJornada": 35,
+      "fechaISO": "2027-05-29",
+      "fecha": "29 de mayo de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-05-29-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-29-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-29-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-05-29-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Reunión de coordinación #04\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.",
+      "tareasDelDia": "Reunión de coordinación #04\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado."
+    },
+    {
+      "id": "jornada-2027-2027-06-05",
+      "numeroJornada": 36,
+      "fechaISO": "2027-06-05",
+      "fecha": "05 de junio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-06-05-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-05-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-05-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-05-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-06-12",
+      "numeroJornada": 37,
+      "fechaISO": "2027-06-12",
+      "fecha": "12 de junio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-06-12-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-12-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-12-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-12-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-06-19",
+      "numeroJornada": 38,
+      "fechaISO": "2027-06-19",
+      "fecha": "19 de junio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-06-19-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-19-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-19-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-19-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-06-26",
+      "numeroJornada": 39,
+      "fechaISO": "2027-06-26",
+      "fecha": "26 de junio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Vacaciones Topo",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-06-26-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-26-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-26-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-06-26-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Vacaciones Topo"
+    },
+    {
+      "id": "jornada-2027-2027-07-03",
+      "numeroJornada": 40,
+      "fechaISO": "2027-07-03",
+      "fecha": "03 de julio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-07-03-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-03-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-03-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-03-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-07-10",
+      "numeroJornada": 41,
+      "fechaISO": "2027-07-10",
+      "fecha": "10 de julio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-07-10-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-10-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-10-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-10-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Reunión de coordinación #05\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.",
+      "tareasDelDia": "Reunión de coordinación #05\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado."
+    },
+    {
+      "id": "jornada-2027-2027-07-17",
+      "numeroJornada": 42,
+      "fechaISO": "2027-07-17",
+      "fecha": "17 de julio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-07-17-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-17-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-17-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-17-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-07-24",
+      "numeroJornada": 43,
+      "fechaISO": "2027-07-24",
+      "fecha": "24 de julio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Salida pedagógica #02: Planear y desarrollar salida pedagógica\nDistribución por énfasis (?)",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-07-24-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-24-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-24-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-24-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Salida pedagógica #02\nPlanear y desarrollar salida pedagógica\nDistribución por énfasis (?)"
+    },
+    {
+      "id": "jornada-2027-2027-07-31",
+      "numeroJornada": 44,
+      "fechaISO": "2027-07-31",
+      "fecha": "31 de julio de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-07-31-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-31-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-31-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-07-31-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-08-07",
+      "numeroJornada": 45,
+      "fechaISO": "2027-08-07",
+      "fecha": "07 de agosto de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-08-07-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-07-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-07-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-07-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-08-14",
+      "numeroJornada": 46,
+      "fechaISO": "2027-08-14",
+      "fecha": "14 de agosto de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-08-14-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-14-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-14-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-14-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-08-21",
+      "numeroJornada": 47,
+      "fechaISO": "2027-08-21",
+      "fecha": "21 de agosto de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-08-21-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-21-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-21-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-21-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Simulacro #03\nEnvío del tercer simulacro.\n---\nReunión de coordinación #06\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado.",
+      "tareasDelDia": "Simulacro #03\nEnvío del tercer simulacro.\n---\nReunión de coordinación #06\nPlaneación de la reunión.\nSeguimiento al proceso y espacio de autocuidado."
+    },
+    {
+      "id": "jornada-2027-2027-08-28",
+      "numeroJornada": 48,
+      "fechaISO": "2027-08-28",
+      "fecha": "28 de agosto de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-08-28-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-28-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-28-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-08-28-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-09-04",
+      "numeroJornada": 49,
+      "fechaISO": "2027-09-04",
+      "fecha": "04 de septiembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-09-04-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-04-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-04-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-04-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-09-11",
+      "numeroJornada": 50,
+      "fechaISO": "2027-09-11",
+      "fecha": "11 de septiembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-09-11-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-11-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-11-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-11-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-09-18",
+      "numeroJornada": 51,
+      "fechaISO": "2027-09-18",
+      "fecha": "18 de septiembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-09-18-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-18-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-18-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-18-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-09-25",
+      "numeroJornada": 52,
+      "fechaISO": "2027-09-25",
+      "fecha": "25 de septiembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-09-25-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-25-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-25-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-09-25-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Final de sesiones de componentes (fecha estimada, depende del examen de la Unal)",
+      "tareasDelDia": "Final de sesiones de componentes (fecha estimada, depende del examen de la Unal)"
+    },
+    {
+      "id": "jornada-2027-2027-10-02",
+      "numeroJornada": 53,
+      "fechaISO": "2027-10-02",
+      "fecha": "02 de octubre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-10-02-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-02-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-02-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-02-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Opción sin asistentes: Cierre de proceso (fecha estimada, depende del examen de la Unal); Opción con asistentes: 1ra sesión de talleres complementarios (sexualidad y género y similares)",
+      "tareasDelDia": "Opción sin asistentes: Cierre de proceso (fecha estimada, depende del examen de la Unal); Opción con asistentes: 1ra sesión de talleres complementarios (sexualidad y género y similares)"
+    },
+    {
+      "id": "jornada-2027-2027-10-09",
+      "numeroJornada": 54,
+      "fechaISO": "2027-10-09",
+      "fecha": "09 de octubre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Cierre del proceso (opción con asistentes)",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-10-09-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-09-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-09-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-09-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Cierre del proceso (opción con asistentes)"
+    },
+    {
+      "id": "jornada-2027-2027-10-16",
+      "numeroJornada": 55,
+      "fechaISO": "2027-10-16",
+      "fecha": "16 de octubre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-10-16-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-16-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-16-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-16-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "Escuela de formación #04\nPlanear y desarrollar escuela de formadores",
+      "tareasDelDia": "Escuela de formación #04\nPlanear y desarrollar escuela de formadores"
+    },
+    {
+      "id": "jornada-2027-2027-10-23",
+      "numeroJornada": 56,
+      "fechaISO": "2027-10-23",
+      "fecha": "23 de octubre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-10-23-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-23-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-23-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-23-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-10-30",
+      "numeroJornada": 57,
+      "fechaISO": "2027-10-30",
+      "fecha": "30 de octubre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-10-30-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-30-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-30-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-10-30-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-11-01",
+      "numeroJornada": 58,
+      "fechaISO": "2027-11-01",
+      "fecha": "01 de noviembre de 2027",
+      "diaSemana": "Lunes",
+      "encargadxDelDia": "",
+      "horasJornada": "Por definir",
+      "tipoJornada": "unificada",
+      "descripcionUnificada": "Asamblea general de talleristas: Evaluación 2027\nProyección 2027\nPresupuesto 2027",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-11-01-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-01-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-01-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-01-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": "Asamblea general de talleristas\nEvaluación 2027\nProyección 2027\nPresupuesto 2027"
+    },
+    {
+      "id": "jornada-2027-2027-11-06",
+      "numeroJornada": 59,
+      "fechaISO": "2027-11-06",
+      "fecha": "06 de noviembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-11-06-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-06-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-06-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-06-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-11-13",
+      "numeroJornada": 60,
+      "fechaISO": "2027-11-13",
+      "fecha": "13 de noviembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-11-13-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-13-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-13-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-13-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-11-20",
+      "numeroJornada": 61,
+      "fechaISO": "2027-11-20",
+      "fecha": "20 de noviembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-11-20-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-20-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-20-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-20-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-11-27",
+      "numeroJornada": 62,
+      "fechaISO": "2027-11-27",
+      "fecha": "27 de noviembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-11-27-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-27-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-27-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-11-27-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-12-04",
+      "numeroJornada": 63,
+      "fechaISO": "2027-12-04",
+      "fecha": "04 de diciembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-12-04-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-04-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-04-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-04-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-12-11",
+      "numeroJornada": 64,
+      "fechaISO": "2027-12-11",
+      "fecha": "11 de diciembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-12-11-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-11-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-11-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-11-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-12-18",
+      "numeroJornada": 65,
+      "fechaISO": "2027-12-18",
+      "fecha": "18 de diciembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-12-18-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-18-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-18-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-18-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-2027-2027-12-25",
+      "numeroJornada": 66,
+      "fechaISO": "2027-12-25",
+      "fecha": "25 de diciembre de 2027",
+      "diaSemana": "Sábado",
+      "encargadxDelDia": "",
+      "horasJornada": "8:00 AM - 3:00 PM",
+      "tipoJornada": "clases",
+      "descripcionUnificada": "",
+      "bloques": [
+        {
+          "id": "jornada-2027-2027-12-25-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-25-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-25-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-2027-2027-12-25-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": "",
+      "tareasDelDia": ""
+    },
+    {
+      "id": "jornada-1794764876767",
+      "numeroJornada": 67,
+      "fecha": "Nueva Fecha 2027",
+      "diaSemana": "Sábado",
+      "tipoJornada": "clases",
+      "bloques": [
+        {
+          "id": "jornada-1794764876767-b1",
+          "hora": "8:00 AM - 9:30 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-1794764876767-b2",
+          "hora": "9:30 AM - 11:00 AM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-1794764876767-b3",
+          "hora": "11:15 AM - 12:45 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        },
+        {
+          "id": "jornada-1794764876767-b4",
+          "hora": "1:30 PM - 3:00 PM",
+          "componente": "",
+          "temaDelDia": "",
+          "talleristas": ""
+        }
+      ],
+      "comentarios": ""
+    }
+  ],
+  "mallaCurricular": [
+    {
+      "id": "malla-ov",
+      "componente": "ORIENTACIÓN VOCACIONAL",
+      "talleristasBase": [
+        "Aleja",
+        "David G.",
+        "Tati",
+        "Karen"
+      ],
+      "sesiones": [
+        "Sesión de bienvenida",
+        "Formación Post secundaria",
+        "Métodos de estudio y aprendizaje",
+        "Preparación para los exámenes",
+        "Entrevista",
+        "Tips para la vida universitaria",
+        "Manejo de emociones",
+        "Habilidades socioemocionales (SABER ICFES)",
+        "OV 9",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "malla-ctx",
+      "componente": "CONTEXTO",
+      "talleristasBase": [
+        "Camilo Torres",
+        "Alexa",
+        "Yeral",
+        "Canela"
+      ],
+      "sesiones": [
+        "Introducción: ¿Para qué las Ciencias Sociales y cómo pensarnos desde ella?",
+        "Pensamiento histórico",
+        "Historia universal",
+        "Análisis geográfico",
+        "Conceptos de geografía",
+        "Análisis Político",
+        "Estructura del Estado",
+        "Análisis Económico",
+        "Historia de Colombia (Enfoque económico)",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "malla-mat",
+      "componente": "MATEMÁTICAS",
+      "talleristasBase": [
+        "Óscar",
+        "Yarid",
+        "Kenny"
+      ],
+      "sesiones": [
+        "Qué es matemáticas. Operaciones y propiedades. Jerarquía",
+        "Regla de 3 (relacionar magnitudes). Fracciones y números racionales",
+        "Clase de ejercicios (fracciones)",
+        "Fundamentos de álgebra",
+        "Funciones",
+        "Geometría",
+        "Trigonometría",
+        "Probabilidad y estadística",
+        "¿Financieras?",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "malla-len",
+      "componente": "LENGUAJE",
+      "talleristasBase": [
+        "Camilo Torres",
+        "Miguel Fuerte",
+        "Juan Pablo Vargas"
+      ],
+      "sesiones": [
+        "La importancia de la lectura. La lectura como proceso",
+        "¿Cómo leemos? Momentos y tipos de lectura",
+        "Panorama general de la lectura. Lectura como proceso creativo",
+        "Lectura literal: ¿cómo entendemos lo que está allí?",
+        "Lectura inferencial (i): ¿qué es inferir en la lectura?",
+        "Lectura inferencial (ii)",
+        "Lectura crítico intertextual (i)",
+        "Lectura crítico intertextual (ii)",
+        "Club de lectura",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "malla-bio",
+      "componente": "BIOLOGÍA",
+      "talleristasBase": [
+        "Sebas",
+        "Johan",
+        "Nicolás",
+        "Lesley"
+      ],
+      "sesiones": [
+        "Sesión 1. Lo vivo & la vida - Biomoléculas",
+        "Sesión 2. Biología molecular",
+        "Sesión 3. Membranas",
+        "Sesión 4. Genética mendeliana",
+        "Sesión 5. Genética molecular",
+        "Sesión 6. Evolución - Torneo Pokémon",
+        "Sesión 7. Ecosistemas & ecología",
+        "Sesión compartida. Energía - Fotosíntesis",
+        "Sesión 9. Biotecnología",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "malla-ing",
+      "componente": "INGLÉS",
+      "talleristasBase": [
+        "Kevin Quevedo",
+        "Paula Ávila",
+        "Miguel Fuerte"
+      ],
+      "sesiones": [
+        "El inglés en la prueba Saber 11 - Introducción al inglés como lengua franca y 'universal'",
+        "What do I look like? What am I like? Physical description and personality",
+        "What's in the house? Housing vocabulary and prepositions of place",
+        "Present (simple and progressive), introduction to past simple and prepositions (place and time)",
+        "Past tenses (progressive and simple), prepositions of time, and possessives.",
+        "Future Simple / Going to / Progressive: What will we do in vacations?",
+        "Comparatives and superlatives. Wild cards",
+        "Modal Verbs (advice, necessity, and obligation)",
+        "Conditionals (0, and 1)",
+        "Second Conditional / Karaoke",
+        "Wasted Time - Sing Me Something New"
+      ]
+    },
+    {
+      "id": "malla-qui",
+      "componente": "QUÍMICA",
+      "talleristasBase": [
+        "Jairo",
+        "Lore"
+      ],
+      "sesiones": [
+        "Introducción: Estados de la materia, propiedades fisicoquímicas y diagramas",
+        "Estructuras atómicas, moleculares, enlaces, mol.",
+        "Tabla periódica",
+        "Reacciones químicas, estequiometría.",
+        "Soluciones, molaridad, reacciones ácido-base.",
+        "Gases ideales",
+        "Química orgánica, nomenclatura, hidrocarburos y compuestos",
+        "Sesión compartida. Energía - Fotosíntesis",
+        "QM 9 (Solución de problemas complejos)",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "malla-aim",
+      "componente": "ANÁLISIS DE LA IMAGEN",
+      "talleristasBase": [
+        "Mao",
+        "David Díaz"
+      ],
+      "sesiones": [
+        "Introducción geometría y Gestalt",
+        "Isométricos",
+        "Isométricos parte 2",
+        "Isométricos parte 3",
+        "AIM 5",
+        "Estructura organizativa y repaso",
+        "AIM 7",
+        "AIM 8",
+        "AIM 9",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": "malla-fil",
+      "componente": "FILOSOFÍA",
+      "talleristasBase": [
+        "Canela",
+        "Catalina",
+        "David"
+      ],
+      "sesiones": [
+        "¿Cómo leer textos desde la filosofía?",
+        "Conceptos básicos de lógica y argumentación",
+        "Lógica y argumentación aplicada",
+        "Lectura crítica y análisis de argumentos",
+        "¿Cómo abordar la historia del pensamiento y la filosofía? Antigua parte 1",
+        "Antigua parte 2 (Clásicos, sofistas y helenística)",
+        "Modernidad (S. XV - XIX)",
+        "Modernidad / Posmodernidad (S. XX - XXI)",
+        "Pensamiento latinoamericano (desde Abya Yala)",
+        "Refuerzo: Lógica y argumentación",
+        "Refuerzo: Lógica y argumentación"
+      ]
+    },
+    {
+      "id": "malla-fis",
+      "componente": "FÍSICA",
+      "talleristasBase": [
+        "Diego",
+        "Miguel Ruiz"
+      ],
+      "sesiones": [
+        "Introducción: Fenómenos físicos, variables físicas y sistemas de unidades.",
+        "Factores de conversión, notación científica y escalas",
+        "Magnitudes Escalares y Vectoriales - Introducción Cinemática",
+        "Cinemática: MRU MRUA",
+        "Dinámica: Leyes de Newton",
+        "Ejercicios Cinemática y Dinámica",
+        "Energía mecánica y trabajo",
+        "Sesión compartida. Energía - Fotosíntesis",
+        "Electromagnetismo",
+        "Ondas",
+        "Refuerzos"
+      ]
+    }
+  ],
+  "talleristas": [
+    "Todos",
+    "Camilo Torres",
+    "Yarid",
+    "David Guáqueta",
+    "Juan Pablo Vargas",
+    "Lesley Cortés",
+    "David Díaz",
+    "Sebastián Vélez",
+    "Diego",
+    "Yeral",
+    "Alexa",
+    "Kevin Quevedo",
+    "Canela",
+    "Tati",
+    "Daniela",
+    "Catalina",
+    "Johan Mejia",
+    "Nicolás Velásquez",
+    "Miguel Ruiz",
+    "Miguel Fuerte",
+    "Paula Ávila",
+    "Jairo",
+    "Lore",
+    "Aleja",
+    "Karen",
+    "Mao",
+    "Óscar",
+    "Kenny"
+  ],
+  "franjasHorarias": [
+    "8:00 AM - 9:30 AM",
+    "9:30 AM - 11:00 AM",
+    "11:15 AM - 12:45 PM",
+    "1:30 PM - 3:00 PM"
+  ],
+  "estructuraCalendario": {
+    "modalidadCiclo": "anual",
+    "nombreCiclo1": "Ciclo I - 2027 (Feb - Jun)",
+    "nombreCiclo2": "Ciclo II - 2027 (Jul - Nov)",
+    "horaInicioDefecto": "8:00 AM",
+    "duracionBloqueMinutos": 90,
+    "periodosTemporales": [
+      {
+        "id": "per-coord-ini",
+        "nombre": "Semana de Coordinación e Inducción Pedagógica",
+        "tipo": "coordinacion",
+        "fechaInicio": "2027-01-16",
+        "fechaFin": "2027-01-23",
+        "colorHex": "#3B82F6",
+        "descripcion": "Reuniones de talleristas, planeación curricular e inauguración"
+      },
+      {
+        "id": "per-clases-sem1",
+        "nombre": "Primer Tramo de Clases 2027",
+        "tipo": "clases",
+        "fechaInicio": "2027-01-30",
+        "fechaFin": "2027-03-20",
+        "colorHex": "#10B981",
+        "descripcion": "Clases regulares sabatinas por componentes"
+      },
+      {
+        "id": "per-semana-santa",
+        "nombre": "Receso de Semana Santa",
+        "tipo": "vacaciones",
+        "fechaInicio": "2027-03-22",
+        "fechaFin": "2027-03-28",
+        "colorHex": "#F59E0B",
+        "descripcion": "Semana Santa - Sin actividades sabatinas"
+      },
+      {
+        "id": "per-vacaciones-mitad",
+        "nombre": "Vacaciones de Mitad de Año",
+        "tipo": "vacaciones",
+        "fechaInicio": "2027-06-21",
+        "fechaFin": "2027-07-11",
+        "colorHex": "#F59E0B",
+        "descripcion": "Receso de mitad de año para estudiantes y talleristas"
+      },
+      {
+        "id": "per-receso-octubre",
+        "nombre": "Semana de Receso Escolar",
+        "tipo": "vacaciones",
+        "fechaInicio": "2027-10-11",
+        "fechaFin": "2027-10-17",
+        "colorHex": "#F59E0B",
+        "descripcion": "Receso escolar de octubre"
+      }
+    ],
+    "fechasClaveExamenes": [
+      {
+        "id": "ex-unal-1",
+        "titulo": "Examen de Admisión UNAL 2027-2",
+        "tipo": "unal",
+        "fecha": "2027-04-18",
+        "descripcion": "Prueba oficial de admisión a la Universidad Nacional"
+      },
+      {
+        "id": "ex-icfes",
+        "titulo": "Examen Saber 11 / ICFES 2027",
+        "tipo": "icfes",
+        "fecha": "2027-08-08",
+        "descripcion": "Prueba de Estado Saber 11 calendario A"
+      },
+      {
+        "id": "ex-unal-2",
+        "titulo": "Examen de Admisión UNAL 2028-1",
+        "tipo": "unal",
+        "fecha": "2027-09-19",
+        "descripcion": "Prueba oficial de admisión a la Universidad Nacional (Segundo período)"
+      },
+      {
+        "id": "ex-sim-1",
+        "titulo": "Primer Simulacro Tipo ICFES / UNAL",
+        "tipo": "simulacro",
+        "fecha": "2027-03-13",
+        "descripcion": "Simulacro diagnóstico general para estudiantes"
+      }
+    ]
+  }
+}

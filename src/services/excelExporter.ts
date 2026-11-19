@@ -1,10 +1,18 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import { EventoCronograma, JornadaPedagogica, MallaComponente } from "@/types";
+import {
+  EventoCronograma,
+  JornadaPedagogica,
+  MallaComponente,
+  InfoContactoTallerista,
+  EstructuraCalendarioConfig,
+} from "@/types";
 import {
   obtenerEstiloComponente,
   obtenerNombreDiaSemana,
   ddmmyyyyToISO,
+  ESTILOS_BLOQUES_PERIODO,
+  ESTILOS_EXAMENES_CLAVE,
 } from "@/utils/festivosColombia";
 
 const BORDES_FINOS: Partial<ExcelJS.Borders> = {
@@ -24,7 +32,9 @@ const BORDES_FINOS: Partial<ExcelJS.Borders> = {
 function construirHojaMatrizJornadas(
   workbook: ExcelJS.Workbook,
   jornadasSinOrdenar: JornadaPedagogica[],
-  malla: MallaComponente[]
+  malla: MallaComponente[],
+  franjasHorariasPersonalizadas?: string[],
+  estructura?: EstructuraCalendarioConfig
 ) {
   // Asegurar orden cronológico en el Excel
   const jornadas = [...jornadasSinOrdenar].sort((a, b) => {
@@ -32,6 +42,13 @@ function construirHojaMatrizJornadas(
     const isoB = b.fechaISO || ddmmyyyyToISO(b.fecha) || "9999-99-99";
     return isoA.localeCompare(isoB);
   });
+
+  // Determinar cuántos bloques de clase tiene la estructura (máximo entre las jornadas o franjas definidas)
+  const maxBloquesJornadas = Math.max(
+    ...jornadas.map((j) => (j.tipoJornada === "clases" ? j.bloques.length : 0)),
+    franjasHorariasPersonalizadas?.length || 4,
+    4
+  );
 
   const sheet = workbook.addWorksheet("Cronograma_Jornadas_2027", {
     views: [{ state: "frozen", xSplit: 1, ySplit: 0 }],
@@ -96,12 +113,13 @@ function construirHojaMatrizJornadas(
   // =========================================================================
   const filaInicioJornadas = malla.length + 4;
 
-  // 4 filas de cabecera: JORNADA, FECHA, DÍA DE LA SEMANA, ENCARGADX DEL DÍA
+  // 5 filas de cabecera: PERÍODO / CICLO, JORNADA, FECHA, DÍA DE LA SEMANA, ENCARGADX DEL DÍA
   const etiquetasCabecera = [
-    { offset: 0, label: "JORNADA", bg: "FF1B365D", text: "FFFFFFFF", bold: true, height: 24 },
-    { offset: 1, label: "FECHA", bg: "FF2A4D7D", text: "FFFFFFFF", bold: true, height: 22 },
-    { offset: 2, label: "DÍA DE LA SEMANA", bg: "FFD9E2EC", text: "FF1B365D", bold: true, height: 20 },
-    { offset: 3, label: "ENCARGADX DEL DÍA", bg: "FFEAF0F6", text: "FF1B365D", bold: true, height: 22 },
+    { offset: 0, label: "PERÍODO / CICLO", bg: "FF0F172A", text: "FFFEF08A", bold: true, height: 24 },
+    { offset: 1, label: "JORNADA", bg: "FF1B365D", text: "FFFFFFFF", bold: true, height: 24 },
+    { offset: 2, label: "FECHA", bg: "FF2A4D7D", text: "FFFFFFFF", bold: true, height: 22 },
+    { offset: 3, label: "DÍA DE LA SEMANA", bg: "FFD9E2EC", text: "FF1B365D", bold: true, height: 20 },
+    { offset: 4, label: "ENCARGADX DEL DÍA", bg: "FFEAF0F6", text: "FF1B365D", bold: true, height: 22 },
   ];
 
   etiquetasCabecera.forEach((cfg) => {
@@ -110,14 +128,14 @@ function construirHojaMatrizJornadas(
     const cLabel = r.getCell(1);
     cLabel.value = cfg.label;
     cLabel.fill = { type: "pattern", pattern: "solid", fgColor: { argb: cfg.bg } };
-    cLabel.font = { bold: cfg.bold, color: { argb: cfg.text }, size: 10, name: "Calibri" };
+    cLabel.font = { bold: cfg.bold, color: { argb: cfg.text }, size: 9.5, name: "Calibri" };
     cLabel.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
     cLabel.border = BORDES_FINOS;
   });
 
-  // 4 Bloques de clase x 4 filas cada uno (HORAS, COMPONENTE, TEMA DEL DIA, TALLERISTA) = 16 filas
-  const inicioBloquesRow = filaInicioJornadas + 4;
-  for (let b = 0; b < 4; b++) {
+  // Bloques de clase x 4 filas cada uno (HORAS, COMPONENTE, TEMA DEL DIA, TALLERISTA)
+  const inicioBloquesRow = filaInicioJornadas + 5;
+  for (let b = 0; b < maxBloquesJornadas; b++) {
     const baseRow = inicioBloquesRow + b * 4;
     const subRows = [
       { off: 0, label: "HORAS", bg: "FFEAF0F6", fg: "FF1B365D", bold: true, h: 20 },
@@ -138,7 +156,7 @@ function construirHojaMatrizJornadas(
   }
 
   // Fila de COMENTARIOS al pie (para reuniones, simulacros y acuerdos de ese día)
-  const filaComentarios = inicioBloquesRow + 16;
+  const filaComentarios = inicioBloquesRow + maxBloquesJornadas * 4;
   const rowCom = sheet.getRow(filaComentarios);
   rowCom.height = 55;
   const cellComLabel = rowCom.getCell(1);
@@ -155,25 +173,66 @@ function construirHojaMatrizJornadas(
       jornada.diaSemana ||
       obtenerNombreDiaSemana(jornada.fechaISO || jornada.fecha) ||
       "Sábado";
+    const isoCol = jornada.fechaISO || ddmmyyyyToISO(jornada.fecha);
+
+    // Identificar Bloque de Período y Examen Clave
+    const periodo = estructura?.periodosTemporales.find(
+      (p) => isoCol && isoCol >= p.fechaInicio && isoCol <= p.fechaFin
+    );
+    const examen = estructura?.fechasClaveExamenes.find((e) => {
+      const eIso = ddmmyyyyToISO(e.fecha);
+      return eIso === isoCol;
+    });
+    const estiloPeriodo = periodo ? ESTILOS_BLOQUES_PERIODO[periodo.tipo] : null;
+
+    // 0. Fila PERÍODO / CARÁCTER
+    const cPeriodo = sheet.getRow(filaInicioJornadas).getCell(colIdx);
+    const caracterEfectivo =
+      jornada.caracter ||
+      (examen ? "examen" : periodo ? (periodo.tipo as any) : jornada.tipoJornada === "unificada" ? "coordinacion" : "clases");
+
+    if (caracterEfectivo === "examen") {
+      cPeriodo.value = `🎓 ${examen?.titulo.toUpperCase() || "EVALUACIÓN / EXAMEN"}`;
+      cPeriodo.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF6B21A8" } }; // Purple 800
+      cPeriodo.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 9, name: "Calibri" };
+    } else if (caracterEfectivo === "vacaciones") {
+      cPeriodo.value = `🏖️ ${periodo?.nombre.toUpperCase() || "RECESO ESCOLAR / VACACIONES"}`;
+      cPeriodo.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFEF3C7" } }; // Amber 100
+      cPeriodo.font = { bold: true, color: { argb: "FF78350F" }, size: 9, name: "Calibri" };
+    } else if (caracterEfectivo === "coordinacion") {
+      cPeriodo.value = `👥 ${periodo?.nombre.toUpperCase() || "COORDINACIÓN / FORMACIÓN"}`;
+      cPeriodo.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFE0E7FF" } }; // Indigo 100
+      cPeriodo.font = { bold: true, color: { argb: "FF312E81" }, size: 9, name: "Calibri" };
+    } else {
+      cPeriodo.value = "📚 CLASES REGULARES";
+      cPeriodo.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFD1FAE5" } }; // Emerald 100
+      cPeriodo.font = { bold: true, color: { argb: "FF065F46" }, size: 9, name: "Calibri" };
+    }
+    cPeriodo.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+    cPeriodo.border = BORDES_FINOS;
 
     // 1. Número de Jornada
-    const cJornada = sheet.getRow(filaInicioJornadas).getCell(colIdx);
+    const cJornada = sheet.getRow(filaInicioJornadas + 1).getCell(colIdx);
     cJornada.value = idx + 1;
     cJornada.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF1B365D" } };
     cJornada.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 11, name: "Calibri" };
     cJornada.alignment = { vertical: "middle", horizontal: "center" };
     cJornada.border = BORDES_FINOS;
 
-    // 2. Fecha
-    const cFecha = sheet.getRow(filaInicioJornadas + 1).getCell(colIdx);
+    // 2. Fecha (con color violeta si es examen oficial)
+    const cFecha = sheet.getRow(filaInicioJornadas + 2).getCell(colIdx);
     cFecha.value = jornada.fecha || "";
-    cFecha.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF2A4D7D" } };
+    if (examen) {
+      cFecha.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF7E22CE" } };
+    } else {
+      cFecha.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF2A4D7D" } };
+    }
     cFecha.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 9.5, name: "Calibri" };
     cFecha.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
     cFecha.border = BORDES_FINOS;
 
     // 3. Día de la Semana
-    const cDia = sheet.getRow(filaInicioJornadas + 2).getCell(colIdx);
+    const cDia = sheet.getRow(filaInicioJornadas + 3).getCell(colIdx);
     cDia.value = diaCalculado.toUpperCase();
     cDia.fill = {
       type: "pattern",
@@ -185,7 +244,7 @@ function construirHojaMatrizJornadas(
     cDia.border = BORDES_FINOS;
 
     // 4. Encargadx del día
-    const cEnc = sheet.getRow(filaInicioJornadas + 3).getCell(colIdx);
+    const cEnc = sheet.getRow(filaInicioJornadas + 4).getCell(colIdx);
     cEnc.value = jornada.encargadxDelDia || "";
     cEnc.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEAF0F6" } };
     cEnc.font = { bold: true, color: { argb: "FF1B365D" }, size: 9.5, name: "Calibri" };
@@ -201,9 +260,9 @@ function construirHojaMatrizJornadas(
       cHoraUnif.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
       cHoraUnif.border = BORDES_FINOS;
 
-      // Combinar las 15 filas restantes del cuerpo de la jornada
+      // Combinar las filas restantes del cuerpo de la jornada
       const filaIniMerge = inicioBloquesRow + 1;
-      const filaFinMerge = inicioBloquesRow + 15;
+      const filaFinMerge = inicioBloquesRow + maxBloquesJornadas * 4 - 1;
       sheet.mergeCells(filaIniMerge, colIdx, filaFinMerge, colIdx);
 
       const cUnif = sheet.getRow(filaIniMerge).getCell(colIdx);
@@ -216,15 +275,16 @@ function construirHojaMatrizJornadas(
         sheet.getRow(r).getCell(colIdx).border = BORDES_FINOS;
       }
     } else {
-      // 4 bloques normales de clase (con horas listas y campos por llenar o llenados)
-      for (let b = 0; b < 4; b++) {
+      // Bloques normales de clase (con horas listas y campos por llenar o llenados)
+      for (let b = 0; b < maxBloquesJornadas; b++) {
         const bloque = jornada.bloques[b];
+        const horaDefecto = franjasHorariasPersonalizadas?.[b] || "";
         const baseRow = inicioBloquesRow + b * 4;
         const estilo = obtenerEstiloComponente(bloque?.componente);
 
         // HORAS
         const cHora = sheet.getRow(baseRow).getCell(colIdx);
-        cHora.value = bloque?.hora || "";
+        cHora.value = bloque?.hora || horaDefecto;
         cHora.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEAF0F6" } };
         cHora.font = { bold: true, color: { argb: "FF1B365D" }, size: 9, name: "Calibri" };
         cHora.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
@@ -370,20 +430,477 @@ function construirHojasHitos(workbook: ExcelJS.Workbook, hitosSinOrdenar: Evento
   });
 }
 
-export async function exportarJornadasAExcel(
+/**
+ * Hoja 4: Directorio y Equipo de Talleristas con datos personales, materias y carga de trabajo
+ */
+function construirHojaDirectorioTalleristas(
+  workbook: ExcelJS.Workbook,
+  jornadas: JornadaPedagogica[],
+  hitos: EventoCronograma[],
+  malla: MallaComponente[],
+  directorio: InfoContactoTallerista[] = []
+) {
+  const sheet = workbook.addWorksheet("Directorio_Talleristas", {
+    views: [{ state: "frozen", xSplit: 0, ySplit: 1 }],
+  });
+
+  sheet.columns = [
+    { key: "num", width: 8 },
+    { key: "nombre", width: 28 },
+    { key: "telefono", width: 18 },
+    { key: "correo", width: 30 },
+    { key: "componentes", width: 34 },
+    { key: "diasAsignados", width: 16 },
+    { key: "clasesProgramadas", width: 18 },
+    { key: "clasesDictadas", width: 18 },
+    { key: "encuentrosComunitarios", width: 22 },
+    { key: "participacionTotal", width: 20 },
+    { key: "tareasTotales", width: 16 },
+    { key: "cumplimiento", width: 16 },
+    { key: "notas", width: 32 },
+  ];
+
+  const headers = [
+    "#",
+    "NOMBRE COMPLETO",
+    "TELÉFONO / WHATSAPP",
+    "CORREO ELECTRÓNICO",
+    "COMPONENTES / MATERIAS",
+    "DÍAS EN ESCUELA",
+    "CLASES PROGRAMADAS",
+    "CLASES DICTADAS",
+    "ENCUENTROS COMUNITARIOS",
+    "PARTICIPACIÓN TOTAL",
+    "TAREAS ASIGNADAS",
+    "CUMPLIMIENTO %",
+    "NOTAS Y OBSERVACIONES",
+  ];
+
+  const rHeader = sheet.getRow(1);
+  rHeader.values = headers;
+  rHeader.height = 28;
+  rHeader.eachCell((c) => {
+    c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF1B365D" } };
+    c.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 10, name: "Calibri" };
+    c.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+    c.border = BORDES_FINOS;
+  });
+
+  // Mapa de componentes por tallerista desde la malla
+  const compMap = new Map<string, Set<string>>();
+  malla.forEach((m) => {
+    (m.talleristasBase || []).forEach((t) => {
+      const k = t.trim();
+      if (!compMap.has(k)) compMap.set(k, new Set());
+      compMap.get(k)!.add(m.componente);
+    });
+  });
+
+  // Recopilar nombres únicos
+  const setNombres = new Set<string>();
+  directorio.forEach((d) => d.nombre && setNombres.add(d.nombre.trim()));
+  compMap.forEach((_, t) => setNombres.add(t));
+  jornadas.forEach((j) => {
+    j.bloques.forEach((b) => {
+      if (b.talleristas) {
+        b.talleristas.split(/[,;/]+/).forEach((sub) => {
+          const l = sub.trim();
+          if (l.length > 2 && l.toLowerCase() !== "todos") setNombres.add(l);
+        });
+      }
+    });
+  });
+
+  const nombresOrdenados = Array.from(setNombres).sort((a, b) => a.localeCompare(b));
+
+  nombresOrdenados.forEach((nombre, idx) => {
+    const info = directorio.find((d) => d.nombre.toLowerCase() === nombre.toLowerCase());
+    const mats = Array.from(compMap.get(nombre) || info?.componentes || []);
+
+    // Calcular clases y días asignados
+    let clasesProgramadas = 0;
+    let clasesDictadas = 0;
+    let encuentrosComunitarios = 0;
+    const diasSet = new Set<string>();
+
+    jornadas.forEach((j) => {
+      let tiene = false;
+      const b = j.bitacora;
+
+      j.bloques.forEach((bloque) => {
+        const compUpper = (bloque.componente || "").trim().toUpperCase();
+        const esDeMateria = compUpper && mats.some((m) => m.toUpperCase() === compUpper);
+        const tieneNombre = bloque.talleristas && bloque.talleristas.toLowerCase().includes(nombre.toLowerCase());
+
+        if (tieneNombre || esDeMateria) {
+          clasesProgramadas++;
+          tiene = true;
+          const reg = b?.ejecucionBloques?.find((r) => r.bloqueId === bloque.id);
+          if (reg?.estado === "dictada" || (tieneNombre && reg?.estado !== "cancelada" && j.fechaISO && j.fechaISO < "2027-01-01")) {
+            clasesDictadas++;
+          }
+        }
+      });
+
+      // Coordinaciones, escuelas y salidas
+      if (b) {
+        if (b.asistentesCoordinacion?.some((a) => a.toLowerCase().includes(nombre.toLowerCase()))) {
+          encuentrosComunitarios++;
+          tiene = true;
+        }
+        if (b.asistentesEscuelaFormacion?.some((a) => a.toLowerCase().includes(nombre.toLowerCase()))) {
+          encuentrosComunitarios++;
+          tiene = true;
+        }
+        if (b.asistentesSalidaPedagogica?.some((a) => a.toLowerCase().includes(nombre.toLowerCase()))) {
+          encuentrosComunitarios++;
+          tiene = true;
+        }
+      }
+
+      if (tiene && j.fecha) diasSet.add(j.fecha);
+    });
+
+    const participacionTotal = clasesDictadas + encuentrosComunitarios;
+
+    let tareasCount = 0;
+    hitos.forEach((h) => {
+      if (h.personasEncargadas && h.personasEncargadas.toLowerCase().includes(nombre.toLowerCase())) {
+        tareasCount++;
+        if (h.fecha) diasSet.add(h.fecha);
+      }
+    });
+
+    const cumplimientoPorcentaje =
+      clasesProgramadas > 0
+        ? Math.round((clasesDictadas / clasesProgramadas) * 100)
+        : 100;
+
+    const r = sheet.getRow(idx + 2);
+    r.values = [
+      idx + 1,
+      nombre,
+      info?.telefono || "Por registrar",
+      info?.correo || "Por registrar",
+      mats.join(", ") || "General / Comunitario",
+      diasSet.size,
+      clasesProgramadas,
+      clasesDictadas,
+      encuentrosComunitarios,
+      participacionTotal,
+      tareasCount,
+      `${cumplimientoPorcentaje}%`,
+      info?.notas || "",
+    ];
+    r.height = 24;
+
+    const bg = idx % 2 === 0 ? "FFFFFFFF" : "FFF8FAFC";
+    r.eachCell({ includeEmpty: true }, (c, col) => {
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: bg } };
+      c.font = { size: 9.5, name: "Calibri", color: { argb: "FF1E293B" } };
+      c.alignment = {
+        vertical: "middle",
+        horizontal: col === 1 || (col >= 6 && col <= 12) ? "center" : "left",
+        wrapText: true,
+      };
+      c.border = BORDES_FINOS;
+    });
+  });
+}
+
+/**
+ * Construye la Hoja 5: "Estructura_y_Fechas_Clave" con el resumen de Ciclos, Períodos (Vacaciones/Clases/Coordinación)
+ * y los Exámenes Oficiales (UNAL / ICFES).
+ */
+function construirHojaEstructuraYFechasClave(
+  workbook: ExcelJS.Workbook,
+  estructura?: EstructuraCalendarioConfig
+) {
+  if (!estructura) return;
+
+  const sheet = workbook.addWorksheet("Estructura_y_Fechas_Clave");
+  sheet.columns = [
+    { key: "col0", width: 6 },
+    { key: "col1", width: 32 },
+    { key: "col2", width: 22 },
+    { key: "col3", width: 18 },
+    { key: "col4", width: 18 },
+    { key: "col5", width: 36 },
+  ];
+
+  // Título
+  const rTit = sheet.getRow(1);
+  rTit.getCell(2).value = "ESTRUCTURA ACADÉMICA, CICLOS Y FECHAS CLAVE 2027";
+  rTit.getCell(2).font = { bold: true, color: { argb: "FFFFFFFF" }, size: 12, name: "Calibri" };
+  rTit.getCell(2).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0F172A" } };
+  sheet.mergeCells(1, 2, 1, 6);
+  rTit.height = 30;
+
+  // Resumen de Ciclos
+  const rCiclo = sheet.getRow(3);
+  rCiclo.getCell(2).value = "MODALIDAD DE CICLOS:";
+  rCiclo.getCell(2).font = { bold: true, size: 10, name: "Calibri" };
+  rCiclo.getCell(3).value =
+    estructura.modalidadCiclo === "dos_ciclos"
+      ? `Dos Ciclos Semestrales (${estructura.nombreCiclo1 || "Ciclo 1"} / ${estructura.nombreCiclo2 || "Ciclo 2"})`
+      : "Ciclo Anual Continuo";
+  sheet.mergeCells(3, 3, 3, 6);
+
+  // Tabla 1: Períodos Temporales (Vacaciones, Coordinación, Clases)
+  const rHPer = sheet.getRow(5);
+  rHPer.height = 24;
+  ["NOMBRE DEL BLOQUE / PERÍODO", "TIPO", "FECHA INICIO", "FECHA FIN", "DESCRIPCIÓN"].forEach(
+    (h, idx) => {
+      const c = rHPer.getCell(idx + 2);
+      c.value = h;
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF1B365D" } };
+      c.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 10, name: "Calibri" };
+      c.alignment = { vertical: "middle", horizontal: "center" };
+      c.border = BORDES_FINOS;
+    }
+  );
+
+  let filaActual = 6;
+  estructura.periodosTemporales.forEach((p) => {
+    const r = sheet.getRow(filaActual);
+    r.height = 22;
+    const estilo = ESTILOS_BLOQUES_PERIODO[p.tipo];
+    const valores = [
+      `${estilo?.icon || "📌"} ${p.nombre}`,
+      p.tipo.toUpperCase(),
+      p.fechaInicio,
+      p.fechaFin,
+      p.descripcion || "",
+    ];
+    valores.forEach((v, idx) => {
+      const c = r.getCell(idx + 2);
+      c.value = v;
+      c.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: `FF${estilo?.excelHex || "FFFFFF"}` },
+      };
+      c.font = { size: 9.5, name: "Calibri", color: { argb: "FF0F172A" } };
+      c.alignment = {
+        vertical: "middle",
+        horizontal: idx === 1 || idx === 2 || idx === 3 ? "center" : "left",
+      };
+      c.border = BORDES_FINOS;
+    });
+    filaActual++;
+  });
+
+  // Tabla 2: Exámenes Oficiales y Pruebas Clave
+  filaActual += 2;
+  const rHExamen = sheet.getRow(filaActual);
+  rHExamen.height = 24;
+  ["EXAMEN / PRUEBA CLAVE", "TIPO", "FECHA PROGRAMADA", "ESTADO", "OBSERVACIONES"].forEach(
+    (h, idx) => {
+      const c = rHExamen.getCell(idx + 2);
+      c.value = h;
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF6B21A8" } }; // Purple 800
+      c.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 10, name: "Calibri" };
+      c.alignment = { vertical: "middle", horizontal: "center" };
+      c.border = BORDES_FINOS;
+    }
+  );
+
+  filaActual++;
+  estructura.fechasClaveExamenes.forEach((e) => {
+    const r = sheet.getRow(filaActual);
+    r.height = 22;
+    const estilo = ESTILOS_EXAMENES_CLAVE[e.tipo];
+    const valores = [
+      `🎓 ${e.titulo}`,
+      estilo?.label || e.tipo.toUpperCase(),
+      e.fecha,
+      "Fecha Oficial Confirmada",
+      e.descripcion || "",
+    ];
+    valores.forEach((v, idx) => {
+      const c = r.getCell(idx + 2);
+      c.value = v;
+      c.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: idx === 0 ? "FFF3E8FF" : "FFFFFFFF" },
+      };
+      c.font = { size: 9.5, name: "Calibri", color: { argb: "FF1E293B" } };
+      c.alignment = {
+        vertical: "middle",
+        horizontal: idx === 1 || idx === 2 || idx === 3 ? "center" : "left",
+      };
+      c.border = BORDES_FINOS;
+    });
+    filaActual++;
+  });
+}
+
+/**
+ * Hoja 6: Bitácora de Sede y Ejecución Real por Jornada
+ * Registra asistencia real, reemplazos, tareas de sede y quiénes asistieron a la formación/coordinación
+ */
+function construirHojaBitacoraSede(
+  workbook: ExcelJS.Workbook,
+  jornadasSinOrdenar: JornadaPedagogica[]
+) {
+  const jornadasConBitacora = [...jornadasSinOrdenar].sort((a, b) => {
+    const isoA = a.fechaISO || ddmmyyyyToISO(a.fecha) || "9999-99-99";
+    const isoB = b.fechaISO || ddmmyyyyToISO(b.fecha) || "9999-99-99";
+    return isoA.localeCompare(isoB);
+  });
+
+  const sheet = workbook.addWorksheet("Bitacora_Sede_Ejecucion", {
+    views: [{ state: "frozen", xSplit: 0, ySplit: 1 }],
+  });
+
+  sheet.columns = [
+    { key: "num", width: 8 },
+    { key: "fecha", width: 22 },
+    { key: "dia", width: 14 },
+    { key: "caracter", width: 18 },
+    { key: "encargadx", width: 22 },
+    { key: "estudiantes", width: 16 },
+    { key: "clasesDictadas", width: 45 },
+    { key: "escuelaFormacion", width: 35 },
+    { key: "coordinacion", width: 35 },
+    { key: "salidaPedagogica", width: 35 },
+    { key: "sedeChecklist", width: 30 },
+    { key: "observaciones", width: 40 },
+  ];
+
+  const headers = [
+    "# JORN",
+    "FECHA",
+    "DÍA",
+    "CARÁCTER",
+    "ENCARGADX DEL DÍA",
+    "ESTUDIANTES",
+    "ESTADO Y TALLERISTAS POR BLOQUE",
+    "ASISTENTES ESCUELA FORMACIÓN",
+    "ASISTENTES COORDINACIÓN",
+    "SALIDA PEDAGÓGICA (LUGAR Y TALLERISTAS)",
+    "CHECKLIST DE SEDE",
+    "OBSERVACIONES Y NOVEDADES",
+  ];
+
+  const rHeader = sheet.getRow(1);
+  rHeader.values = headers;
+  rHeader.height = 28;
+  rHeader.eachCell((c) => {
+    c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF4C1D95" } }; // Purple 900
+    c.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 9.5, name: "Calibri" };
+    c.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+    c.border = BORDES_FINOS;
+  });
+
+  jornadasConBitacora.forEach((j, idx) => {
+    const bit = j.bitacora;
+    const caracter = j.caracter || (j.tipoJornada === "clases" ? "clases" : "coordinacion");
+
+    // Resumen de bloques dictados
+    const detalleBloques = (j.bloques || []).map((b, bIdx) => {
+      const reg = bit?.ejecucionBloques?.find((r) => r.bloqueId === b.id);
+      const est = reg?.estado || "pendiente";
+      const tall = reg?.talleristaEfectivo || b.talleristas || "Sin tallerista";
+      return `B${bIdx + 1} [${b.componente || "Materia"}]: ${est.toUpperCase()} (${tall})`;
+    }).join(" | ");
+
+    // Checklist de sede
+    const checks: string[] = [];
+    if (bit?.aperturaLlaves) checks.push("🔑 Llaves OK");
+    if (bit?.refrigerioEntregado) checks.push("☕ Refrigerio OK");
+    if (bit?.circuloPalabraRealizado) checks.push("🗣️ Círculo OK");
+    if (bit?.aseoSalonesVerificado) checks.push("🧹 Aseo OK");
+    if (bit?.cierreSedeRealizado) checks.push("🔒 Cierre OK");
+    const checkTexto = checks.length > 0 ? checks.join(" • ") : "Sin registro";
+
+    const detalleSalida =
+      bit?.lugarSalidaPedagogica || (bit?.asistentesSalidaPedagogica || []).length > 0
+        ? `${bit?.lugarSalidaPedagogica ? `[${bit.lugarSalidaPedagogica}] ` : ""}${(bit?.asistentesSalidaPedagogica || []).join(", ") || "Todos los talleristas"}`
+        : "—";
+
+    const r = sheet.getRow(idx + 2);
+    r.values = [
+      j.numeroJornada || idx + 1,
+      j.fecha || "",
+      j.diaSemana || "",
+      caracter.toUpperCase(),
+      bit?.encargadxConfirmadx || j.encargadxDelDia || "Por definir",
+      bit?.estudiantesPresentes !== undefined ? bit.estudiantesPresentes : "—",
+      detalleBloques,
+      (bit?.asistentesEscuelaFormacion || []).join(", ") || "—",
+      (bit?.asistentesCoordinacion || []).join(", ") || "—",
+      detalleSalida,
+      checkTexto,
+      bit?.observacionesGenerales || j.comentarios || "",
+    ];
+    r.height = 26;
+
+    const bg = idx % 2 === 0 ? "FFFFFFFF" : "FFFDF4FF";
+    r.eachCell({ includeEmpty: true }, (c, col) => {
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: bg } };
+      c.font = { size: 9, name: "Calibri", color: { argb: "FF1E293B" } };
+      c.alignment = {
+        vertical: "middle",
+        horizontal: col === 1 || col === 3 || col === 4 || col === 6 ? "center" : "left",
+        wrapText: true,
+      };
+      c.border = BORDES_FINOS;
+    });
+  });
+}
+
+export function generarWorkbookCronograma(
   jornadas: JornadaPedagogica[],
   malla: MallaComponente[] = [],
-  hitos: EventoCronograma[] = []
-): Promise<void> {
+  hitos: EventoCronograma[] = [],
+  franjasHorarias?: string[],
+  directorioTalleristas: InfoContactoTallerista[] = [],
+  estructura?: EstructuraCalendarioConfig
+): ExcelJS.Workbook {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Escuela Popular El Topo";
   workbook.created = new Date();
 
-  construirHojaMatrizJornadas(workbook, jornadas, malla);
+  // Hoja 1: Matriz completa de jornadas 2027 + Malla de componentes arriba
+  construirHojaMatrizJornadas(workbook, jornadas, malla, franjasHorarias, estructura);
+
+  // Hoja 2 y 3: Cronograma de Hitos y Tareas con fechas y responsables
   if (hitos.length > 0) {
     construirHojasHitos(workbook, hitos);
   }
 
+  // Hoja 4: Directorio completo de talleristas con teléfonos, correos y materias
+  construirHojaDirectorioTalleristas(workbook, jornadas, hitos, malla, directorioTalleristas);
+
+  // Hoja 5: Estructura de Ciclos, Períodos (Vacaciones, Clases, Coordinación) y Exámenes Oficiales
+  if (estructura) {
+    construirHojaEstructuraYFechasClave(workbook, estructura);
+  }
+
+  // Hoja 6: Bitácora de Sede, Ejecución Real, Escuelas de Formación y Coordinaciones
+  construirHojaBitacoraSede(workbook, jornadas);
+
+  return workbook;
+}
+
+export async function exportarJornadasAExcel(
+  jornadas: JornadaPedagogica[],
+  malla: MallaComponente[] = [],
+  hitos: EventoCronograma[] = [],
+  franjasHorarias?: string[],
+  directorioTalleristas: InfoContactoTallerista[] = [],
+  estructura?: EstructuraCalendarioConfig
+): Promise<void> {
+  const workbook = generarWorkbookCronograma(
+    jornadas,
+    malla,
+    hitos,
+    franjasHorarias,
+    directorioTalleristas,
+    estructura
+  );
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

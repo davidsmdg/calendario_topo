@@ -16,7 +16,7 @@ import {
   ChevronRight,
   GraduationCap,
 } from "lucide-react";
-import { EventoCronograma, JornadaPedagogica } from "@/types";
+import { EventoCronograma, JornadaPedagogica, EstructuraCalendarioConfig } from "@/types";
 import {
   FESTIVOS_COLOMBIA_2027,
   MESES_NOMBRES,
@@ -25,12 +25,15 @@ import {
   ddmmyyyyToISO,
   isoToDDMMYYYY,
   isoToFechaComunitaria,
+  ESTILOS_BLOQUES_PERIODO,
+  ESTILOS_EXAMENES_CLAVE,
 } from "@/utils/festivosColombia";
 import { FlorMuralSVG, AbejitaMuralSVG } from "./TopoAvatar";
 
 interface CalendarioAnualProps {
   hitos: EventoCronograma[];
   jornadas: JornadaPedagogica[];
+  estructura?: EstructuraCalendarioConfig;
   onActualizarHito: (hito: EventoCronograma) => void;
   onCrearHito: (nuevo: Partial<EventoCronograma>) => void;
   onActualizarJornada: (jornada: JornadaPedagogica) => void;
@@ -41,6 +44,7 @@ interface CalendarioAnualProps {
 export function CalendarioAnual({
   hitos,
   jornadas,
+  estructura,
   onActualizarHito,
   onCrearHito,
   onActualizarJornada,
@@ -50,11 +54,29 @@ export function CalendarioAnual({
   const [modoVista, setModoVista] = useState<"anual" | "mensual">("anual");
   const [mesExpandido, setMesExpandido] = useState<number>(0); // 0 = Enero
   const [fechaSeleccionadaISO, setFechaSeleccionadaISO] = useState<string | null>(null);
+  const [filtroPeriodo, setFiltroPeriodo] = useState<string>("todos");
   const [nuevoEventoTitulo, setNuevoEventoTitulo] = useState("");
   const [nuevoEventoCompromiso, setNuevoEventoCompromiso] = useState("");
   const [nuevoEventoEncargados, setNuevoEventoEncargados] = useState("");
   const [hitoArrastradoId, setHitoArrastradoId] = useState<string | null>(null);
   const [mostrarPanelSinFecha, setMostrarPanelSinFecha] = useState<boolean>(true);
+
+  // Mapear período temporal por fecha ISO
+  const obtenerPeriodoFecha = (iso: string) => {
+    if (!estructura?.periodosTemporales) return null;
+    return estructura.periodosTemporales.find(
+      (p) => iso >= p.fechaInicio && iso <= p.fechaFin
+    );
+  };
+
+  // Mapear examen clave por fecha ISO
+  const obtenerExamenFecha = (iso: string) => {
+    if (!estructura?.fechasClaveExamenes) return null;
+    return estructura.fechasClaveExamenes.find((e) => {
+      const eIso = ddmmyyyyToISO(e.fecha);
+      return eIso === iso;
+    });
+  };
 
   const hitosPorISO = useMemo(() => {
     const map: Record<string, EventoCronograma[]> = {};
@@ -192,6 +214,22 @@ export function CalendarioAnual({
             const jornadasDia = jornadasPorISO[celda.iso] || [];
             const esFinDeSemana = celda.diaSemana >= 5;
             const tieneActividad = hitosDia.length > 0 || jornadasDia.length > 0;
+            const periodo = celda.iso ? obtenerPeriodoFecha(celda.iso) : null;
+            const examen = celda.iso ? obtenerExamenFecha(celda.iso) : null;
+            const estiloPeriodo = periodo ? ESTILOS_BLOQUES_PERIODO[periodo.tipo] : null;
+            const estiloExamen = examen ? ESTILOS_EXAMENES_CLAVE[examen.tipo] : null;
+
+            // Determinar estilo dinámico de fondo y borde según Bloque y Examen
+            let claseFondoBorde = "bg-white border-stone-200/80 hover:border-topo-green";
+            if (examen) {
+              claseFondoBorde = `bg-purple-100/90 border-purple-500 ring-2 ring-purple-400 hover:ring-purple-600 shadow-md`;
+            } else if (festivo) {
+              claseFondoBorde = "bg-orange-50/90 border-topo-terracotta/50 hover:border-topo-terracotta";
+            } else if (estiloPeriodo) {
+              claseFondoBorde = `${estiloPeriodo.bgLight} ${estiloPeriodo.border} hover:brightness-95`;
+            } else if (esFinDeSemana) {
+              claseFondoBorde = "bg-amber-50/75 border-amber-200/90 hover:border-topo-mustard";
+            }
 
             return (
               <div
@@ -200,22 +238,20 @@ export function CalendarioAnual({
                 onDrop={() => manejarDropEnFecha(celda.iso!)}
                 onClick={() => setFechaSeleccionadaISO(celda.iso)}
                 className={`group relative rounded-xl border text-left transition cursor-pointer flex flex-col justify-between ${
-                  expandido ? "min-h-[96px] p-2" : "min-h-[44px] p-1"
-                } ${
-                  festivo
-                    ? "bg-orange-50/90 border-topo-terracotta/50 hover:border-topo-terracotta"
-                    : esFinDeSemana
-                    ? "bg-amber-50/75 border-amber-200/90 hover:border-topo-mustard"
-                    : "bg-white border-stone-200/80 hover:border-topo-green"
-                } ${
-                  tieneActividad ? "ring-2 ring-topo-green/40 shadow-sm" : ""
+                  expandido ? "min-h-[105px] p-2" : "min-h-[46px] p-1"
+                } ${claseFondoBorde} ${
+                  tieneActividad && !examen ? "ring-2 ring-topo-green/40 shadow-sm" : ""
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
                   <span
                     className={`text-xs font-black leading-none ${
-                      festivo
+                      examen
+                        ? "text-purple-950 underline decoration-purple-600 decoration-2"
+                        : festivo
                         ? "text-topo-terracotta"
+                        : estiloPeriodo
+                        ? estiloPeriodo.text
                         : esFinDeSemana
                         ? "text-amber-950"
                         : "text-stone-700"
@@ -225,6 +261,22 @@ export function CalendarioAnual({
                   </span>
 
                   <div className="flex items-center gap-0.5">
+                    {examen && (
+                      <span
+                        className="px-1 py-0.2 rounded bg-purple-700 text-white text-[9px] font-black leading-tight animate-pulse"
+                        title={`★ EXAMEN CLAVE: ${examen.titulo}`}
+                      >
+                        🎓
+                      </span>
+                    )}
+                    {periodo && !examen && (
+                      <span
+                        className="text-[10px]"
+                        title={`Bloque: ${periodo.nombre} (${periodo.tipo})`}
+                      >
+                        {estiloPeriodo?.icon || "📌"}
+                      </span>
+                    )}
                     {festivo && (
                       <span
                         className="w-2 h-2 rounded-full bg-topo-terracotta"
@@ -250,6 +302,16 @@ export function CalendarioAnual({
 
                 {expandido ? (
                   <div className="mt-1.5 space-y-1 overflow-hidden">
+                    {examen && (
+                      <div className="text-[10px] font-black text-white bg-purple-700 px-1.5 py-0.5 rounded truncate shadow-xs">
+                        🎓 {examen.titulo}
+                      </div>
+                    )}
+                    {periodo && !examen && (
+                      <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded truncate ${estiloPeriodo?.badgeBg || "bg-stone-200"}`}>
+                        {estiloPeriodo?.icon} {periodo.nombre}
+                      </div>
+                    )}
                     {festivo && (
                       <div className="text-[10px] font-bold text-topo-terracotta bg-orange-100/90 px-1.5 py-0.5 rounded truncate">
                         🇨🇴 {festivo.nombre}
@@ -273,11 +335,21 @@ export function CalendarioAnual({
                     ))}
                   </div>
                 ) : (
-                  (hitosDia.length > 0 || jornadasDia.length > 0 || festivo) && (
-                    <div className="mt-0.5 truncate text-[9px] leading-tight text-stone-700 font-bold">
-                      {jornadasDia[0]
-                        ? `Jornada ${jornadasDia[0].numeroJornada}`
-                        : hitosDia[0]?.evento || festivo?.nombre}
+                  (examen || periodo || hitosDia.length > 0 || jornadasDia.length > 0 || festivo) && (
+                    <div className="mt-0.5 truncate text-[9px] leading-tight font-extrabold">
+                      {examen ? (
+                        <span className="text-purple-900 bg-purple-200/80 px-1 py-0.2 rounded font-black">
+                          🎓 {examen.titulo}
+                        </span>
+                      ) : jornadasDia[0] ? (
+                        <span className="text-stone-700">Jornada {jornadasDia[0].numeroJornada}</span>
+                      ) : periodo ? (
+                        <span className={`${estiloPeriodo?.text || "text-stone-700"}`}>
+                          {estiloPeriodo?.icon} {periodo.nombre}
+                        </span>
+                      ) : (
+                        <span className="text-stone-700">{hitosDia[0]?.evento || festivo?.nombre}</span>
+                      )}
                     </div>
                   )
                 )}
@@ -332,24 +404,21 @@ export function CalendarioAnual({
 
         {/* Leyenda y Switch de Vista */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="hidden md:flex items-center gap-3 text-xs font-bold text-stone-600 mr-2">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded bg-amber-100 border border-amber-300" />
-              Fin de semana
+          <div className="hidden xl:flex items-center gap-2.5 text-xs font-bold text-stone-600 mr-2">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 border border-emerald-400 text-emerald-900 text-[11px]">
+              📚 Clases
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-topo-green" />
-              Tarea 2027
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-100 border border-amber-400 text-amber-900 text-[11px]">
+              🏖️ Vacaciones / Receso
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="px-1.5 py-0.5 rounded bg-matrix-header text-white text-[10px] font-bold">
-                J1
-              </span>
-              Clase Programada
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-100 border border-indigo-400 text-indigo-900 text-[11px]">
+              👥 Coordinación
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-topo-terracotta" />
-              Festivo Colombia
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-purple-100 border border-purple-500 text-purple-900 text-[11px]">
+              🎓 Examen UNAL / ICFES
+            </span>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-orange-100 border border-topo-terracotta/50 text-topo-terracotta text-[11px]">
+              🇨🇴 Festivo
             </span>
           </div>
 
@@ -557,6 +626,52 @@ export function CalendarioAnual({
             </div>
 
             <div className="p-5 space-y-4 max-h-[80vh] overflow-y-auto text-sm">
+              {/* Resaltado de Examen Clave si aplica */}
+              {fechaSeleccionadaISO && obtenerExamenFecha(fechaSeleccionadaISO) && (
+                <div className="p-3.5 rounded-2xl bg-purple-700 text-white flex items-center gap-3 shadow-md">
+                  <span className="text-2xl">🎓</span>
+                  <div>
+                    <span className="text-[10px] uppercase font-black tracking-wider bg-white/20 px-2 py-0.5 rounded-full inline-block">
+                      Hito Institucional / Examen
+                    </span>
+                    <h4 className="text-sm font-black">
+                      {obtenerExamenFecha(fechaSeleccionadaISO)!.titulo}
+                    </h4>
+                    {obtenerExamenFecha(fechaSeleccionadaISO)!.descripcion && (
+                      <p className="text-xs text-purple-100 font-medium mt-0.5">
+                        {obtenerExamenFecha(fechaSeleccionadaISO)!.descripcion}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Resaltado de Bloque / Período del Calendario si aplica */}
+              {fechaSeleccionadaISO && obtenerPeriodoFecha(fechaSeleccionadaISO) && (
+                <div className={`p-3 rounded-2xl border-2 flex items-center gap-3 ${
+                  ESTILOS_BLOQUES_PERIODO[obtenerPeriodoFecha(fechaSeleccionadaISO)!.tipo]?.bgLight || "bg-stone-100"
+                } ${
+                  ESTILOS_BLOQUES_PERIODO[obtenerPeriodoFecha(fechaSeleccionadaISO)!.tipo]?.border || "border-stone-300"
+                }`}>
+                  <span className="text-2xl">
+                    {ESTILOS_BLOQUES_PERIODO[obtenerPeriodoFecha(fechaSeleccionadaISO)!.tipo]?.icon || "📌"}
+                  </span>
+                  <div>
+                    <span className="text-[10px] uppercase font-black tracking-wider text-stone-600 block">
+                      Bloque: {obtenerPeriodoFecha(fechaSeleccionadaISO)!.tipo.toUpperCase()}
+                    </span>
+                    <h5 className="font-extrabold text-stone-900 text-xs sm:text-sm">
+                      {obtenerPeriodoFecha(fechaSeleccionadaISO)!.nombre}
+                    </h5>
+                    {obtenerPeriodoFecha(fechaSeleccionadaISO)!.descripcion && (
+                      <p className="text-[11px] text-stone-600 mt-0.5">
+                        {obtenerPeriodoFecha(fechaSeleccionadaISO)!.descripcion}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {festivoModal && (
                 <div className="p-3 rounded-2xl bg-orange-50 border border-topo-terracotta/40 text-topo-terracotta flex items-center gap-2.5 font-extrabold">
                   <Flag className="w-5 h-5 shrink-0" />

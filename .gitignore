@@ -35,3 +35,5 @@ next-env.d.ts
 
 # temp excel files
 ~$*
+*.tmp
+RESPALDO_LOCAL_CRONOGRAMA_2027.xlsx.tmp

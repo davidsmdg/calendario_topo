@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Calendar,
   ListTodo,
   Layers,
-  Database,
-  Download,
-  Coffee,
+  ArrowLeft,
+  Gamepad2,
+  Table as TableIcon,
   CheckCircle2,
-  CloudUpload,
+  FileSpreadsheet,
+  Settings2,
 } from "lucide-react";
 import {
   EstadoCronogramaTopo,
@@ -23,28 +24,36 @@ import {
 } from "@/services/storageService";
 import { exportarJornadasAExcel } from "@/services/excelExporter";
 import { usePausaActiva } from "@/hooks/usePausaActiva";
-import {
-  TopoAvatar,
-  SolMuralSVG,
-  AbejitaMuralSVG,
-  FlorMuralSVG,
-  JardinMuralBarra,
-} from "@/components/TopoAvatar";
+import { TopoAvatar, JardinMuralBarra } from "@/components/TopoAvatar";
 import { CalendarioAnual } from "@/components/CalendarioAnual";
 import { CronogramaGeneral } from "@/components/CronogramaGeneral";
 import { MatrizJornadas } from "@/components/MatrizJornadas";
+import { SeguimientoTalleristas } from "@/components/SeguimientoTalleristas";
+import { EstructuraCalendario } from "@/components/EstructuraCalendario";
+import { VistaHojaCalculo } from "@/components/VistaHojaCalculo";
+import { BitacoraEncargadxView } from "@/components/BitacoraEncargadxView";
 import { ModalPausaActiva } from "@/components/ModalPausaActiva";
 import { ModalConfigSheets } from "@/components/ModalConfigSheets";
+import { MenuInicial } from "@/components/MenuInicial";
 
-type ModuloActivo = "calendario" | "cronograma" | "jornadas";
+type ModuloActivo =
+  | "menu"
+  | "juego"
+  | "calendario"
+  | "cronograma"
+  | "matriz"
+  | "talleristas"
+  | "estructura"
+  | "hoja_calculo"
+  | "bitacora";
 
 export default function HomePage() {
   const [estado, setEstado] = useState<EstadoCronogramaTopo>(() =>
     obtenerEstadoInicialSemilla()
   );
   const [hidratado, setHidratado] = useState(false);
-  // Inicia directo en la pestaña de Jornadas/Juego para que sea inmediato darle en "¡Empezar!"
-  const [moduloActivo, setModuloActivo] = useState<ModuloActivo>("jornadas");
+  // Inicia en el Menú Inicial / Home
+  const [moduloActivo, setModuloActivo] = useState<ModuloActivo>("menu");
   const [jornadaDestacadaId, setJornadaDestacadaId] = useState<string | null>(null);
   const [modalSheetsAbierto, setModalSheetsAbierto] = useState(false);
   const [guardadoReciente, setGuardadoReciente] = useState(false);
@@ -52,18 +61,60 @@ export default function HomePage() {
 
   const pausaActiva = usePausaActiva();
 
+  const timerDebounceBackup = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
-    const cargado = StorageService.cargarLocal();
-    setEstado(cargado);
+    // Al abrir o recargar la aplicación:
+    // 1. Cargar lo que esté en LocalStorage como respuesta inmediata
+    const local = StorageService.cargarLocal();
+    setEstado(local);
     setTieneUrlSheets(Boolean(StorageService.obtenerUrlGoogleSheets()));
-    setHidratado(true);
+
+    // 2. Verificar y sincronizar con el disco duro del servidor (/api/backup)
+    fetch("/api/backup")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok && res.estado && Array.isArray(res.estado.jornadas) && res.estado.jornadas.length > 0) {
+          // Si el disco tiene datos más recientes o iguales, sincronizar
+          setEstado(res.estado);
+          StorageService.guardarLocal(res.estado);
+        } else if (local && local.jornadas && local.jornadas.length > 0) {
+          // Si el disco estaba vacío pero en local había datos, respaldar al disco de inmediato
+          fetch("/api/backup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(local),
+          }).catch(console.warn);
+        }
+      })
+      .catch((err) => console.warn("No se pudo contactar /api/backup:", err))
+      .finally(() => {
+        setHidratado(true);
+      });
   }, []);
 
   const persistirCambio = useCallback((nuevoEstado: EstadoCronogramaTopo) => {
+    // 1. Estado de React
     setEstado(nuevoEstado);
+
+    // 2. LocalStorage en navegador (inmediato, 0ms)
     StorageService.guardarLocal(nuevoEstado);
     setGuardadoReciente(true);
-    setTimeout(() => setGuardadoReciente(false), 1800);
+    setTimeout(() => setGuardadoReciente(false), 2000);
+
+    // 3. Respaldo a Disco en Excel + JSON (con debounce seguro de 800ms para evitar escrituras excesivas)
+    if (timerDebounceBackup.current) {
+      clearTimeout(timerDebounceBackup.current);
+    }
+    timerDebounceBackup.current = setTimeout(() => {
+      if (typeof window !== "undefined") {
+        fetch("/api/backup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(nuevoEstado),
+        }).catch((err) => console.warn("Error al respaldar en disco:", err));
+      }
+    }, 800);
   }, []);
 
   // Handlers de Hitos
@@ -149,23 +200,12 @@ export default function HomePage() {
   };
 
   const handleCrearJornadaEnFecha = (fechaComunitaria: string) => {
-    // Si ya existe una columna de jornada en esa fecha, simplemente la abrimos y destacamos
-    const existente = estado.jornadas.find(
-      (j) => (j.fecha || "").toLowerCase() === fechaComunitaria.toLowerCase()
-    );
-    if (existente) {
-      setJornadaDestacadaId(existente.id);
-      setModuloActivo("jornadas");
-      return;
-    }
-
     const nuevaId = `jornada-${Date.now()}`;
     const nueva: JornadaPedagogica = {
       id: nuevaId,
       numeroJornada: estado.jornadas.length + 1,
       fecha: fechaComunitaria,
-      encargadxDelDia: "",
-      horasJornada: "8:00 AM - 3:00 PM",
+      diaSemana: "Sábado",
       tipoJornada: "clases",
       bloques: [
         { id: `${nuevaId}-b1`, hora: "8:00 AM - 9:30 AM", componente: "", temaDelDia: "", talleristas: "" },
@@ -180,7 +220,7 @@ export default function HomePage() {
       jornadas: [...estado.jornadas, nueva],
     });
     setJornadaDestacadaId(nuevaId);
-    setModuloActivo("jornadas");
+    setModuloActivo("juego");
   };
 
   const handleActualizarMalla = (nuevaMalla: MallaComponente[]) => {
@@ -195,6 +235,17 @@ export default function HomePage() {
     persistirCambio(semilla);
   };
 
+  const handleDescargarExcelGlobal = () => {
+    exportarJornadasAExcel(
+      estado.jornadas,
+      estado.mallaCurricular,
+      estado.hitos,
+      estado.franjasHorarias,
+      estado.directorioTalleristas,
+      estado.estructuraCalendario
+    );
+  };
+
   if (!hidratado) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#FCFBF7]">
@@ -206,188 +257,331 @@ export default function HomePage() {
     );
   }
 
+  // Título e ícono dinámico para la barra limpia de vistas interiores
+  const titulosSeccion: Record<ModuloActivo, { titulo: string; icono: React.ReactNode; color: string }> = {
+    menu: { titulo: "Menú Principal", icono: null, color: "" },
+    juego: {
+      titulo: "Planificador Jornada a Jornada (Día por Día)",
+      icono: <Calendar className="w-5 h-5 text-[#7A3EBE]" />,
+      color: "bg-purple-100 text-[#5C23A3]",
+    },
+    calendario: {
+      titulo: "Calendario Anual 2027",
+      icono: <Calendar className="w-5 h-5 text-[#1368CE]" />,
+      color: "bg-blue-100 text-[#1368CE]",
+    },
+    cronograma: {
+      titulo: "Tareas y Cronograma General",
+      icono: <ListTodo className="w-5 h-5 text-[#D83A56]" />,
+      color: "bg-rose-100 text-[#B5253F]",
+    },
+    matriz: {
+      titulo: "Sábana de Jornadas y Malla Curricular",
+      icono: <TableIcon className="w-5 h-5 text-topo-green" />,
+      color: "bg-emerald-100 text-topo-green",
+    },
+    hoja_calculo: {
+      titulo: "Hoja de Cálculo General (Matriz en Vivo)",
+      icono: <FileSpreadsheet className="w-5 h-5 text-emerald-600" />,
+      color: "bg-emerald-100 text-emerald-950",
+    },
+    talleristas: {
+      titulo: "Directorio y Seguimiento de Talleristas",
+      icono: <TableIcon className="w-5 h-5 text-amber-500" />,
+      color: "bg-amber-100 text-amber-950",
+    },
+    estructura: {
+      titulo: "Estructura y Ciclos del Calendario",
+      icono: <Settings2 className="w-5 h-5 text-amber-600" />,
+      color: "bg-amber-100 text-amber-950",
+    },
+    bitacora: {
+      titulo: "Bitácora del Encargadx del Día (Sede)",
+      icono: <ListTodo className="w-5 h-5 text-purple-600" />,
+      color: "bg-purple-100 text-purple-950",
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFBF7]">
-      {/* CABECERA INSPIRADA DIRECTAMENTE EN EL MURAL DE LA ESCUELA POPULAR EL TOPO */}
-      <header className="sticky top-0 z-30 bg-[#FCFBF7]/95 backdrop-blur border-b-2 border-[#E2DCCE] shadow-warm relative overflow-hidden">
-        {/* Caminito punteado de abejas decorativo de fondo */}
-        <svg
-          viewBox="0 0 1200 90"
-          fill="none"
-          className="absolute inset-0 w-full h-full pointer-events-none opacity-25"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M 180 70 C 320 10, 450 85, 620 25 C 790 -15, 920 80, 1150 20"
-            stroke="#2B2623"
-            strokeWidth="2.5"
-            strokeDasharray="6 8"
-            strokeLinecap="round"
-          />
-        </svg>
+      {/* =========================================================================
+          BARRA DE NAVEGACIÓN
+          - En 'menu': Barra limpia con identidad del Topo
+          - En módulos interiores: Barra ultra limpia enfocada con botón "← Volver al Menú"
+         ========================================================================= */}
+      <header className="sticky top-0 z-30 bg-[#FCFBF7]/95 backdrop-blur border-b-2 border-[#E2DCCE] shadow-warm relative">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+          {moduloActivo === "menu" ? (
+            /* Header en el Menú Inicial */
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/logo-personaje.png"
+                  alt="El Topo"
+                  className="h-12 sm:h-14 w-auto object-contain drop-shadow-sm"
+                />
+                <div>
+                  <img
+                    src="/logo-texto.png"
+                    alt="Escuela Popular El Topo"
+                    className="h-7 sm:h-8 w-auto object-contain"
+                  />
+                  <span className="text-[11px] font-black text-topo-green block">
+                    ★ Calendario y Planificador 2027
+                  </span>
+                </div>
+              </div>
 
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-4 relative z-10">
-          {/* Logo Oficial en PNG + Sol y Flores del Mural */}
-          <div className="flex items-center gap-3">
-            <img
-              src="/logo-personaje.png"
-              alt="El Topo"
-              className="h-16 sm:h-20 w-auto object-contain drop-shadow-sm"
-            />
-            <div className="flex flex-col">
-              <img
-                src="/logo-texto.png"
-                alt="Escuela Popular El Topo"
-                className="h-11 sm:h-14 w-auto object-contain"
-              />
-              <span className="text-[11px] font-extrabold tracking-wide text-topo-green mt-0.5">
-                ★ Calendario y Planificador Escolar 2027
-              </span>
+              <div className="flex items-center gap-2">
+                {guardadoReciente && (
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-topo-green text-xs font-black animate-fadeIn">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    ¡Guardado!
+                  </span>
+                )}
+              </div>
             </div>
-            <div className="hidden sm:flex items-center gap-1 ml-1">
-              <SolMuralSVG className="w-11 h-11" />
-              <AbejitaMuralSVG className="w-6 h-6 -mt-4" />
+          ) : (
+            /* Header Limpio e Inmersivo en Secciones Interiores */
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3 sm:gap-4">
+                {/* Botón Destacado estilo Kahoot para Volver al Menú */}
+                <button
+                  type="button"
+                  onClick={() => setModuloActivo("menu")}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white hover:bg-[#F6F2E9] border-2 border-[#D5CBB8] text-topo-dark font-black text-xs sm:text-sm shadow-sm transition transform active:scale-95 group"
+                >
+                  <ArrowLeft className="w-4 h-4 text-topo-terracotta group-hover:-translate-x-1 transition-transform" />
+                  <span>Volver al Menú</span>
+                </button>
+
+                {/* Título de la sección actual */}
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-white border border-[#E2DCCE] shadow-xs hidden sm:block">
+                    {titulosSeccion[moduloActivo].icono}
+                  </div>
+                  <h1 className="text-sm sm:text-base font-black text-topo-dark">
+                    {titulosSeccion[moduloActivo].titulo}
+                  </h1>
+                </div>
+              </div>
+
+              {/* Conmutadores rápidos sutiles entre secciones */}
+              <div className="flex items-center gap-1.5">
+                {guardadoReciente && (
+                  <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-topo-green text-xs font-black">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    Guardado
+                  </span>
+                )}
+                
+                <div className="hidden lg:flex items-center gap-1 bg-[#F6F2E9] p-1 rounded-2xl border border-[#E2DCCE]">
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("juego")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "juego"
+                        ? "bg-[#7A3EBE] text-white shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    🗓️ Día por Día
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("calendario")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "calendario"
+                        ? "bg-[#1368CE] text-white shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    📅 Calendario
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("cronograma")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "cronograma"
+                        ? "bg-[#D83A56] text-white shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    📋 Tareas
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("matriz")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "matriz"
+                        ? "bg-topo-green text-white shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    📑 Sábana
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("hoja_calculo")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "hoja_calculo"
+                        ? "bg-emerald-600 text-white shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    📊 Hoja Excel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("talleristas")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "talleristas"
+                        ? "bg-amber-500 text-stone-900 shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    👥 Talleristas
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("bitacora")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "bitacora"
+                        ? "bg-purple-600 text-white shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    📋 Bitácora Sede
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModuloActivo("estructura")}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
+                      moduloActivo === "estructura"
+                        ? "bg-[#1B365D] text-white shadow-xs"
+                        : "text-stone-700 hover:bg-white"
+                    }`}
+                  >
+                    ⚙️ Estructura
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* Navegación Central Clara y Escolar */}
-          <nav className="flex flex-wrap items-center gap-1.5 bg-[#F6F2E9] p-1.5 rounded-2xl border-2 border-[#E2DCCE]">
-            <button
-              type="button"
-              onClick={() => setModuloActivo("calendario")}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${
-                moduloActivo === "calendario"
-                  ? "bg-topo-mustard text-topo-dark shadow-sm"
-                  : "text-stone-700 hover:bg-white/80"
-              }`}
-            >
-              <Calendar className="w-4 h-4 text-topo-terracotta" />
-              1. Calendario 2027
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModuloActivo("cronograma")}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${
-                moduloActivo === "cronograma"
-                  ? "bg-topo-mustard text-topo-dark shadow-sm"
-                  : "text-stone-700 hover:bg-white/80"
-              }`}
-            >
-              <ListTodo className="w-4 h-4 text-topo-green" />
-              2. Tareas 2027 ({estado.hitos.length})
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModuloActivo("jornadas")}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition ${
-                moduloActivo === "jornadas"
-                  ? "bg-topo-mustard text-topo-dark shadow-sm"
-                  : "text-stone-700 hover:bg-white/80"
-              }`}
-            >
-              <Layers className="w-4 h-4 text-matrix-header" />
-              3. Clases / Jornadas ({estado.jornadas.length})
-            </button>
-          </nav>
-
-          {/* Utilidades Derecha */}
-          <div className="flex items-center gap-2">
-            <FlorMuralSVG className="hidden xl:block w-8 h-8 mr-1" />
-
-            <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-topo-green">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>{guardadoReciente ? "¡Guardado!" : "Guardado automático"}</span>
-            </div>
-
-            <button
-              type="button"
-              onClick={pausaActiva.abrirManualmente}
-              title="Recordatorio de Pausa Activa (30 min)"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-xs font-black text-amber-950 transition"
-            >
-              <Coffee className="w-3.5 h-3.5 text-topo-terracotta" />
-              <span className="font-mono">{pausaActiva.minutosFormateados}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                exportarJornadasAExcel(
-                  estado.jornadas,
-                  estado.mallaCurricular,
-                  estado.hitos
-                )
-              }
-              title="Descargar archivo Excel 2027 (.xlsx)"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-topo-green hover:bg-emerald-800 text-white font-extrabold text-xs shadow-sm transition"
-            >
-              <Download className="w-3.5 h-3.5 text-amber-200" />
-              <span className="hidden md:inline">Descargar Excel</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setModalSheetsAbierto(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-[#D5CBB8] bg-white hover:bg-[#F6F2E9] text-xs font-extrabold text-stone-700 transition"
-              title="Conectar Google Sheets o reiniciar lienzo 2027"
-            >
-              {tieneUrlSheets ? (
-                <CloudUpload className="w-4 h-4 text-topo-green" />
-              ) : (
-                <Database className="w-4 h-4 text-topo-terracotta" />
-              )}
-              <span className="hidden lg:inline">Google Sheets</span>
-            </button>
-          </div>
+          )}
         </div>
       </header>
 
-      {/* CONTENIDO PRINCIPAL */}
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-5">
-        {moduloActivo === "calendario" && (
-          <CalendarioAnual
-            hitos={estado.hitos}
-            jornadas={estado.jornadas}
-            onActualizarHito={handleActualizarHito}
-            onCrearHito={handleCrearHito}
-            onActualizarJornada={handleActualizarJornada}
-            onCrearJornadaEnFecha={handleCrearJornadaEnFecha}
+      {/* =========================================================================
+          CONTENIDO DINÁMICO
+         ========================================================================= */}
+      <main className="flex-1 w-full mx-auto">
+        {/* VISTA 1: MENÚ INICIAL / HOME */}
+        {moduloActivo === "menu" && (
+          <MenuInicial
+            estado={estado}
+            onSeleccionarModulo={(m) => setModuloActivo(m)}
             onIrAJornada={(jId) => {
               setJornadaDestacadaId(jId);
-              setModuloActivo("jornadas");
+              setModuloActivo("juego");
             }}
+            onDescargarExcel={handleDescargarExcelGlobal}
+            onAbrirModalSheets={() => setModalSheetsAbierto(true)}
+            onAbrirPausaActiva={pausaActiva.abrirManualmente}
+            minutosPausa={pausaActiva.minutosFormateados}
+            guardadoReciente={guardadoReciente}
+            tieneUrlSheets={tieneUrlSheets}
           />
         )}
 
-        {moduloActivo === "cronograma" && (
-          <CronogramaGeneral
-            hitos={estado.hitos}
-            talleristas={estado.talleristas}
-            onReordenarHitos={handleReordenarHitos}
-            onActualizarHito={handleActualizarHito}
-            onCrearHito={handleCrearHito}
-            onDuplicarHito={handleDuplicarHito}
-            onEliminarHito={handleEliminarHito}
-          />
-        )}
+        {/* VISTAS INTERIORES LIMPIAS */}
+        {moduloActivo !== "menu" && (
+          <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-5">
+            {moduloActivo === "calendario" && (
+              <CalendarioAnual
+                hitos={estado.hitos}
+                jornadas={estado.jornadas}
+                estructura={estado.estructuraCalendario}
+                onActualizarHito={handleActualizarHito}
+                onCrearHito={handleCrearHito}
+                onActualizarJornada={handleActualizarJornada}
+                onCrearJornadaEnFecha={handleCrearJornadaEnFecha}
+                onIrAJornada={(jId) => {
+                  setJornadaDestacadaId(jId);
+                  setModuloActivo("juego");
+                }}
+              />
+            )}
 
-        {moduloActivo === "jornadas" && (
-          <MatrizJornadas
-            jornadas={estado.jornadas}
-            mallaCurricular={estado.mallaCurricular}
-            hitos={estado.hitos}
-            talleristas={estado.talleristas}
-            jornadaDestacadaId={jornadaDestacadaId}
-            onActualizarJornada={handleActualizarJornada}
-            onReemplazarJornadas={handleReemplazarJornadas}
-            onActualizarMalla={handleActualizarMalla}
-          />
+            {moduloActivo === "cronograma" && (
+              <CronogramaGeneral
+                hitos={estado.hitos}
+                talleristas={estado.talleristas}
+                onReordenarHitos={handleReordenarHitos}
+                onActualizarHito={handleActualizarHito}
+                onCrearHito={handleCrearHito}
+                onDuplicarHito={handleDuplicarHito}
+                onEliminarHito={handleEliminarHito}
+              />
+            )}
+
+            {(moduloActivo === "juego" || moduloActivo === "matriz") && (
+              <MatrizJornadas
+                key={moduloActivo}
+                jornadas={estado.jornadas}
+                mallaCurricular={estado.mallaCurricular}
+                hitos={estado.hitos}
+                talleristas={estado.talleristas}
+                estructura={estado.estructuraCalendario}
+                jornadaDestacadaId={jornadaDestacadaId}
+                modoInicial={moduloActivo === "juego" ? "juego" : "matriz"}
+                onActualizarJornada={handleActualizarJornada}
+                onReemplazarJornadas={handleReemplazarJornadas}
+                onActualizarMalla={handleActualizarMalla}
+                onVolverAlMenu={() => setModuloActivo("menu")}
+              />
+            )}
+
+            {moduloActivo === "hoja_calculo" && (
+              <VistaHojaCalculo
+                estado={estado}
+                onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
+                onVolverAlMenu={() => setModuloActivo("menu")}
+              />
+            )}
+
+            {moduloActivo === "talleristas" && (
+              <SeguimientoTalleristas
+                estado={estado}
+                onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
+                onIrAJornada={(jId) => {
+                  setJornadaDestacadaId(jId);
+                  setModuloActivo("juego");
+                }}
+                onIrAHito={() => setModuloActivo("cronograma")}
+              />
+            )}
+
+            {moduloActivo === "bitacora" && (
+              <BitacoraEncargadxView
+                estado={estado}
+                jornadaIdInicial={jornadaDestacadaId}
+                onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
+                onVolverAlMenu={() => setModuloActivo("menu")}
+              />
+            )}
+
+            {moduloActivo === "estructura" && (
+              <EstructuraCalendario
+                estado={estado}
+                onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
+                onVolverAlMenu={() => setModuloActivo("menu")}
+              />
+            )}
+          </div>
         )}
       </main>
 
-      {/* JARDÍN DE FLORES Y ABEJAS DEL MURAL + PIE DE PÁGINA */}
+      {/* PIE DE PÁGINA ESCOLAR */}
       <footer className="mt-8 border-t-2 border-[#E2DCCE] bg-[#F6F2E9]/80">
         <JardinMuralBarra className="pt-2" />
         <div className="max-w-[1600px] mx-auto px-6 py-3 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-600 border-t border-[#E2DCCE]/60">
@@ -397,15 +591,15 @@ export default function HomePage() {
               alt="Escuela Popular El Topo"
               className="h-6 w-auto object-contain"
             />
-            <span>• Planificador Pedagógico 2027</span>
+            <span>• Planificador Pedagógico Comunitario 2027</span>
           </div>
-          <div className="font-semibold">
-            Tareas 2027 precargadas • Clases listas para programar desde cero
+          <div className="font-semibold text-stone-500">
+            Escuela Popular El Topo • Educación Transformadora
           </div>
         </div>
       </footer>
 
-      {/* MODAL DE PAUSA ACTIVA */}
+      {/* MODALES */}
       <ModalPausaActiva
         abierto={pausaActiva.mostrarModal}
         sugerencia={pausaActiva.sugerenciaActual}
@@ -414,7 +608,6 @@ export default function HomePage() {
         onOtraSugerencia={pausaActiva.siguienteSugerencia}
       />
 
-      {/* MODAL DE CONFIGURACIÓN DE GOOGLE SHEETS */}
       <ModalConfigSheets
         abierto={modalSheetsAbierto}
         onCerrar={() => {

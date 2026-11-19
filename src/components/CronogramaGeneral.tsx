@@ -482,16 +482,7 @@ export function CronogramaGeneral({
               title="Ordenar todas las filas cronológicamente por fecha"
             >
               <ArrowUpDown className="w-3.5 h-3.5 text-topo-terracotta" />
-              Ordenar Cronológicamente
-            </button>
-
-            <button
-              type="button"
-              onClick={() => exportarHitosTodo2027Excel(hitos)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-topo-green hover:bg-emerald-800 text-white font-bold text-xs shadow-sm transition"
-            >
-              <Download className="w-3.5 h-3.5" />
-              Exportar Hitos (.xlsx)
+              Ordenar Fechas
             </button>
 
             <input
@@ -505,6 +496,7 @@ export function CronogramaGeneral({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl border border-stone-300 bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs transition"
+              title="Importar CSV o Excel de tareas"
             >
               <Upload className="w-3.5 h-3.5" />
               Importar
