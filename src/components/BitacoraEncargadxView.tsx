@@ -80,6 +80,7 @@ export function BitacoraEncargadxView({
   }
 
   // Bitácora actual (o inicial por defecto)
+  const fechaISO = jornada.fechaISO || ddmmyyyyToISO(jornada.fecha) || "";
   const bitacora: BitacoraEncargadx = jornada.bitacora || {
     encargadxConfirmadx: jornada.encargadxDelDia || "",
     aperturaLlaves: false,
@@ -556,6 +557,128 @@ export function BitacoraEncargadxView({
             );
           })}
         </div>
+      </div>
+
+      {/* SECCIÓN 2.5: ASISTENCIA DE ESTUDIANTES DE LA JORNADA */}
+      <div className="bg-white rounded-3xl p-6 border-2 border-[#E2DCCE] shadow-warm space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-stone-100 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="p-2 rounded-xl bg-blue-100 text-blue-800 font-black text-sm">🎒</span>
+            <div>
+              <h3 className="text-base font-black text-topo-dark">
+                Asistencia de Estudiantes por Clases ({fechaISO})
+              </h3>
+              <p className="text-xs text-stone-500">
+                Marca a cuántas clases del día asistió cada alumno (4 clases = jornada completa).
+              </p>
+            </div>
+          </div>
+
+          {(estado.estudiantes || []).length > 0 && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const nuevos = (estado.estudiantes || []).map((e) => {
+                    const mapa = { ...(e.asistenciasPorJornada || {}) };
+                    mapa[fechaISO] = 4;
+                    const tot = Object.values(mapa).reduce((a, b) => a + b, 0);
+                    return {
+                      ...e,
+                      asistenciasPorJornada: mapa,
+                      totalClasesAsistidas: tot,
+                      totalJornadasAsistidas: tot / 4,
+                    };
+                  });
+                  onActualizarEstado({ ...estado, estudiantes: nuevos });
+                  guardarBitacora({ ...bitacora, estudiantesPresentes: nuevos.filter((e) => e.estado === "activo").length });
+                }}
+                className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 font-black text-xs transition border border-blue-200 cursor-pointer"
+              >
+                ✓ Todos Asistieron (4 clases)
+              </button>
+            </div>
+          )}
+        </div>
+
+        {(estado.estudiantes || []).filter((e) => e.estado === "activo").length === 0 ? (
+          <div className="p-6 text-center text-xs text-stone-500 font-bold bg-stone-50 rounded-2xl border border-dashed border-stone-200">
+            No hay estudiantes activos registrados en este calendario. Puedes añadirlos desde el módulo de <strong>Estudiantes</strong>.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 max-h-96 overflow-y-auto p-1">
+            {(estado.estudiantes || [])
+              .filter((e) => e.estado === "activo")
+              .map((est) => {
+                const clasesHoy = est.asistenciasPorJornada?.[fechaISO] ?? 0;
+
+                return (
+                  <div
+                    key={`asist-est-${est.id}`}
+                    className={`p-3 rounded-2xl border-2 transition flex flex-col justify-between gap-2 ${
+                      clasesHoy === 4
+                        ? "bg-emerald-50/80 border-emerald-300"
+                        : clasesHoy > 0
+                        ? "bg-amber-50/80 border-amber-300"
+                        : "bg-stone-50 border-stone-200"
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-black text-topo-dark truncate">
+                        {est.nombres} {est.apellidos}
+                      </p>
+                      <span className="text-[10px] font-bold text-stone-500 block">
+                        {clasesHoy === 4
+                          ? "✅ Vino a las 4 clases"
+                          : clasesHoy > 0
+                          ? `⚠️ Vino a ${clasesHoy} de 4 clases`
+                          : "❌ No asistió hoy"}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-1 pt-1 border-t border-stone-200/60">
+                      {[0, 1, 2, 3, 4].map((num) => (
+                        <button
+                          key={`btn-c-${est.id}-${num}`}
+                          type="button"
+                          onClick={() => {
+                            const nuevos = (estado.estudiantes || []).map((e) => {
+                              if (e.id === est.id) {
+                                const mapa = { ...(e.asistenciasPorJornada || {}) };
+                                mapa[fechaISO] = num;
+                                const tot = Object.values(mapa).reduce((a, b) => a + b, 0);
+                                return {
+                                  ...e,
+                                  asistenciasPorJornada: mapa,
+                                  totalClasesAsistidas: tot,
+                                  totalJornadasAsistidas: tot / 4,
+                                };
+                              }
+                              return e;
+                            });
+                            onActualizarEstado({ ...estado, estudiantes: nuevos });
+                            const presentes = nuevos.filter((e) => (e.asistenciasPorJornada?.[fechaISO] ?? 0) > 0).length;
+                            guardarBitacora({ ...bitacora, estudiantesPresentes: presentes });
+                          }}
+                          className={`py-1 rounded-lg text-[10px] font-black transition cursor-pointer ${
+                            clasesHoy === num
+                              ? num === 4
+                                ? "bg-emerald-600 text-white shadow-xs"
+                                : num > 0
+                                ? "bg-amber-500 text-white shadow-xs"
+                                : "bg-stone-700 text-white shadow-xs"
+                              : "bg-white hover:bg-stone-100 text-stone-700 border border-stone-200"
+                          }`}
+                        >
+                          {num === 0 ? "0" : `${num}c`}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        )}
       </div>
 
       {/* SECCIÓN 3: ACTIVIDADES COMUNITARIAS POST-CLASE Y SALIDAS */}

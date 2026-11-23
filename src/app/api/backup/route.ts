@@ -19,7 +19,20 @@ export async function GET() {
       const data = await fs.readFile(RUTA_JSON, "utf-8");
       const parsed = JSON.parse(data) as EstadoCronogramaTopo;
       if (parsed && Array.isArray(parsed.jornadas) && parsed.jornadas.length > 0) {
-        return NextResponse.json({ ok: true, origen: "disco", estado: parsed });
+        const semilla = obtenerEstadoInicialSemilla();
+        // Asegurar que siempre tenga los calendarios 2026 y 2027 aunque el JSON previo no los tuviera
+        const calendarios =
+          Array.isArray(parsed.calendarios) && parsed.calendarios.length > 0
+            ? parsed.calendarios
+            : semilla.calendarios || [];
+
+        const conCalendarios: EstadoCronogramaTopo = {
+          ...parsed,
+          calendarioActivoId: parsed.calendarioActivoId || "cal-2027-anual",
+          calendarios,
+          estudiantes: parsed.estudiantes || semilla.estudiantes || [],
+        };
+        return NextResponse.json({ ok: true, origen: "disco", estado: conCalendarios });
       }
     } catch {
       // Si el archivo JSON no existe en disco, generamos la semilla

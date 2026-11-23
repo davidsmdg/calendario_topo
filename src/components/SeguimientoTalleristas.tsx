@@ -27,6 +27,10 @@ import {
   X,
   UserPlus,
   Settings,
+  Send,
+  Mail,
+  Shield,
+  Loader2,
 } from "lucide-react";
 import {
   EstadoCronogramaTopo,
@@ -129,6 +133,7 @@ export function SeguimientoTalleristas({
   const [busqueda, setBusqueda] = useState<string>("");
   const [filtroMateria, setFiltroMateria] = useState<string>("todas");
   const [filtroCarga, setFiltroCarga] = useState<"todos" | "con_asignacion" | "sin_asignacion">("todos");
+  const [filtroVigencia, setFiltroVigencia] = useState<"todos" | "activos" | "antiguos">("todos");
   const [vistaTabDetalle, setVistaTabDetalle] = useState<"todas" | "clases" | "tareas">("todas");
 
   // Estado para la modal o sección de Gestión / Edición de Talleristas
@@ -143,7 +148,10 @@ export function SeguimientoTalleristas({
   const [nuevoTalleristaNombre, setNuevoTalleristaNombre] = useState<string>("");
   const [nuevoTalleristaTelefono, setNuevoTalleristaTelefono] = useState<string>("");
   const [nuevoTalleristaCorreo, setNuevoTalleristaCorreo] = useState<string>("");
+  const [nuevoTalleristaRol, setNuevoTalleristaRol] = useState<"tallerista" | "coordinador">("tallerista");
   const [nuevoTalleristaMaterias, setNuevoTalleristaMaterias] = useState<string[]>([]);
+  const [rolEdicion, setRolEdicion] = useState<"tallerista" | "coordinador">("tallerista");
+  const [enviandoInvitacion, setEnviandoInvitacion] = useState<boolean>(false);
   const [mensajeFeedback, setMensajeFeedback] = useState<string | null>(null);
 
   // Lista de todos los componentes / materias disponibles en el sistema
@@ -408,9 +416,14 @@ export function SeguimientoTalleristas({
       if (filtroCarga === "con_asignacion" && cargaTotal === 0) return false;
       if (filtroCarga === "sin_asignacion" && cargaTotal > 0) return false;
 
+      // Filtro por vigencia (Activos en este ciclo vs Antiguos)
+      const tieneActividadEnCiclo = cargaTotal > 0 || perfil.materiasBase.length > 0;
+      if (filtroVigencia === "activos" && !tieneActividadEnCiclo) return false;
+      if (filtroVigencia === "antiguos" && tieneActividadEnCiclo) return false;
+
       return true;
     });
-  }, [todosLosTalleristas, perfilesMap, busqueda, filtroMateria, filtroCarga]);
+  }, [todosLosTalleristas, perfilesMap, busqueda, filtroMateria, filtroCarga, filtroVigencia]);
 
   // Perfil activo
   const perfilActivo = useMemo(() => {
@@ -429,7 +442,37 @@ export function SeguimientoTalleristas({
 
   const notificarFeedback = (msg: string) => {
     setMensajeFeedback(msg);
-    setTimeout(() => setMensajeFeedback(null), 3000);
+    setTimeout(() => setMensajeFeedback(null), 3500);
+  };
+
+  // Enviar invitación de Supabase Auth
+  const handleEnviarInvitacionEmail = async (email: string, nombre: string, rol: string, componentes: string[]) => {
+    if (!email || !email.includes("@")) {
+      alert("Por favor ingresa un correo electrónico válido para enviar la invitación.");
+      return;
+    }
+    setEnviandoInvitacion(true);
+    try {
+      const res = await fetch("/api/invitaciones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          nombre: nombre.trim(),
+          rol,
+          componentes,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Error al enviar la invitación.");
+      }
+      notificarFeedback(`📩 ¡Invitación de Supabase enviada con éxito a ${email}!`);
+    } catch (err: any) {
+      alert(`No se pudo enviar la invitación: ${err.message}`);
+    } finally {
+      setEnviandoInvitacion(false);
+    }
   };
 
   // Crear un nuevo tallerista y vincularlo a sus componentes en la Malla
@@ -479,6 +522,7 @@ export function SeguimientoTalleristas({
       nombre,
       telefono: nuevoTalleristaTelefono.trim(),
       correo: nuevoTalleristaCorreo.trim(),
+      rol: nuevoTalleristaRol,
       componentes: nuevoTalleristaMaterias,
     };
     const nuevoDirectorio = [...directorioPrevio.filter((d) => d.nombre !== nombre), nuevoRegistro];
@@ -490,6 +534,16 @@ export function SeguimientoTalleristas({
         mallaCurricular: nuevaMalla,
         directorioTalleristas: nuevoDirectorio,
       });
+    }
+
+    // Si tiene correo ingresado, preguntar o enviar invitación automáticamente
+    if (nuevoTalleristaCorreo.trim()) {
+      handleEnviarInvitacionEmail(
+        nuevoTalleristaCorreo.trim(),
+        nombre,
+        nuevoTalleristaRol,
+        nuevoTalleristaMaterias
+      );
     }
 
     setNuevoTalleristaNombre("");
@@ -511,6 +565,7 @@ export function SeguimientoTalleristas({
     setTelefonoEdicion(infoContacto?.telefono || "");
     setCorreoEdicion(infoContacto?.correo || "");
     setNotasEdicion(infoContacto?.notas || "");
+    setRolEdicion(((infoContacto as any)?.rol as "tallerista" | "coordinador") || "tallerista");
     setMateriasEdicion(perfil ? [...perfil.materiasBase] : []);
   };
 
@@ -545,12 +600,13 @@ export function SeguimientoTalleristas({
       };
     });
 
-    // 3. Actualizar Directorio de Contacto (teléfono, correo, notas)
+    // 3. Actualizar Directorio de Contacto (teléfono, correo, notas, rol)
     const directorioPrevio = estado.directorioTalleristas || [];
     const registroActualizado = {
       nombre: nombreNuevo,
       telefono: telefonoEdicion.trim(),
       correo: correoEdicion.trim(),
+      rol: rolEdicion,
       notas: notasEdicion.trim(),
       componentes: materiasEdicion,
     };
@@ -767,6 +823,42 @@ export function SeguimientoTalleristas({
 
               <div>
                 <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
+                  Rol y Permisos del Sistema:
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNuevoTalleristaRol("tallerista")}
+                    className={`p-2.5 rounded-xl border-2 text-left transition ${
+                      nuevoTalleristaRol === "tallerista"
+                        ? "border-[#7A3EBE] bg-purple-50 text-purple-950 font-black shadow-xs"
+                        : "border-stone-200 bg-white text-stone-600 font-bold"
+                    }`}
+                  >
+                    <span className="block text-xs">👤 Tallerista</span>
+                    <span className="block text-[10px] text-stone-500 font-medium">
+                      Ver clases, postularse como encargadx y bitácora
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNuevoTalleristaRol("coordinador")}
+                    className={`p-2.5 rounded-xl border-2 text-left transition ${
+                      nuevoTalleristaRol === "coordinador"
+                        ? "border-amber-500 bg-amber-50 text-amber-950 font-black shadow-xs"
+                        : "border-stone-200 bg-white text-stone-600 font-bold"
+                    }`}
+                  >
+                    <span className="block text-xs">👑 Coordinador/a</span>
+                    <span className="block text-[10px] text-stone-500 font-medium">
+                      Crear calendarios, editar estructura y roles
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
                   Componentes / Materias en las que participa:
                 </label>
                 <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-white rounded-xl border border-stone-200">
@@ -859,6 +951,76 @@ export function SeguimientoTalleristas({
                       />
                     </div>
                   </div>
+
+                  <div>
+                    <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
+                      Rol y Permisos del Sistema:
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setRolEdicion("tallerista")}
+                        className={`p-2.5 rounded-xl border-2 text-left transition ${
+                          rolEdicion === "tallerista"
+                            ? "border-[#7A3EBE] bg-purple-50 text-purple-950 font-black shadow-xs"
+                            : "border-stone-200 bg-white text-stone-600 font-bold"
+                        }`}
+                      >
+                        <span className="block text-xs">👤 Tallerista</span>
+                        <span className="block text-[10px] text-stone-500 font-medium">
+                          Rol pedagógico regular
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setRolEdicion("coordinador")}
+                        className={`p-2.5 rounded-xl border-2 text-left transition ${
+                          rolEdicion === "coordinador"
+                            ? "border-amber-500 bg-amber-50 text-amber-950 font-black shadow-xs"
+                            : "border-stone-200 bg-white text-stone-600 font-bold"
+                        }`}
+                      >
+                        <span className="block text-xs">👑 Coordinador/a</span>
+                        <span className="block text-[10px] text-stone-500 font-medium">
+                          Permiso de crear calendarios
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {correoEdicion && (
+                    <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 text-xs">
+                        <Mail className="w-4 h-4 text-purple-700 shrink-0" />
+                        <span className="font-bold text-purple-950 truncate">{correoEdicion}</span>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={enviandoInvitacion}
+                        onClick={() =>
+                          handleEnviarInvitacionEmail(
+                            correoEdicion,
+                            nombreEdicion,
+                            rolEdicion,
+                            materiasEdicion
+                          )
+                        }
+                        className="px-3 py-1.5 rounded-lg bg-[#7A3EBE] hover:bg-purple-800 text-white font-black text-xs flex items-center gap-1.5 shadow-xs transition disabled:opacity-50"
+                      >
+                        {enviandoInvitacion ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>Enviando...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-3.5 h-3.5" />
+                            <span>Reenviar Invitación</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
 
                   <div>
                     <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
@@ -999,6 +1161,43 @@ export function SeguimientoTalleristas({
               }`}
             >
               Sin Asignar
+            </button>
+          </div>
+
+          {/* Filtro Activos vs Antiguos */}
+          <div className="inline-flex rounded-2xl bg-[#F6F2E9] p-1 border border-[#E2DCCE]">
+            <button
+              type="button"
+              onClick={() => setFiltroVigencia("todos")}
+              className={`px-3 py-1 rounded-xl text-xs font-extrabold transition ${
+                filtroVigencia === "todos"
+                  ? "bg-[#1B365D] text-white shadow-xs"
+                  : "text-stone-600 hover:text-topo-dark"
+              }`}
+            >
+              Todos
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroVigencia("activos")}
+              className={`px-3 py-1 rounded-xl text-xs font-extrabold transition ${
+                filtroVigencia === "activos"
+                  ? "bg-emerald-600 text-white shadow-xs"
+                  : "text-stone-600 hover:text-topo-dark"
+              }`}
+            >
+              🌟 Activos
+            </button>
+            <button
+              type="button"
+              onClick={() => setFiltroVigencia("antiguos")}
+              className={`px-3 py-1 rounded-xl text-xs font-extrabold transition ${
+                filtroVigencia === "antiguos"
+                  ? "bg-stone-500 text-white shadow-xs"
+                  : "text-stone-600 hover:text-topo-dark"
+              }`}
+            >
+              📜 Antiguos
             </button>
           </div>
         </div>

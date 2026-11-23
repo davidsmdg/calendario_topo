@@ -81,6 +81,21 @@ export function EstructuraCalendario({
   const [nuevaFranja, setNuevaFranja] = useState("");
   const [mensajeFeedback, setMensajeFeedback] = useState<string | null>(null);
 
+  const [mostrarModalNuevo, setMostrarModalNuevo] = useState(false);
+  const [nuevoCalNombre, setNuevoCalNombre] = useState("");
+  const [nuevoCalCodigo, setNuevoCalCodigo] = useState("");
+  const [nuevoCalAno, setNuevoCalAno] = useState(2027);
+
+  const calActual = useMemo(() => {
+    return (
+      (estado.calendarios || []).find((c) => c.id === estado.calendarioActivoId) ||
+      (estado.calendarios || [])[0]
+    );
+  }, [estado.calendarios, estado.calendarioActivoId]);
+
+  const esHistorico = calActual?.estado === "historico";
+  const [edicionDesbloqueada, setEdicionDesbloqueada] = useState(!esHistorico);
+
   // Estado para el modal de conflicto de fechas
   const [conflictoFecha, setConflictoFecha] = useState<{
     fechaISO: string;
@@ -353,14 +368,30 @@ export function EstructuraCalendario({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => handleGuardarConfiguracion()}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-stone-900 font-black text-xs shadow-md transition transform active:scale-95"
-          >
-            <Save className="w-4 h-4" />
-            <span>Guardar Estructura</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            {esHistorico ? (
+              <div className="px-4 py-2 rounded-2xl bg-stone-900/40 border border-white/30 text-amber-300 font-black text-xs flex items-center gap-1.5">
+                <span>🔒 Calendario Histórico (Solo Consulta)</span>
+              </div>
+            ) : !edicionDesbloqueada ? (
+              <button
+                type="button"
+                onClick={() => setEdicionDesbloqueada(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-stone-900 font-black text-xs shadow-md transition"
+              >
+                <span>🔓 Desbloquear Edición Estructural</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => handleGuardarConfiguracion()}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-stone-900 font-black text-xs shadow-md transition transform active:scale-95"
+              >
+                <Save className="w-4 h-4" />
+                <span>Guardar Estructura</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -661,6 +692,11 @@ export function EstructuraCalendario({
               simulacro: { bg: "bg-purple-100", text: "text-purple-900", label: "✍️ SIMULACRO" },
               salida: { bg: "bg-teal-100", text: "text-teal-900", label: "🚌 SALIDA" },
               cierre: { bg: "bg-amber-100", text: "text-amber-900", label: "🎉 CIERRE" },
+              inauguracion: { bg: "bg-amber-100", text: "text-amber-900", label: "🌟 INAUGURACIÓN" },
+              coordinacion: { bg: "bg-indigo-100", text: "text-indigo-900", label: "🤝 COORDINACIÓN" },
+              formacion: { bg: "bg-rose-100", text: "text-rose-900", label: "📖 ESCUELA FORMACIÓN" },
+              asamblea: { bg: "bg-violet-100", text: "text-violet-950", label: "🗳️ ASAMBLEA GENERAL" },
+              hito: { bg: "bg-stone-200", text: "text-stone-800", label: "📌 HITO" },
             };
             const est = estilos[ex.tipo] || estilos.unal;
 
@@ -676,11 +712,16 @@ export function EstructuraCalendario({
                       onChange={(e) => handleActualizarExamenDirecto(ex.id, { tipo: e.target.value as any })}
                       className="text-xs font-black uppercase px-2 py-1 rounded-lg bg-stone-100 border border-stone-300 cursor-pointer"
                     >
-                      <option value="unal">🏛️ Admisión UNAL</option>
-                      <option value="icfes">📄 Saber 11 ICFES</option>
-                      <option value="simulacro">✍️ Simulacro</option>
+                      <option value="inauguracion">🌟 Inauguración</option>
+                      <option value="asamblea">🗳️ Asamblea General</option>
+                      <option value="coordinacion">🤝 Reunión de Coordinación</option>
+                      <option value="formacion">📖 Escuela de Formación</option>
                       <option value="salida">🚌 Salida Pedagógica</option>
-                      <option value="cierre">🎉 Cierre</option>
+                      <option value="simulacro">✍️ Simulacro</option>
+                      <option value="icfes">📄 Saber 11 ICFES</option>
+                      <option value="unal">🏛️ Admisión UNAL</option>
+                      <option value="cierre">🎉 Cierre de Ciclo</option>
+                      <option value="hito">📌 Hito Especial</option>
                     </select>
 
                     <button

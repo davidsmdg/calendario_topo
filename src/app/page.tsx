@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Calendar,
   ListTodo,
@@ -11,6 +11,14 @@ import {
   CheckCircle2,
   FileSpreadsheet,
   Settings2,
+  Menu as MenuIcon,
+  X,
+  User,
+  Shield,
+  LogOut,
+  ChevronRight,
+  Sparkles,
+  Archive,
 } from "lucide-react";
 import {
   EstadoCronogramaTopo,
@@ -35,6 +43,12 @@ import { BitacoraEncargadxView } from "@/components/BitacoraEncargadxView";
 import { ModalPausaActiva } from "@/components/ModalPausaActiva";
 import { ModalConfigSheets } from "@/components/ModalConfigSheets";
 import { MenuInicial } from "@/components/MenuInicial";
+import { ModuloEstudiantes } from "@/components/ModuloEstudiantes";
+import { DashboardPeriodoHistorico } from "@/components/DashboardPeriodoHistorico";
+import { ModalCrearCalendario } from "@/components/ModalCrearCalendario";
+import { ModuloHistoricoCiclos } from "@/components/ModuloHistoricoCiclos";
+import { PantallaLogin } from "@/components/PantallaLogin";
+import { supabase } from "@/lib/supabaseClient";
 
 type ModuloActivo =
   | "menu"
@@ -43,9 +57,12 @@ type ModuloActivo =
   | "cronograma"
   | "matriz"
   | "talleristas"
+  | "estudiantes"
   | "estructura"
   | "hoja_calculo"
-  | "bitacora";
+  | "bitacora"
+  | "historico_2026"
+  | "ciclos_archivo";
 
 export default function HomePage() {
   const [estado, setEstado] = useState<EstadoCronogramaTopo>(() =>
@@ -56,8 +73,27 @@ export default function HomePage() {
   const [moduloActivo, setModuloActivo] = useState<ModuloActivo>("menu");
   const [jornadaDestacadaId, setJornadaDestacadaId] = useState<string | null>(null);
   const [modalSheetsAbierto, setModalSheetsAbierto] = useState(false);
+  const [modalCrearCalendarioAbierto, setModalCrearCalendarioAbierto] = useState(false);
   const [guardadoReciente, setGuardadoReciente] = useState(false);
   const [tieneUrlSheets, setTieneUrlSheets] = useState(false);
+
+  // Estados para Sesión y Autenticación Supabase
+  const [usuarioAutenticado, setUsuarioAutenticado] = useState<any>(null);
+  const [comprobandoSesion, setComprobandoSesion] = useState(true);
+
+  // Estados para Menú Hamburguesa y Perfil de Usuario
+  const [menuHamburguesaAbierto, setMenuHamburguesaAbierto] = useState(false);
+  const [menuPerfilAbierto, setMenuPerfilAbierto] = useState(false);
+  const [talleristaSesion, setTalleristaSesion] = useState<{
+    nombre: string;
+    rol: string;
+    avatarLetra: string;
+    email?: string;
+  }>({
+    nombre: "Coordinación General",
+    rol: "Administrador Pedagógico",
+    avatarLetra: "C",
+  });
 
   const pausaActiva = usePausaActiva();
 
@@ -70,27 +106,83 @@ export default function HomePage() {
     setEstado(local);
     setTieneUrlSheets(Boolean(StorageService.obtenerUrlGoogleSheets()));
 
-    // 2. Verificar y sincronizar con el disco duro del servidor (/api/backup)
-    fetch("/api/backup")
+    // 2. Conectar y sincronizar DIRECTAMENTE con la Base de Datos PostgreSQL de Supabase
+    fetch("/api/calendarios")
       .then((res) => res.json())
-      .then((res) => {
-        if (res.ok && res.estado && Array.isArray(res.estado.jornadas) && res.estado.jornadas.length > 0) {
-          // Si el disco tiene datos más recientes o iguales, sincronizar
-          setEstado(res.estado);
-          StorageService.guardarLocal(res.estado);
-        } else if (local && local.jornadas && local.jornadas.length > 0) {
-          // Si el disco estaba vacío pero en local había datos, respaldar al disco de inmediato
-          fetch("/api/backup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(local),
-          }).catch(console.warn);
+      .then((dbData) => {
+        if (dbData && Array.isArray(dbData.calendarios)) {
+          const calActivo = dbData.calendarioActivo;
+          const nuevoEstado: EstadoCronogramaTopo = {
+            ...local,
+            calendarios: dbData.calendarios,
+            calendarioActivoId: calActivo ? calActivo.id : null,
+            jornadas: calActivo ? dbData.jornadas || [] : [],
+            hitos: calActivo ? dbData.hitos || [] : [],
+            estudiantes: calActivo ? dbData.estudiantes || [] : [],
+            talleristas: dbData.talleristas?.length ? dbData.talleristas : local.talleristas,
+            directorioTalleristas: dbData.directorioTalleristas?.length
+              ? dbData.directorioTalleristas
+              : local.directorioTalleristas,
+            estructuraCalendario: calActivo?.configuracion_json
+              ? typeof calActivo.configuracion_json === "string"
+                ? JSON.parse(calActivo.configuracion_json)
+                : calActivo.configuracion_json
+              : calActivo?.estructura_config
+              ? typeof calActivo.estructura_config === "string"
+                ? JSON.parse(calActivo.estructura_config)
+                : calActivo.estructura_config
+              : undefined,
+          };
+          setEstado(nuevoEstado);
+          StorageService.guardarLocal(nuevoEstado);
         }
       })
-      .catch((err) => console.warn("No se pudo contactar /api/backup:", err))
+      .catch((err) => console.warn("No se pudo sincronizar con Supabase /api/calendarios:", err))
       .finally(() => {
         setHidratado(true);
       });
+    // 3. Verificar estado de autenticación en Supabase
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUsuarioAutenticado(session.user);
+        const meta = session.user.user_metadata || {};
+        const nom = meta.nombre || session.user.email?.split("@")[0] || "Tallerista";
+        const rol = meta.rol === "coordinador" ? "Coordinación General" : "Tallerista Pedagógicx";
+        setTalleristaSesion({
+          nombre: nom,
+          rol: rol,
+          avatarLetra: nom.charAt(0).toUpperCase(),
+          email: session.user.email,
+        });
+      } else {
+        setUsuarioAutenticado(null);
+      }
+      setComprobandoSesion(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUsuarioAutenticado(session.user);
+        const meta = session.user.user_metadata || {};
+        const nom = meta.nombre || session.user.email?.split("@")[0] || "Tallerista";
+        const rol = meta.rol === "coordinador" ? "Coordinación General" : "Tallerista Pedagógicx";
+        setTalleristaSesion({
+          nombre: nom,
+          rol: rol,
+          avatarLetra: nom.charAt(0).toUpperCase(),
+          email: session.user.email,
+        });
+      } else {
+        setUsuarioAutenticado(null);
+      }
+      setComprobandoSesion(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const persistirCambio = useCallback((nuevoEstado: EstadoCronogramaTopo) => {
@@ -115,7 +207,92 @@ export default function HomePage() {
         }).catch((err) => console.warn("Error al respaldar en disco:", err));
       }
     }, 800);
+    // 3. Verificar estado de autenticación en Supabase
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUsuarioAutenticado(session.user);
+        const meta = session.user.user_metadata || {};
+        const nom = meta.nombre || session.user.email?.split("@")[0] || "Tallerista";
+        const rol = meta.rol === "coordinador" ? "Coordinación General" : "Tallerista Pedagógicx";
+        setTalleristaSesion({
+          nombre: nom,
+          rol: rol,
+          avatarLetra: nom.charAt(0).toUpperCase(),
+          email: session.user.email,
+        });
+      } else {
+        setUsuarioAutenticado(null);
+      }
+      setComprobandoSesion(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUsuarioAutenticado(session.user);
+        const meta = session.user.user_metadata || {};
+        const nom = meta.nombre || session.user.email?.split("@")[0] || "Tallerista";
+        const rol = meta.rol === "coordinador" ? "Coordinación General" : "Tallerista Pedagógicx";
+        setTalleristaSesion({
+          nombre: nom,
+          rol: rol,
+          avatarLetra: nom.charAt(0).toUpperCase(),
+          email: session.user.email,
+        });
+      } else {
+        setUsuarioAutenticado(null);
+      }
+      setComprobandoSesion(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Handler para cambiar de calendario activo (ej. "2027 - Ciclo Anual" vs "2026 - Histórico")
+  const handleCambiarCalendario = (calId: string) => {
+    const calSeleccionado = (estado.calendarios || []).find((c) => c.id === calId);
+    if (!calSeleccionado) return;
+
+    // Guardar el estado actual dentro del calendario antes de cambiar
+    const calendariosActualizados = (estado.calendarios || []).map((c) => {
+      if (c.id === (estado.calendarioActivoId || "cal-2027-anual")) {
+        return {
+          ...c,
+          jornadas: estado.jornadas,
+          hitos: estado.hitos,
+          mallaCurricular: estado.mallaCurricular,
+          estudiantes: estado.estudiantes || [],
+          estructuraCalendario: estado.estructuraCalendario || c.estructuraCalendario,
+        };
+      }
+      return c;
+    });
+
+    const nuevoEstado: EstadoCronogramaTopo = {
+      ...estado,
+      calendarioActivoId: calSeleccionado.id,
+      calendarios: calendariosActualizados,
+      jornadas: calSeleccionado.jornadas || [],
+      hitos: calSeleccionado.hitos || [],
+      mallaCurricular: calSeleccionado.mallaCurricular || [],
+      estudiantes: calSeleccionado.estudiantes || [],
+      estructuraCalendario: calSeleccionado.estructuraCalendario,
+    };
+
+    persistirCambio(nuevoEstado);
+  };
+
+  const calActual = useMemo(() => {
+    return (
+      (estado.calendarios || []).find((c) => c.id === estado.calendarioActivoId) ||
+      (estado.calendarios || [])[0]
+    );
+  }, [estado.calendarios, estado.calendarioActivoId]);
+
+  const esHistorico = calActual?.estado === "historico";
 
   // Handlers de Hitos
   const handleActualizarHito = (hitoActualizado: EventoCronograma) => {
@@ -235,6 +412,46 @@ export default function HomePage() {
     persistirCambio(semilla);
   };
 
+  const handlePostularEncargadx = async (jornadaId: string, nombreTallerista: string) => {
+    try {
+      await fetch("/api/calendarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "actualizar_encargadx",
+          jornadaId,
+          encargadxNombre: nombreTallerista,
+        }),
+      });
+      const nuevasJornadas = estado.jornadas.map((j) =>
+        j.id === jornadaId ? { ...j, encargadxDelDia: nombreTallerista } : j
+      );
+      persistirCambio({ ...estado, jornadas: nuevasJornadas });
+    } catch (e) {
+      console.error("Error al postular encargado:", e);
+    }
+  };
+
+  const handleLiberarEncargadx = async (jornadaId: string) => {
+    try {
+      await fetch("/api/calendarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "actualizar_encargadx",
+          jornadaId,
+          encargadxNombre: "",
+        }),
+      });
+      const nuevasJornadas = estado.jornadas.map((j) =>
+        j.id === jornadaId ? { ...j, encargadxDelDia: "" } : j
+      );
+      persistirCambio({ ...estado, jornadas: nuevasJornadas });
+    } catch (e) {
+      console.error("Error al liberar fecha de encargado:", e);
+    }
+  };
+
   const handleDescargarExcelGlobal = () => {
     exportarJornadasAExcel(
       estado.jornadas,
@@ -246,7 +463,7 @@ export default function HomePage() {
     );
   };
 
-  if (!hidratado) {
+  if (!hidratado || comprobandoSesion) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#FCFBF7]">
         <TopoAvatar size="lg" variant="completo" />
@@ -254,6 +471,26 @@ export default function HomePage() {
           Cargando Escuela Popular El Topo 2027...
         </p>
       </div>
+    );
+  }
+
+  // SI NO HAY SESIÓN INICIADA, MOSTRAR LA PANTALLA DE LOGIN
+  if (!usuarioAutenticado) {
+    return (
+      <PantallaLogin
+        onLoginExitoso={(user) => {
+          setUsuarioAutenticado(user);
+          const meta = user.user_metadata || {};
+          const nom = meta.nombre || user.email?.split("@")[0] || "Tallerista";
+          const rol = meta.rol === "coordinador" ? "Coordinación General" : "Tallerista Pedagógicx";
+          setTalleristaSesion({
+            nombre: nom,
+            rol: rol,
+            avatarLetra: nom.charAt(0).toUpperCase(),
+            email: user.email,
+          });
+        }}
+      />
     );
   }
 
@@ -290,6 +527,11 @@ export default function HomePage() {
       icono: <TableIcon className="w-5 h-5 text-amber-500" />,
       color: "bg-amber-100 text-amber-950",
     },
+    estudiantes: {
+      titulo: "Directorio de Estudiantes y Permanencia",
+      icono: <TableIcon className="w-5 h-5 text-blue-600" />,
+      color: "bg-blue-100 text-blue-950",
+    },
     estructura: {
       titulo: "Estructura y Ciclos del Calendario",
       icono: <Settings2 className="w-5 h-5 text-amber-600" />,
@@ -299,6 +541,16 @@ export default function HomePage() {
       titulo: "Bitácora del Encargadx del Día (Sede)",
       icono: <ListTodo className="w-5 h-5 text-purple-600" />,
       color: "bg-purple-100 text-purple-950",
+    },
+    historico_2026: {
+      titulo: "Archivo y Balance: Año 2026",
+      icono: <TableIcon className="w-5 h-5 text-amber-600" />,
+      color: "bg-stone-800 text-amber-300",
+    },
+    ciclos_archivo: {
+      titulo: "Archivo Histórico de Ciclos y Memoria",
+      icono: <Archive className="w-5 h-5 text-amber-600" />,
+      color: "bg-amber-100 text-amber-950",
     },
   };
 
@@ -339,6 +591,90 @@ export default function HomePage() {
                     ¡Guardado!
                   </span>
                 )}
+
+                {/* BOTÓN PERFIL EN HOME */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuPerfilAbierto(!menuPerfilAbierto);
+                      setMenuHamburguesaAbierto(false);
+                    }}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white hover:bg-stone-50 border-2 border-[#D5CBB8] text-topo-dark font-black text-xs shadow-xs transition transform active:scale-95"
+                    title="Perfil y Rol"
+                  >
+                    <div className="w-6 h-6 rounded-xl bg-[#7A3EBE] text-white flex items-center justify-center font-black text-xs">
+                      {talleristaSesion.avatarLetra}
+                    </div>
+                    <span className="hidden md:inline text-xs font-black text-stone-800">
+                      {talleristaSesion.nombre}
+                    </span>
+                    <Shield className="w-3.5 h-3.5 text-topo-terracotta" />
+                  </button>
+
+                  {/* Popover Menú Perfil */}
+                  {menuPerfilAbierto && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setMenuPerfilAbierto(false)}
+                      />
+                      <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border-2 border-stone-200 p-4 z-50 animate-fadeIn">
+                        <div className="flex items-center gap-3 pb-3 border-b border-stone-100">
+                          <div className="w-10 h-10 rounded-2xl bg-[#7A3EBE] text-white flex items-center justify-center font-black text-base shadow-sm">
+                            {talleristaSesion.avatarLetra}
+                          </div>
+                          <div>
+                            <div className="font-black text-stone-900 text-sm">{talleristaSesion.nombre}</div>
+                            <div className="text-[11px] font-bold text-stone-700 flex items-center gap-1">
+                              <Shield className="w-3 h-3 text-amber-500" />
+                              {talleristaSesion.rol}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="py-2.5 text-xs text-stone-600 leading-relaxed border-b border-stone-100 space-y-1">
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className="text-stone-500">Correo:</span>
+                            <span className="text-stone-900 font-mono">{talleristaSesion.email || "Sin correo"}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className="text-stone-500">Permisos:</span>
+                            <span className={`px-2 py-0.5 rounded-md font-black text-[10px] ${
+                              talleristaSesion.rol.includes("Coordinaci")
+                                ? "bg-amber-100 text-amber-900"
+                                : "bg-purple-100 text-purple-900"
+                            }`}>
+                              {talleristaSesion.rol.includes("Coordinaci") ? "Coordinación Total" : "Tallerista (Lectura y Aulas)"}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await supabase.auth.signOut();
+                              setUsuarioAutenticado(null);
+                              setMenuPerfilAbierto(false);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 font-black text-xs transition"
+                          >
+                            <LogOut className="w-3.5 h-3.5" />
+                            <span>Cerrar Sesión</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setMenuPerfilAbierto(false)}
+                            className="font-bold text-stone-500 hover:text-stone-800 text-xs"
+                          >
+                            Ocultar
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ) : (
@@ -366,104 +702,389 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Conmutadores rápidos sutiles entre secciones */}
-              <div className="flex items-center gap-1.5">
+              {/* Acciones de Cabecera: Perfil y Menú Hamburguesa */}
+              <div className="flex items-center gap-2">
                 {guardadoReciente && (
                   <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-100 text-topo-green text-xs font-black">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     Guardado
                   </span>
                 )}
-                
-                <div className="hidden lg:flex items-center gap-1 bg-[#F6F2E9] p-1 rounded-2xl border border-[#E2DCCE]">
+
+                {/* BOTÓN PERFIL EN SECCIÓN INTERIOR */}
+                <div className="relative">
                   <button
                     type="button"
-                    onClick={() => setModuloActivo("juego")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "juego"
-                        ? "bg-[#7A3EBE] text-white shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
+                    onClick={() => {
+                      setMenuPerfilAbierto(!menuPerfilAbierto);
+                      setMenuHamburguesaAbierto(false);
+                    }}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white hover:bg-stone-50 border-2 border-[#D5CBB8] text-topo-dark font-black text-xs shadow-xs transition transform active:scale-95"
+                    title="Perfil y Rol"
                   >
-                    🗓️ Día por Día
+                    <div className="w-6 h-6 rounded-xl bg-[#7A3EBE] text-white flex items-center justify-center font-black text-xs">
+                      {talleristaSesion.avatarLetra}
+                    </div>
+                    <span className="hidden sm:inline text-xs font-black text-stone-800">
+                      {talleristaSesion.nombre}
+                    </span>
+                    <Shield className="w-3.5 h-3.5 text-topo-terracotta" />
                   </button>
+
+                  {/* Popover Menú Perfil */}
+                  {menuPerfilAbierto && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setMenuPerfilAbierto(false)}
+                      />
+                      <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border-2 border-stone-200 p-4 z-50 animate-fadeIn">
+                        <div className="flex items-center gap-3 pb-3 border-b border-stone-100">
+                          <div className="w-10 h-10 rounded-2xl bg-[#7A3EBE] text-white flex items-center justify-center font-black text-base shadow-sm">
+                            {talleristaSesion.avatarLetra}
+                          </div>
+                          <div>
+                            <div className="font-black text-stone-900 text-sm">{talleristaSesion.nombre}</div>
+                            <div className="text-[11px] font-bold text-stone-700 flex items-center gap-1">
+                              <Shield className="w-3 h-3 text-amber-500" />
+                              {talleristaSesion.rol}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="py-2.5 text-xs text-stone-600 leading-relaxed border-b border-stone-100 space-y-1">
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className="text-stone-500">Correo:</span>
+                            <span className="text-stone-900 font-mono">{talleristaSesion.email || "Sin correo"}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className="text-stone-500">Permisos:</span>
+                            <span className={`px-2 py-0.5 rounded-md font-black text-[10px] ${
+                              talleristaSesion.rol.includes("Coordinaci")
+                                ? "bg-amber-100 text-amber-900"
+                                : "bg-purple-100 text-purple-900"
+                            }`}>
+                              {talleristaSesion.rol.includes("Coordinaci") ? "Coordinación Total" : "Tallerista (Lectura y Aulas)"}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await supabase.auth.signOut();
+                              setUsuarioAutenticado(null);
+                              setMenuPerfilAbierto(false);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 hover:bg-rose-100 font-black text-xs transition"
+                          >
+                            <LogOut className="w-3.5 h-3.5" />
+                            <span>Cerrar Sesión</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setMenuPerfilAbierto(false)}
+                            className="font-bold text-stone-500 hover:text-stone-800 text-xs"
+                          >
+                            Ocultar
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* BOTÓN MENÚ HAMBURGUESA */}
+                <div className="relative">
                   <button
                     type="button"
-                    onClick={() => setModuloActivo("calendario")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "calendario"
-                        ? "bg-[#1368CE] text-white shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
+                    onClick={() => {
+                      setMenuHamburguesaAbierto(!menuHamburguesaAbierto);
+                      setMenuPerfilAbierto(false);
+                    }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-[#1B365D] hover:bg-[#132847] text-white font-black text-xs shadow-md transition transform active:scale-95"
+                    title="Navegación de Módulos"
                   >
-                    📅 Calendario
+                    <MenuIcon className="w-4 h-4 text-amber-300" />
+                    <span className="hidden sm:inline">Módulos</span>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => setModuloActivo("cronograma")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "cronograma"
-                        ? "bg-[#D83A56] text-white shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
-                  >
-                    📋 Tareas
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModuloActivo("matriz")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "matriz"
-                        ? "bg-topo-green text-white shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
-                  >
-                    📑 Sábana
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModuloActivo("hoja_calculo")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "hoja_calculo"
-                        ? "bg-emerald-600 text-white shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
-                  >
-                    📊 Hoja Excel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModuloActivo("talleristas")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "talleristas"
-                        ? "bg-amber-500 text-stone-900 shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
-                  >
-                    👥 Talleristas
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModuloActivo("bitacora")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "bitacora"
-                        ? "bg-purple-600 text-white shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
-                  >
-                    📋 Bitácora Sede
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setModuloActivo("estructura")}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition ${
-                      moduloActivo === "estructura"
-                        ? "bg-[#1B365D] text-white shadow-xs"
-                        : "text-stone-700 hover:bg-white"
-                    }`}
-                  >
-                    ⚙️ Estructura
-                  </button>
+
+                  {/* Dropdown del Menú Hamburguesa */}
+                  {menuHamburguesaAbierto && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40 bg-stone-900/20 backdrop-blur-xs"
+                        onClick={() => setMenuHamburguesaAbierto(false)}
+                      />
+                      <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-3xl shadow-2xl border-2 border-stone-200 p-3 z-50 animate-fadeIn divide-y divide-stone-100">
+                        <div className="px-3 py-2 flex items-center justify-between">
+                          <span className="text-xs font-black uppercase tracking-wider text-stone-700">
+                            Navegación Rápida
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setMenuHamburguesaAbierto(false)}
+                            className="p-1 rounded-lg text-stone-600 hover:bg-stone-100"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="py-2 grid grid-cols-1 gap-1 max-h-[70vh] overflow-y-auto">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("juego");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "juego"
+                                ? "bg-[#7A3EBE] text-white shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">🗓️</span>
+                              <div>
+                                <div>Día por Día</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "juego" ? "text-purple-100" : "text-stone-600"}`}>
+                                  Secuencia interactiva y bitácora
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("calendario");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "calendario"
+                                ? "bg-[#1368CE] text-white shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">📅</span>
+                              <div>
+                                <div>Calendario Anual</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "calendario" ? "text-blue-100" : "text-stone-600"}`}>
+                                  Vista de meses y hitos UNAL/ICFES
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("cronograma");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "cronograma"
+                                ? "bg-[#D83A56] text-white shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">📋</span>
+                              <div>
+                                <div>Lista de Tareas y Fechas</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "cronograma" ? "text-rose-100" : "text-stone-600"}`}>
+                                  Cronograma completo y filtros
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("matriz");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "matriz"
+                                ? "bg-topo-green text-white shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">📑</span>
+                              <div>
+                                <div>Sábana Pedagógica</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "matriz" ? "text-emerald-100" : "text-stone-600"}`}>
+                                  Malla 4 bloques x 4 componentes
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("hoja_calculo");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "hoja_calculo"
+                                ? "bg-emerald-600 text-white shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">📊</span>
+                              <div>
+                                <div>Hoja Excel Integrada</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "hoja_calculo" ? "text-emerald-100" : "text-stone-600"}`}>
+                                  Edición ágil de celdas
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("talleristas");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "talleristas"
+                                ? "bg-amber-500 text-stone-900 shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">👥</span>
+                              <div>
+                                <div>Directorio de Talleristas</div>
+                                <div className="text-[10px] font-normal text-stone-600">
+                                  Activos vs. antiguos y carga docente
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("estudiantes");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "estudiantes"
+                                ? "bg-blue-600 text-white shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">🎒</span>
+                              <div>
+                                <div>Estudiantes y Asistencia</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "estudiantes" ? "text-blue-100" : "text-stone-600"}`}>
+                                  Permanencia, deserción y clases 0 a 4
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("bitacora");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "bitacora"
+                                ? "bg-purple-600 text-white shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">📋</span>
+                              <div>
+                                <div>Bitácora del Encargadx</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "bitacora" ? "text-purple-100" : "text-stone-600"}`}>
+                                  Apertura de sede y toma de asistencia
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("ciclos_archivo");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
+                              moduloActivo === "ciclos_archivo"
+                                ? "bg-stone-800 text-amber-300 shadow-sm"
+                                : "text-stone-700 hover:bg-stone-100"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">📂</span>
+                              <div>
+                                <div>Archivo de Ciclos y Memoria</div>
+                                <div className={`text-[10px] font-normal ${moduloActivo === "ciclos_archivo" ? "text-amber-200" : "text-stone-600"}`}>
+                                  Histórico 2026, ciclos activos y finalizados
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-60" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModalCrearCalendarioAbierto(true);
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-200"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-base">✨</span>
+                              <div>
+                                <div>Nuevo Calendario / Ciclo</div>
+                                <div className="text-[10px] font-normal text-amber-800">
+                                  Asistente oficial para programar fechas
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight className="w-4 h-4 text-amber-600" />
+                          </button>
+                        </div>
+
+                        <div className="pt-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setModuloActivo("menu");
+                              setMenuHamburguesaAbierto(false);
+                            }}
+                            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-black transition"
+                          >
+                            <ArrowLeft className="w-3.5 h-3.5 text-topo-terracotta" />
+                            Ir al Menú Principal
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -479,11 +1100,19 @@ export default function HomePage() {
         {moduloActivo === "menu" && (
           <MenuInicial
             estado={estado}
+            esCoordinador={Boolean(
+              talleristaSesion.rol?.toLowerCase().includes("coordinaci") ||
+              talleristaSesion.rol?.toLowerCase().includes("administrador")
+            )}
+            usuarioActualNombre={talleristaSesion.nombre}
+            onPostularEncargadx={handlePostularEncargadx}
+            onLiberarEncargadx={handleLiberarEncargadx}
             onSeleccionarModulo={(m) => setModuloActivo(m)}
             onIrAJornada={(jId) => {
               setJornadaDestacadaId(jId);
               setModuloActivo("juego");
             }}
+            onAbrirAsistenteCalendario={() => setModalCrearCalendarioAbierto(true)}
             onDescargarExcel={handleDescargarExcelGlobal}
             onAbrirModalSheets={() => setModalSheetsAbierto(true)}
             onAbrirPausaActiva={pausaActiva.abrirManualmente}
@@ -561,6 +1190,27 @@ export default function HomePage() {
               />
             )}
 
+            {moduloActivo === "estudiantes" && (
+              <ModuloEstudiantes
+                estudiantes={estado.estudiantes || []}
+                jornadas={estado.jornadas || []}
+                esHistorico={esHistorico}
+                nombreCalendario={calActual?.nombre || "Calendario Actual"}
+                onActualizarEstudiantes={(nuevos) => {
+                  const nuevosCalendarios = (estado.calendarios || []).map((c) =>
+                    c.id === (estado.calendarioActivoId || "cal-2027-anual")
+                      ? { ...c, estudiantes: nuevos }
+                      : c
+                  );
+                  persistirCambio({
+                    ...estado,
+                    estudiantes: nuevos,
+                    calendarios: nuevosCalendarios,
+                  });
+                }}
+              />
+            )}
+
             {moduloActivo === "bitacora" && (
               <BitacoraEncargadxView
                 estado={estado}
@@ -575,6 +1225,67 @@ export default function HomePage() {
                 estado={estado}
                 onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
                 onVolverAlMenu={() => setModuloActivo("menu")}
+              />
+            )}
+
+            {moduloActivo === "historico_2026" && (
+              <DashboardPeriodoHistorico
+                anoSeleccionado={2026}
+                onVolverAlMenu={() => setModuloActivo("ciclos_archivo")}
+              />
+            )}
+
+            {moduloActivo === "ciclos_archivo" && (
+              <ModuloHistoricoCiclos
+                calendarios={estado.calendarios || []}
+                calendarioActivoId={estado.calendarioActivoId || null}
+                esCoordinador={talleristaSesion.rol.toLowerCase().includes("coordinaci") || talleristaSesion.rol.toLowerCase().includes("administrador")}
+                onSeleccionarCalendario={(calId) => {
+                  handleCambiarCalendario(calId);
+                  setModuloActivo("calendario");
+                }}
+                onCambiarEstadoCalendario={async (calId, nuevoEstado) => {
+                  try {
+                    const res = await fetch("/api/calendarios", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        action: "cambiar_estado_calendario",
+                        calId,
+                        nuevoEstado,
+                      }),
+                    });
+                    if (res.ok) {
+                      // Recargar desde base de datos con cache-busting
+                      const dbRes = await fetch(`/api/calendarios?t=${Date.now()}`);
+                      const dbData = await dbRes.json();
+                      if (dbData && Array.isArray(dbData.calendarios)) {
+                        const calActivo = dbData.calendarioActivo;
+                        persistirCambio({
+                          ...estado,
+                          calendarios: dbData.calendarios,
+                          calendarioActivoId: calActivo ? calActivo.id : null,
+                          jornadas: calActivo ? dbData.jornadas || [] : [],
+                          hitos: calActivo ? dbData.hitos || [] : [],
+                          estudiantes: calActivo ? dbData.estudiantes || [] : [],
+                          estructuraCalendario: calActivo?.configuracion_json
+                            ? typeof calActivo.configuracion_json === "string"
+                              ? JSON.parse(calActivo.configuracion_json)
+                              : calActivo.configuracion_json
+                            : calActivo?.estructura_config
+                            ? typeof calActivo.estructura_config === "string"
+                              ? JSON.parse(calActivo.estructura_config)
+                              : calActivo.estructura_config
+                            : undefined,
+                        });
+                      }
+                    }
+                  } catch (e) {
+                    console.error("Error cambiando estado:", e);
+                  }
+                }}
+                onAbrirAsistenteNuevo={() => setModalCrearCalendarioAbierto(true)}
+                onVerDashboard2026={() => setModuloActivo("historico_2026")}
               />
             )}
           </div>
@@ -617,6 +1328,47 @@ export default function HomePage() {
         estadoActual={estado}
         onReemplazarEstado={(nuevo) => persistirCambio(nuevo)}
         onRestaurarSemilla={handleRestaurarSemilla}
+      />
+
+      {/* ASISTENTE COORDINACIÓN: CREAR NUEVO CALENDARIO / CICLO */}
+      <ModalCrearCalendario
+        abierto={modalCrearCalendarioAbierto}
+        onCerrar={() => setModalCrearCalendarioAbierto(false)}
+        onCrearCalendario={async (nuevoCal) => {
+          // 1. Guardar en Base de Datos de Supabase para que todos los talleristas lo vean
+          try {
+            await fetch("/api/calendarios", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "crear_calendario",
+                nuevoCal: nuevoCal,
+                jornadas: nuevoCal.jornadas || [],
+                hitos: nuevoCal.hitos || [],
+              }),
+            });
+          } catch (err) {
+            console.error("Error guardando nuevo calendario en Supabase:", err);
+          }
+
+          // 2. Actualizar estado local inmediato
+          const nuevosCalendarios = [
+            nuevoCal,
+            ...(estado.calendarios || []).filter((c) => c.id !== nuevoCal.id),
+          ];
+          const nuevoEstado: EstadoCronogramaTopo = {
+            ...estado,
+            calendarioActivoId: nuevoCal.id,
+            calendarios: nuevosCalendarios,
+            jornadas: nuevoCal.jornadas || [],
+            hitos: nuevoCal.hitos || [],
+            mallaCurricular: nuevoCal.mallaCurricular || [],
+            estructuraCalendario: nuevoCal.estructuraCalendario,
+          };
+          persistirCambio(nuevoEstado);
+          setModalCrearCalendarioAbierto(false);
+          setModuloActivo("calendario");
+        }}
       />
     </div>
   );

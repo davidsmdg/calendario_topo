@@ -96,6 +96,60 @@ export interface InfoContactoTallerista {
   rol?: string;
   componentes?: string[];
   notas?: string;
+  calendariosParticipados?: string[]; // Ej: ["2026-Anual", "2027-1"]
+  activo?: boolean; // Activo en el ciclo actual vs Antiguo
+}
+
+// 6.1. Definición y Seguimiento de Estudiantes
+export type EstadoEstudiante = 'activo' | 'espera' | 'retirado' | 'egresado';
+
+export interface AsistenciaEstudianteJornada {
+  jornadaId: string;
+  fechaISO: string;
+  bloquesAsistidos: number; // 0, 1, 2, 3 o 4 clases
+  asistioTotal: boolean;    // true si vino a las 4 clases
+  observacion?: string;     // Ej: "Llegó tarde al Bloque 2", "Permiso médico"
+}
+
+export interface EstudianteTopo {
+  id: string;
+  num?: number;
+  nombres: string;
+  apellidos: string;
+  documento?: string;
+  telefono?: string;
+  correo?: string;
+  estado: EstadoEstudiante; // 'activo' | 'espera' | 'retirado' | 'egresado'
+  fechaIngreso?: string;   // Para identificar cuándo ingresó (ej. desde lista de espera)
+  fechaRetiro?: string;
+  motivoRetiro?: string;
+  calendarioId: string;    // ID del calendario/cohorte al que pertenece (ej. "cal-2026", "cal-2027-1")
+  asistenciasPorJornada?: Record<string, number>; // jornadaId o fechaISO -> número de clases (0, 1, 2, 3, 4)
+  totalClasesAsistidas?: number; // Total acumulado de clases
+  totalJornadasAsistidas?: number; // Total jornadas equivalentes (fracciones)
+  puntajeSaber11?: number; // Puntaje oficial o simulacro final
+  simulacros?: { nombre: string; puntaje: number; fecha?: string }[];
+  observaciones?: string;
+}
+
+// 6.2. Modelo de Calendario / Ciclo Independiente
+export type EstadoCalendario = 'activo' | 'historico' | 'borrador';
+
+export interface CalendarioCicloTopo {
+  id: string;                    // Ej: "cal-2026-anual", "cal-2027-anual", "cal-2027-1"
+  nombre: string;                // Ej: "2026 - Ciclo Anual (Histórico)", "2027 - Ciclo Anual (En Curso)"
+  codigo: string;                // Ej: "2026", "2027-1", "2027-2"
+  ano: number;                   // 2026, 2027, etc.
+  estado: EstadoCalendario;      // 'activo' (en transcurso, editable) o 'historico' (cerrado, solo lectura)
+  fechaInicio: string;           // YYYY-MM-DD
+  fechaFin: string;             // YYYY-MM-DD
+  descripcion?: string;
+  jornadas: JornadaPedagogica[]; // Jornadas propias de este calendario
+  hitos: EventoCronograma[];     // Tareas/hitos propios
+  mallaCurricular: MallaComponente[];
+  estructuraCalendario: EstructuraCalendarioConfig;
+  estudiantes: EstudianteTopo[]; // Estudiantes vinculados a este calendario
+  talleristasAsignados?: string[]; // Nombres de talleristas activos en este ciclo
 }
 
 // 7. Configuración de Bloque Temporal del Calendario (Vacaciones, Clases, Coordinación, Salida)
@@ -111,14 +165,15 @@ export interface BloquePeriodoCalendario {
   descripcion?: string;
 }
 
-// 8. Fecha Hito Clave (Exámenes de Estado, Pruebas Institucionales y Salidas Pedagógicas)
-export type TipoHitoExamen = 'unal' | 'icfes' | 'simulacro' | 'salida' | 'cierre';
+// 8. Fecha Hito Clave (Exámenes de Estado, Pruebas Institucionales, Salidas Pedagógicas, Coordinación, Escuela de Formación y Asamblea)
+export type TipoHitoExamen = 'unal' | 'icfes' | 'simulacro' | 'salida' | 'cierre' | 'inauguracion' | 'coordinacion' | 'formacion' | 'asamblea' | 'hito';
 
 export interface FechaClaveExamen {
   id: string;
-  titulo: string;             // Ej: "Examen Admisión UNAL 2027-1", "Saber 11 ICFES Calendario A"
+  titulo: string;             // Ej: "Examen Admisión UNAL 2027-1", "Asamblea General Topo 2026"
   tipo: TipoHitoExamen;
-  fecha: string;              // YYYY-MM-DD o DD/MM/YYYY
+  fecha: string;              // YYYY-MM-DD o DD/MM/YYYY (o fecha inicial)
+  fechaFin?: string;          // YYYY-MM-DD opcional para hitos de varios días (ej. Asamblea de 2 días)
   descripcion?: string;
 }
 
@@ -147,11 +202,14 @@ export interface FranjaHorariaConfig {
 export interface EstadoCronogramaTopo {
   version: string;
   ultimaActualizacion: string;
+  calendarioActivoId?: string; // ID del calendario actualmente visualizado
+  calendarios?: CalendarioCicloTopo[]; // Lista de todos los calendarios (2026, 2027, etc.)
   hitos: EventoCronograma[];
   jornadas: JornadaPedagogica[];
   mallaCurricular: MallaComponente[];
   talleristas: string[];
   directorioTalleristas?: InfoContactoTallerista[]; // Datos personales/contacto
+  estudiantes?: EstudianteTopo[]; // Estudiantes del calendario actual
   franjasHorarias?: string[]; // Array de strings con las horas por defecto estructurales
   estructuraCalendario?: EstructuraCalendarioConfig; // Configuración de ciclos, períodos y exámenes
 }

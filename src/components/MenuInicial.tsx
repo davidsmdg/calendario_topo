@@ -24,6 +24,13 @@ import {
   CalendarClock,
   Check,
   ClipboardList,
+  Archive,
+  UserCheck,
+  Shield,
+  KeyRound,
+  CalendarCheck,
+  UserPlus,
+  RotateCcw,
 } from "lucide-react";
 import { TopoAvatar, SolMuralSVG, AbejitaMuralSVG, FlorMuralSVG } from "./TopoAvatar";
 import { EstadoCronogramaTopo, JornadaPedagogica } from "@/types";
@@ -32,10 +39,15 @@ import { TimelineEstrategico } from "./TimelineEstrategico";
 
 interface MenuInicialProps {
   estado: EstadoCronogramaTopo;
+  esCoordinador?: boolean;
+  usuarioActualNombre?: string;
+  onPostularEncargadx?: (jornadaId: string, nombreTallerista: string) => Promise<void>;
+  onLiberarEncargadx?: (jornadaId: string) => Promise<void>;
   onSeleccionarModulo: (
-    modulo: "juego" | "calendario" | "cronograma" | "matriz" | "talleristas" | "estructura" | "hoja_calculo" | "bitacora"
+    modulo: "juego" | "calendario" | "cronograma" | "matriz" | "talleristas" | "estructura" | "hoja_calculo" | "bitacora" | "ciclos_archivo"
   ) => void;
   onIrAJornada?: (jornadaId: string) => void;
+  onAbrirAsistenteCalendario?: () => void;
   onDescargarExcel: () => void;
   onAbrirModalSheets: () => void;
   onAbrirPausaActiva: () => void;
@@ -46,8 +58,13 @@ interface MenuInicialProps {
 
 export function MenuInicial({
   estado,
+  esCoordinador = false,
+  usuarioActualNombre = "David Díaz",
+  onPostularEncargadx,
+  onLiberarEncargadx,
   onSeleccionarModulo,
   onIrAJornada,
+  onAbrirAsistenteCalendario,
   onDescargarExcel,
   onAbrirModalSheets,
   onAbrirPausaActiva,
@@ -59,6 +76,10 @@ export function MenuInicial({
   const totalHitos = estado.hitos.length;
   const hitosCompletados = estado.hitos.filter((h) => h.completado).length;
   const totalJornadas = estado.jornadas.length;
+
+  // Determinar si hay un ciclo activo oficial en este momento
+  const hayCicloActivo = Boolean(estado.calendarioActivoId);
+  const calActivoObj = (estado.calendarios || []).find((c) => c.id === estado.calendarioActivoId);
 
   // Clasificación detallada de jornadas por carácter y tipo
   const jornadasClases = estado.jornadas.filter((j) => (j.caracter || (j.tipoJornada === "clases" ? "clases" : "coordinacion")) === "clases").length;
@@ -182,6 +203,56 @@ export function MenuInicial({
     });
   }, [estado.estructuraCalendario?.fechasClaveExamenes, jornadasOrdenadas]);
 
+  // Lógica para Encargadx del Día
+  const hoyRef = React.useMemo(() => {
+    const h = new Date();
+    h.setHours(0, 0, 0, 0);
+    return h;
+  }, []);
+  const hoyISO = hoyRef.toISOString().split("T")[0];
+
+  // Fechas libres (sin encargado asignado)
+  const fechasLibres = React.useMemo(() => {
+    return jornadasOrdenadas.filter((j) => !j.encargadxDelDia || !j.encargadxDelDia.trim());
+  }, [jornadasOrdenadas]);
+
+  // Próxima fecha libre (priorizando fechas futuras o de hoy, y si todas pasaron, la primera libre disponible)
+  const proximaFechaLibre = React.useMemo(() => {
+    const libreFutura = fechasLibres.find((j) => {
+      const iso = j.fechaISO || ddmmyyyyToISO(j.fecha) || "";
+      return iso >= hoyISO;
+    });
+    return libreFutura || fechasLibres[0] || null;
+  }, [fechasLibres, hoyISO]);
+
+  // Turno del usuario actual
+  const turnosUsuario = React.useMemo(() => {
+    if (!usuarioActualNombre) return [];
+    const nom = usuarioActualNombre.trim().toLowerCase();
+    return jornadasOrdenadas.filter(
+      (j) => j.encargadxDelDia && j.encargadxDelDia.trim().toLowerCase() === nom
+    );
+  }, [jornadasOrdenadas, usuarioActualNombre]);
+
+  // Próximo turno del usuario actual (futuro o primero disponible)
+  const miProximoTurno = React.useMemo(() => {
+    const futuro = turnosUsuario.find((j) => {
+      const iso = j.fechaISO || ddmmyyyyToISO(j.fecha) || "";
+      return iso >= hoyISO;
+    });
+    return futuro || turnosUsuario[0] || null;
+  }, [turnosUsuario, hoyISO]);
+
+  // Días faltantes para el turno del usuario actual
+  const diasFaltantesMiTurno = React.useMemo(() => {
+    if (!miProximoTurno) return null;
+    const iso = miProximoTurno.fechaISO || ddmmyyyyToISO(miProximoTurno.fecha) || "";
+    if (!iso) return null;
+    const [y, m, d] = iso.split("-").map(Number);
+    const target = new Date(y, m - 1, d);
+    return Math.round((target.getTime() - hoyRef.getTime()) / (1000 * 60 * 60 * 24));
+  }, [miProximoTurno, hoyRef]);
+
   return (
     <div className="max-w-[1300px] mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8 animate-fadeIn">
       {/* =========================================================================
@@ -220,327 +291,100 @@ export function MenuInicial({
 
             {/* Badges de resumen rápido */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-2">
-              <span className="px-3 py-1 rounded-xl bg-white/15 backdrop-blur border border-white/20 text-xs font-bold text-white">
-                📅 {totalJornadas} Fechas en Cronograma
-              </span>
-              <span className="px-3 py-1 rounded-xl bg-white/15 backdrop-blur border border-white/20 text-xs font-bold text-emerald-300">
-                📚 {jornadasClases} Sábados de Clases ({totalHorasPedagogicas} Horas)
-              </span>
-              <span className="px-3 py-1 rounded-xl bg-white/15 backdrop-blur border border-white/20 text-xs font-bold text-amber-300">
-                🏖️ {jornadasVacaciones} Recesos &bull; 👥 {jornadasCoordinacion} Coordinación
-              </span>
-              <span className="px-3 py-1 rounded-xl bg-white/15 backdrop-blur border border-white/20 text-xs font-bold text-purple-200">
-                ✓ {jornadasListas} Jornadas con Clases Asignadas
-              </span>
+              {hayCicloActivo ? (
+                <>
+                  <span className="px-3 py-1 rounded-xl bg-emerald-500/30 backdrop-blur border border-emerald-400 text-xs font-black text-emerald-200">
+                    🟢 Activo: {calActivoObj?.nombre || "Ciclo Oficial"}
+                  </span>
+                  <span className="px-3 py-1 rounded-xl bg-white/15 backdrop-blur border border-white/20 text-xs font-bold text-white">
+                    📅 {totalJornadas} Fechas
+                  </span>
+                  <span className="px-3 py-1 rounded-xl bg-white/15 backdrop-blur border border-white/20 text-xs font-bold text-emerald-300">
+                    📚 {jornadasClases} Sábados de Clases ({totalHorasPedagogicas} Horas)
+                  </span>
+                  <span className="px-3 py-1 rounded-xl bg-white/15 backdrop-blur border border-white/20 text-xs font-bold text-amber-300">
+                    🏖️ {jornadasVacaciones} Recesos &bull; 👥 {jornadasCoordinacion} Coordinación
+                  </span>
+                </>
+              ) : (
+                <span className="px-4 py-1.5 rounded-xl bg-amber-400/20 backdrop-blur border border-amber-300/40 text-xs font-bold text-amber-200">
+                  ⚠️ No hay un ciclo lectivo activo en este momento (período en receso o finalizado)
+                </span>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* =========================================================================
-          NUEVO RADAR OPERATIVO: PRÓXIMA JORNADA + ESTADÍSTICAS VIVAS + EXÁMENES + SEMÁFORO
-         ========================================================================= */}
-      <div className="space-y-5">
-        {/* FILA 1: RADAR DE LA PRÓXIMA JORNADA (ACCESO INMEDIATO) */}
-        {infoProximaJornada && (
-          <div className="rounded-3xl bg-gradient-to-r from-[#1B365D] via-[#2A4D7D] to-[#1B365D] text-white p-5 sm:p-6 border-4 border-amber-300 shadow-warm-lg flex flex-col md:flex-row items-center justify-between gap-5 animate-fadeIn">
-            <div className="flex items-center gap-4 w-full md:w-auto">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-400 text-topo-dark flex flex-col items-center justify-center font-black shadow-md shrink-0">
-                <span className="text-[10px] uppercase font-bold tracking-wider leading-none">JORNADA</span>
-                <span className="text-2xl leading-none mt-1">#{infoProximaJornada.jornada.numeroJornada}</span>
-              </div>
-              <div className="space-y-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400 text-topo-dark shadow-sm">
-                    {infoProximaJornada.esHoy
-                      ? "🎯 ¡Es Hoy!"
-                      : infoProximaJornada.yaPaso
-                      ? `Pasó hace ${Math.abs(infoProximaJornada.diasFaltantes)} días`
-                      : `⏳ Próxima en ${infoProximaJornada.diasFaltantes} días`}
-                  </span>
-                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-black uppercase ${
-                    infoProximaJornada.caracter === "clases"
-                      ? "bg-emerald-400 text-emerald-950"
-                      : infoProximaJornada.caracter === "vacaciones"
-                      ? "bg-amber-300 text-amber-950"
-                      : infoProximaJornada.caracter === "coordinacion"
-                      ? "bg-indigo-300 text-indigo-950"
-                      : "bg-purple-300 text-purple-950"
-                  }`}>
-                    {infoProximaJornada.caracter === "clases"
-                      ? "📚 Sábado de Clases"
-                      : infoProximaJornada.caracter === "vacaciones"
-                      ? "🏖️ Receso Escolar"
-                      : infoProximaJornada.caracter === "coordinacion"
-                      ? "👥 Coordinación"
-                      : "🎓 Examen / Simulacro"}
-                  </span>
-                  <span className="text-xs font-bold text-slate-300">
-                    {infoProximaJornada.jornada.diaSemana}
-                  </span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-black capitalize text-white">
-                  {infoProximaJornada.jornada.fecha}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-200 font-medium">
-                  {infoProximaJornada.caracter === "clases" ? (
-                    <>
-                      <span className="font-bold text-amber-300">Encargadx: </span>
-                      {infoProximaJornada.jornada.encargadxDelDia || "Por definir"} &bull;{" "}
-                      <span className="font-bold text-emerald-300">Materias: </span>
-                      {infoProximaJornada.jornada.bloques
-                        .map((b) => b.componente || "Sin materia")
-                        .join(" • ")}
-                    </>
-                  ) : (
-                    <>
-                      <span className="font-bold text-amber-300">Actividad: </span>
-                      {infoProximaJornada.jornada.descripcionUnificada || "Sin descripción de agenda"}
-                    </>
-                  )}
-                </p>
-              </div>
-            </div>
-
-            <div className="shrink-0 w-full md:w-auto flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => onSeleccionarModulo("bitacora")}
-                className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm shadow-md transition hover:scale-105 active:scale-95"
-              >
-                <ClipboardList className="w-4 h-4 text-amber-300" />
-                <span>Abrir Bitácora del Día</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (onIrAJornada) {
-                    onIrAJornada(infoProximaJornada.jornada.id);
-                  } else {
-                    onSeleccionarModulo("juego");
-                  }
-                }}
-                className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-topo-dark font-black text-xs sm:text-sm shadow-md transition hover:scale-105 active:scale-95"
-              >
-                <span>Planear Fecha</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
+      {/* BARRA INFORMATIVA DE ESTADO DEL CICLO: REDIRECCIÓN RÁPIDA */}
+      <div className={`rounded-3xl p-4 sm:p-5 border-2 shadow-warm flex flex-wrap items-center justify-between gap-4 transition ${
+        hayCicloActivo
+          ? "bg-emerald-50/80 border-emerald-300"
+          : "bg-amber-50/90 border-amber-300"
+      }`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-black ${
+            hayCicloActivo ? "bg-emerald-200 text-emerald-950" : "bg-amber-200 text-amber-950"
+          }`}>
+            {hayCicloActivo ? "🟢" : "⏸️"}
           </div>
-        )}
-
-        {/* FILA 2: GRID DE 3 BLOQUES EJECUTIVOS Y VISUALES */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* TARJETA RESUMEN 1: ESTRUCTURA REAL Y BALANCE DEL CALENDARIO */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-[#E2DCCE] shadow-warm space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-sm text-topo-dark flex items-center gap-2">
-                <span className="p-1.5 rounded-xl bg-amber-100 text-amber-800 text-xs">📊</span>
-                Estructura del Calendario
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-black text-stone-900">
+                {hayCicloActivo ? `Ciclo Lectivo Activo: ${calActivoObj?.nombre || "En curso"}` : "Sin ciclo lectivo activo"}
               </h3>
-              <span className="text-[10px] font-black uppercase text-stone-600 bg-stone-100 px-2 py-0.5 rounded-full">
-                {totalJornadas} Días Totales
+              <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                hayCicloActivo ? "bg-emerald-200 text-emerald-900" : "bg-amber-200 text-amber-900"
+              }`}>
+                {hayCicloActivo ? "En curso" : "Receso / Finalizado"}
               </span>
             </div>
-
-            {/* Barra segmentada visual del año */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-[11px] font-extrabold text-stone-500">
-                <span>Distribución del Año Pedagógico</span>
-                <span>{totalHorasPedagogicas} hrs de clase</span>
-              </div>
-              <div className="w-full h-3 rounded-full bg-stone-100 flex overflow-hidden border border-stone-200">
-                <div
-                  className="bg-emerald-500 h-full transition-all"
-                  style={{ width: `${(jornadasClases / (totalJornadas || 1)) * 100}%` }}
-                  title={`Clases: ${jornadasClases} días (${Math.round((jornadasClases / (totalJornadas || 1)) * 100)}%)`}
-                />
-                <div
-                  className="bg-amber-400 h-full transition-all"
-                  style={{ width: `${(jornadasVacaciones / (totalJornadas || 1)) * 100}%` }}
-                  title={`Vacaciones: ${jornadasVacaciones} días (${Math.round((jornadasVacaciones / (totalJornadas || 1)) * 100)}%)`}
-                />
-                <div
-                  className="bg-indigo-400 h-full transition-all"
-                  style={{ width: `${(jornadasCoordinacion / (totalJornadas || 1)) * 100}%` }}
-                  title={`Coordinación: ${jornadasCoordinacion} días (${Math.round((jornadasCoordinacion / (totalJornadas || 1)) * 100)}%)`}
-                />
-                <div
-                  className="bg-purple-500 h-full transition-all"
-                  style={{ width: `${(jornadasExamenes / (totalJornadas || 1)) * 100}%` }}
-                  title={`Exámenes: ${jornadasExamenes} días (${Math.round((jornadasExamenes / (totalJornadas || 1)) * 100)}%)`}
-                />
-              </div>
-            </div>
-
-            {/* Tarjeticas de métricas numéricas */}
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950">
-                <span className="text-[10px] uppercase font-black text-emerald-700 block">📚 Clases</span>
-                <span className="text-xl font-black">{jornadasClases}</span>
-                <span className="text-[10px] text-emerald-800 font-bold block">
-                  {Math.round((jornadasClases / (totalJornadas || 1)) * 100)}% del tiempo
-                </span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950">
-                <span className="text-[10px] uppercase font-black text-amber-700 block">🏖️ Recesos</span>
-                <span className="text-xl font-black">{jornadasVacaciones}</span>
-                <span className="text-[10px] text-amber-800 font-bold block">
-                  Vacaciones y festivos
-                </span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-950">
-                <span className="text-[10px] uppercase font-black text-indigo-700 block">👥 Coordinación</span>
-                <span className="text-xl font-black">{jornadasCoordinacion}</span>
-                <span className="text-[10px] text-indigo-800 font-bold block">
-                  Inducción / Escuela
-                </span>
-              </div>
-
-              <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200 text-purple-950">
-                <span className="text-[10px] uppercase font-black text-purple-700 block">🎓 Exámenes</span>
-                <span className="text-xl font-black">{jornadasExamenes}</span>
-                <span className="text-[10px] text-purple-800 font-bold block">
-                  Simulacros oficiales
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-stone-200 flex items-center justify-between text-[11px] text-stone-600 font-bold">
-              <span>📅 {totalSabados} Sábados</span>
-              <span>⚡ {totalEntreSemana} Fechas entre semana</span>
-            </div>
-          </div>
-
-          {/* TARJETA RESUMEN 2: HITOS Y EXÁMENES OFICIALES CON CUENTA REGRESIVA */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-[#E2DCCE] shadow-warm space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-sm text-topo-dark flex items-center gap-2">
-                <span className="p-1.5 rounded-xl bg-purple-100 text-purple-800 text-xs">🎓</span>
-                Exámenes Oficiales (Metas)
-              </h3>
-              <span className="text-[10px] font-black uppercase text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
-                Tiempo Restante
-              </span>
-            </div>
-
-            <div className="space-y-2 text-xs">
-              {examenesConConteo.map((e) => {
-                const yaPaso = e.diasFaltantes < 0;
-                const esHoy = e.diasFaltantes === 0;
-                return (
-                  <div
-                    key={e.id}
-                    className="p-3 rounded-2xl bg-purple-50/90 border border-purple-200 flex flex-col gap-1.5 text-purple-950"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="font-black leading-snug truncate">🎓 {e.titulo}</p>
-                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
-                        esHoy
-                          ? "bg-amber-400 text-topo-dark animate-pulse"
-                          : yaPaso
-                          ? "bg-stone-200 text-stone-600"
-                          : e.diasFaltantes <= 60
-                          ? "bg-rose-500 text-white animate-pulse"
-                          : "bg-purple-700 text-white"
-                      }`}>
-                        {esHoy
-                          ? "¡Es Hoy!"
-                          : yaPaso
-                          ? "Realizado"
-                          : `Faltan ${e.diasFaltantes} días`}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-[11px] text-purple-800">
-                      <span className="font-bold">Fecha: {e.fecha}</span>
-                      {!yaPaso && (
-                        <span className="font-black text-purple-900 bg-white/70 px-2 py-0.5 rounded-lg border border-purple-200">
-                          {e.sabadosDeClaseAntes} sábados de clase previos
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* TARJETA RESUMEN 3: MONITOR DE COBERTURA DE CLASES POR MATERIA (SEMÁFORO) */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-[#E2DCCE] shadow-warm space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-black text-sm text-topo-dark flex items-center gap-2">
-                <span className="p-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs">📈</span>
-                Semáforo Curricular
-              </h3>
-              <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
-                Meta: 11 Sesiones
-              </span>
-            </div>
-
-            <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1 text-xs">
-              {estado.mallaCurricular.map((m) => {
-                const count = conteoClasesPorComponente[m.componente.toUpperCase()] || 0;
-                const porcentaje = Math.min(100, Math.round((count / 11) * 100));
-                const esCompleto = count >= 11;
-                const enProgreso = count >= 6;
-
-                return (
-                  <div key={m.id} className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="font-black text-[11px] text-topo-dark truncate max-w-[150px]">
-                        {m.componente}
-                      </span>
-                      <span className={`text-[11px] font-black px-2 py-0.5 rounded-full ${
-                        esCompleto
-                          ? "bg-emerald-100 text-emerald-800"
-                          : enProgreso
-                          ? "bg-amber-100 text-amber-800"
-                          : "bg-rose-100 text-rose-800"
-                      }`}>
-                        {count} / 11 ses. ({porcentaje}%)
-                      </span>
-                    </div>
-
-                    <div className="w-full h-2 rounded-full bg-stone-200 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-300 ${
-                          esCompleto
-                            ? "bg-emerald-500"
-                            : enProgreso
-                            ? "bg-amber-400"
-                            : "bg-rose-400"
-                        }`}
-                        style={{ width: `${porcentaje}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <p className="text-xs text-stone-600 font-medium">
+              {hayCicloActivo
+                ? "Todas las clases, asistencias y bitácoras del sistema giran en torno a este ciclo activo."
+                : "No se registran clases actualmente. Puedes crear un nuevo ciclo o reactivar uno previo desde el archivo."}
+            </p>
           </div>
         </div>
 
-        {/* ESQUEMA ESTRATÉGICO PANORÁMICO RESUMIDO (TIMELINE HORIZONTAL DEL AÑO) */}
-        {estado.estructuraCalendario && (
-          <TimelineEstrategico
-            modalidadCiclo={estado.estructuraCalendario.modalidadCiclo}
-            nombreCiclo1={estado.estructuraCalendario.nombreCiclo1}
-            nombreCiclo2={estado.estructuraCalendario.nombreCiclo2}
-            periodos={estado.estructuraCalendario.periodosTemporales}
-            examenes={estado.estructuraCalendario.fechasClaveExamenes}
-            titulo="🗺️ Esquema Cronológico de Ciclos, Tramos y Metas 2027"
-            subtitulo="Panorámica visual del año lectivo, cortes de receso y metas de admisión oficial"
-            compacto={true}
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {hayCicloActivo ? (
+            <button
+              type="button"
+              onClick={() => onSeleccionarModulo("ciclos_archivo")}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white hover:bg-stone-50 border border-emerald-300 text-emerald-900 font-black text-xs shadow-sm transition active:scale-95"
+            >
+              <Archive className="w-3.5 h-3.5" />
+              <span>Gestionar / Desactivar Ciclo</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              {esCoordinador && onAbrirAsistenteCalendario && (
+                <button
+                  type="button"
+                  onClick={onAbrirAsistenteCalendario}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#7A3EBE] hover:bg-[#5C23A3] text-white font-black text-xs shadow-sm transition active:scale-95"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Crear Nuevo Ciclo</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => onSeleccionarModulo("ciclos_archivo")}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-black text-xs shadow-sm transition active:scale-95"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Ver Archivo / Activar Ciclo</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* =========================================================================
           PANEL DE ACCIONES GLOBALES / ADMINISTRATIVAS (EXCEL, SHEETS, PAUSA, ESTADO)
+          - Ubicado estratégicamente justo debajo del banner principal
          ========================================================================= */}
       <div className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-[#E2DCCE] shadow-warm flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -549,17 +393,17 @@ export function MenuInicial({
           </div>
           <div>
             <h3 className="text-sm font-black text-topo-dark">Herramientas Globales</h3>
-            <p className="text-xs text-stone-500">
+            <p className="text-xs text-stone-500 font-bold">
               Descarga consolidada en Excel o sincronización en la nube
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Indicador de guardado local y respaldo Excel */}
-          <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-black text-topo-green" title="Todos los cambios se guardan al instante en tu navegador y en el archivo RESPALDO_LOCAL_CRONOGRAMA_2027.xlsx de la carpeta">
+          {/* Indicador de sincronización en vivo con base de datos Supabase */}
+          <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-black text-topo-green" title="Todos los cambios se guardan y leen en vivo desde la base de datos de Supabase">
             <CheckCircle2 className="w-4 h-4" />
-            <span>{guardadoReciente ? "¡Guardado en Excel y Local!" : "Guardado automático local + Excel"}</span>
+            <span>Sincronizado con Base de Datos</span>
           </div>
 
           {/* Pausa Activa */}
@@ -600,6 +444,467 @@ export function MenuInicial({
             <span>Descargar Todo en Excel (.xlsx)</span>
           </button>
         </div>
+      </div>
+
+      {/* =========================================================================
+          RADAR OPERATIVO: SOLO SE RENDERIZA SI HAY UN CICLO LECTIVO ACTIVO
+         ========================================================================= */}
+      <div className="space-y-5">
+        {hayCicloActivo && (
+          <>
+            {/* FILA 1: RADAR DE LA PRÓXIMA JORNADA (ACCESO INMEDIATO) */}
+            {infoProximaJornada && (
+              <div className="rounded-3xl bg-gradient-to-r from-[#1B365D] via-[#2A4D7D] to-[#1B365D] text-white p-5 sm:p-6 border-4 border-amber-300 shadow-warm-lg flex flex-col md:flex-row items-center justify-between gap-5 animate-fadeIn">
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-400 text-topo-dark flex flex-col items-center justify-center font-black shadow-md shrink-0">
+                    <span className="text-[10px] uppercase font-bold tracking-wider leading-none">JORNADA</span>
+                    <span className="text-2xl leading-none mt-1">#{infoProximaJornada.jornada.numeroJornada}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400 text-topo-dark shadow-sm">
+                        {infoProximaJornada.esHoy
+                          ? "🎯 ¡Es Hoy!"
+                          : infoProximaJornada.yaPaso
+                          ? `Pasó hace ${Math.abs(infoProximaJornada.diasFaltantes)} días`
+                          : `⏳ Próxima en ${infoProximaJornada.diasFaltantes} días`}
+                      </span>
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-black uppercase ${
+                        infoProximaJornada.caracter === "clases"
+                          ? "bg-emerald-400 text-emerald-950"
+                          : infoProximaJornada.caracter === "vacaciones"
+                          ? "bg-amber-300 text-amber-950"
+                          : infoProximaJornada.caracter === "coordinacion"
+                          ? "bg-indigo-300 text-indigo-950"
+                          : "bg-purple-300 text-purple-950"
+                      }`}>
+                        {infoProximaJornada.caracter === "clases"
+                          ? "📚 Sábado de Clases"
+                          : infoProximaJornada.caracter === "vacaciones"
+                          ? "🏖️ Receso Escolar"
+                          : infoProximaJornada.caracter === "coordinacion"
+                          ? "👥 Coordinación"
+                          : "🎓 Examen / Simulacro"}
+                      </span>
+                      <span className="text-xs font-bold text-slate-300">
+                        {infoProximaJornada.jornada.diaSemana}
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-black capitalize text-white">
+                      {infoProximaJornada.jornada.fecha}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-200 font-medium">
+                      {infoProximaJornada.caracter === "clases" ? (
+                        <>
+                          <span className="font-bold text-amber-300">Encargadx: </span>
+                          {infoProximaJornada.jornada.encargadxDelDia || "Por definir"} &bull;{" "}
+                          <span className="font-bold text-emerald-300">Materias: </span>
+                          {infoProximaJornada.jornada.bloques
+                            .map((b) => b.componente || "Sin materia")
+                            .join(" • ")}
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-bold text-amber-300">Actividad: </span>
+                          {infoProximaJornada.jornada.descripcionUnificada || "Sin descripción de agenda"}
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="shrink-0 w-full md:w-auto flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onSeleccionarModulo("bitacora")}
+                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm shadow-md transition hover:scale-105 active:scale-95"
+                  >
+                    <ClipboardList className="w-4 h-4 text-amber-300" />
+                    <span>Abrir Bitácora del Día</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onIrAJornada) {
+                        onIrAJornada(infoProximaJornada.jornada.id);
+                      } else {
+                        onSeleccionarModulo("juego");
+                      }
+                    }}
+                    className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-topo-dark font-black text-xs sm:text-sm shadow-md transition hover:scale-105 active:scale-95"
+                  >
+                    <span>Planear Fecha</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* FILA 2: GRID DE BLOQUES EJECUTIVOS Y VISUALES */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              {/* TARJETA RESUMEN 1: ESTRUCTURA REAL Y BALANCE DEL CALENDARIO */}
+              <div className="bg-white rounded-3xl p-5 border-2 border-[#E2DCCE] shadow-warm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-black text-sm text-topo-dark flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-amber-100 text-amber-800 text-xs">📊</span>
+                    Estructura del Calendario
+                  </h3>
+                  <span className="text-[10px] font-black uppercase text-stone-600 bg-stone-100 px-2 py-0.5 rounded-full">
+                    {totalJornadas} Días Totales
+                  </span>
+                </div>
+
+                {/* Barra segmentada visual del año */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-extrabold text-stone-500">
+                    <span>Distribución del Año Pedagógico</span>
+                    <span>{totalHorasPedagogicas} hrs de clase</span>
+                  </div>
+                  <div className="w-full h-3 rounded-full bg-stone-100 flex overflow-hidden border border-stone-200">
+                    <div
+                      className="bg-emerald-500 h-full transition-all"
+                      style={{ width: `${(jornadasClases / (totalJornadas || 1)) * 100}%` }}
+                      title={`Clases: ${jornadasClases} días (${Math.round((jornadasClases / (totalJornadas || 1)) * 100)}%)`}
+                    />
+                    <div
+                      className="bg-amber-400 h-full transition-all"
+                      style={{ width: `${(jornadasVacaciones / (totalJornadas || 1)) * 100}%` }}
+                      title={`Vacaciones: ${jornadasVacaciones} días (${Math.round((jornadasVacaciones / (totalJornadas || 1)) * 100)}%)`}
+                    />
+                    <div
+                      className="bg-indigo-400 h-full transition-all"
+                      style={{ width: `${(jornadasCoordinacion / (totalJornadas || 1)) * 100}%` }}
+                      title={`Coordinación: ${jornadasCoordinacion} días (${Math.round((jornadasCoordinacion / (totalJornadas || 1)) * 100)}%)`}
+                    />
+                    <div
+                      className="bg-purple-500 h-full transition-all"
+                      style={{ width: `${(jornadasExamenes / (totalJornadas || 1)) * 100}%` }}
+                      title={`Exámenes: ${jornadasExamenes} días (${Math.round((jornadasExamenes / (totalJornadas || 1)) * 100)}%)`}
+                    />
+                  </div>
+                </div>
+
+                {/* Tarjeticas de métricas numéricas */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950">
+                    <span className="text-[10px] uppercase font-black text-emerald-700 block">📚 Clases</span>
+                    <span className="text-xl font-black">{jornadasClases}</span>
+                    <span className="text-[10px] text-emerald-800 font-bold block">
+                      {Math.round((jornadasClases / (totalJornadas || 1)) * 100)}% del tiempo
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-950">
+                    <span className="text-[10px] uppercase font-black text-amber-700 block">🏖️ Recesos</span>
+                    <span className="text-xl font-black">{jornadasVacaciones}</span>
+                    <span className="text-[10px] text-amber-800 font-bold block">
+                      Vacaciones y festivos
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-950">
+                    <span className="text-[10px] uppercase font-black text-indigo-700 block">👥 Coordinación</span>
+                    <span className="text-xl font-black">{jornadasCoordinacion}</span>
+                    <span className="text-[10px] text-indigo-800 font-bold block">
+                      Inducción / Escuela
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200 text-purple-950">
+                    <span className="text-[10px] uppercase font-black text-purple-700 block">🎓 Exámenes</span>
+                    <span className="text-xl font-black">{jornadasExamenes}</span>
+                    <span className="text-[10px] text-purple-800 font-bold block">
+                      Simulacros oficiales
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-stone-200 flex items-center justify-between text-[11px] text-stone-600 font-bold">
+                  <span>📅 {totalSabados} Sábados</span>
+                  <span>⚡ {totalEntreSemana} Fechas entre semana</span>
+                </div>
+              </div>
+
+              {/* MÓDULO INTEGRADO: GESTIÓN DE ENCARGADX DEL DÍA (COL-SPAN 2) */}
+              <div className="lg:col-span-2 bg-white rounded-3xl p-5 sm:p-6 border-2 border-[#E2DCCE] shadow-warm flex flex-col justify-between gap-4">
+                {/* Cabecera unificada */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-stone-100">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-lg shadow-sm">
+                      📋
+                    </div>
+                    <div>
+                      <h3 className="font-black text-base text-topo-dark leading-tight flex items-center gap-2">
+                        Gestión de Encargadx del Día
+                      </h3>
+                      <p className="text-[11px] text-stone-500 font-medium">
+                        Apertura de sede, logística y toma comunitaria de asistencia
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${
+                      miProximoTurno ? "bg-purple-100 text-purple-800" : "bg-stone-100 text-stone-600"
+                    }`}>
+                      {miProximoTurno ? "Tu turno asignado" : "Sin asignar a ti"}
+                    </span>
+                    <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${
+                      fechasLibres.length > 0 ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"
+                    }`}>
+                      {fechasLibres.length > 0 ? `${fechasLibres.length} Fechas Libres` : "100% Cubierto"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Cuerpo dividido en 2 columnas integradas */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                  {/* LADO IZQUIERDO: Mi Turno Personal & Acceso a Bitácora */}
+                  <div className="flex flex-col justify-between p-4 rounded-2xl bg-[#FAF9F5] border border-stone-200/80 space-y-3">
+                    <div className="space-y-2.5">
+                      <span className="text-[10px] font-black text-stone-500 uppercase tracking-wider block">
+                        👤 Mi Turno Personal
+                      </span>
+
+                      {miProximoTurno ? (
+                        <div className="p-3.5 rounded-xl bg-white border border-purple-200 shadow-sm space-y-2 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-black text-purple-900 text-sm">
+                              Jornada #{miProximoTurno.numeroJornada}
+                            </span>
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
+                              diasFaltantesMiTurno === 0
+                                ? "bg-amber-400 text-topo-dark animate-pulse"
+                                : diasFaltantesMiTurno !== null && diasFaltantesMiTurno < 0
+                                ? "bg-stone-200 text-stone-600"
+                                : diasFaltantesMiTurno !== null && diasFaltantesMiTurno <= 7
+                                ? "bg-rose-500 text-white animate-pulse"
+                                : "bg-purple-700 text-white"
+                            }`}>
+                              {diasFaltantesMiTurno === 0
+                                ? "¡Es Hoy!"
+                                : diasFaltantesMiTurno !== null && diasFaltantesMiTurno < 0
+                                ? "Turno anterior"
+                                : `Faltan ${diasFaltantesMiTurno} días`}
+                            </span>
+                          </div>
+
+                          <div className="text-purple-950 space-y-0.5">
+                            <p className="font-black text-xs">📅 {miProximoTurno.fecha}</p>
+                            <p className="text-[11px] text-purple-700 font-medium">
+                              Horario: {miProximoTurno.horasJornada || "8:00 AM - 3:00 PM"}
+                            </p>
+                          </div>
+
+                          <div className="pt-2 border-t border-purple-100 flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-stone-600">
+                              Responsable: <strong className="text-purple-900">{miProximoTurno.encargadxDelDia}</strong>
+                            </span>
+                            {onLiberarEncargadx && (
+                              <button
+                                type="button"
+                                onClick={() => onLiberarEncargadx(miProximoTurno.id)}
+                                className="text-[10px] font-bold text-rose-600 hover:text-rose-800 underline transition"
+                              >
+                                Liberar fecha
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-4 rounded-xl bg-white border border-stone-200 text-center space-y-1.5">
+                          <div className="text-xl">🌱</div>
+                          <p className="text-xs font-bold text-stone-700">
+                            No tienes sábados asignados en este ciclo
+                          </p>
+                          <p className="text-[10px] text-stone-500">
+                            Puedes postularte a las fechas disponibles en la lista contigua.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (miProximoTurno && onIrAJornada) {
+                          onIrAJornada(miProximoTurno.id);
+                        }
+                        onSeleccionarModulo("bitacora");
+                      }}
+                      className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs shadow-sm transition hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <ClipboardList className="w-4 h-4 text-amber-300" />
+                      <span>Acceder a Bitácora del Encargadx</span>
+                    </button>
+                  </div>
+
+                  {/* LADO DERECHO: Próxima Libre & Lista de Postulaciones */}
+                  <div className="flex flex-col justify-between p-4 rounded-2xl bg-[#FAF9F5] border border-stone-200/80 space-y-2.5">
+                    <span className="text-[10px] font-black text-stone-500 uppercase tracking-wider block">
+                      ✋ Fechas y Postulación Comunitaria
+                    </span>
+
+                    {/* Próxima fecha libre destacada */}
+                    {proximaFechaLibre ? (
+                      <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-2 shrink-0">
+                        <div>
+                          <span className="text-[9px] font-black text-amber-800 uppercase block">Próxima libre</span>
+                          <span className="text-xs font-black text-stone-900 block">
+                            #{proximaFechaLibre.numeroJornada} - {proximaFechaLibre.fecha}
+                          </span>
+                        </div>
+                        {onPostularEncargadx && (
+                          <button
+                            type="button"
+                            onClick={() => onPostularEncargadx(proximaFechaLibre.id, usuarioActualNombre)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-topo-dark font-black text-[11px] shadow-sm transition hover:scale-105 active:scale-95"
+                          >
+                            <UserPlus className="w-3.5 h-3.5" />
+                            <span>Postularme</span>
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+
+                    {/* Lista scrollable de fechas */}
+                    <div className="space-y-1.5 max-h-[175px] overflow-y-auto pr-1 text-xs flex-1">
+                      {jornadasOrdenadas.map((j) => {
+                        const tieneEncargado = Boolean(j.encargadxDelDia?.trim());
+                        const soyYo = j.encargadxDelDia?.trim().toLowerCase() === (usuarioActualNombre || "").trim().toLowerCase();
+                        const esLibre = !tieneEncargado;
+
+                        return (
+                          <div
+                            key={j.id}
+                            className={`p-2 rounded-xl border flex items-center justify-between gap-2 transition ${
+                              soyYo
+                                ? "bg-purple-50/90 border-purple-200 text-purple-950 font-bold"
+                                : esLibre
+                                ? "bg-white border-amber-200/80 hover:bg-amber-50/40"
+                                : "bg-white/80 border-stone-200 text-stone-600"
+                            }`}
+                          >
+                            <div className="truncate min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[11px] font-black text-stone-900">
+                                  #{j.numeroJornada}
+                                </span>
+                                <span className="text-[11px] text-stone-700">
+                                  {j.fecha}
+                                </span>
+                              </div>
+                              <div className="text-[10px] truncate text-stone-500">
+                                {soyYo ? "Tú eres encargadx ✨" : tieneEncargado ? `Encargadx: ${j.encargadxDelDia}` : "Sin encargadx asignadx"}
+                              </div>
+                            </div>
+
+                            <div className="shrink-0">
+                              {esLibre && onPostularEncargadx ? (
+                                <button
+                                  type="button"
+                                  onClick={() => onPostularEncargadx(j.id, usuarioActualNombre)}
+                                  className="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 text-[10px] font-black transition"
+                                >
+                                  Postular
+                                </button>
+                              ) : soyYo && onLiberarEncargadx ? (
+                                <button
+                                  type="button"
+                                  onClick={() => onLiberarEncargadx(j.id)}
+                                  className="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-bold transition"
+                                >
+                                  Liberar
+                                </button>
+                              ) : (
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                  tieneEncargado ? "bg-stone-100 text-stone-600" : "bg-amber-100 text-amber-800"
+                                }`}>
+                                  {tieneEncargado ? "Asignado" : "Libre"}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ESQUEMA ESTRATÉGICO PANORÁMICO RESUMIDO (TIMELINE HORIZONTAL DEL AÑO) */}
+        {hayCicloActivo && estado.estructuraCalendario && (estado.estructuraCalendario.periodosTemporales?.length > 0 || estado.estructuraCalendario.fechasClaveExamenes?.length > 0) ? (
+          <TimelineEstrategico
+            modalidadCiclo={estado.estructuraCalendario.modalidadCiclo}
+            nombreCiclo1={estado.estructuraCalendario.nombreCiclo1}
+            nombreCiclo2={estado.estructuraCalendario.nombreCiclo2}
+            periodos={estado.estructuraCalendario.periodosTemporales || []}
+            examenes={estado.estructuraCalendario.fechasClaveExamenes || []}
+            titulo="🗺️ Esquema Cronológico de Ciclos, Tramos y Metas"
+            subtitulo="Panorámica visual del año lectivo, cortes de receso y metas de admisión oficial"
+            compacto={true}
+          />
+        ) : (
+          /* ESPACIO PERMANENTE DEL CALENDARIO GRÁFICO CUANDO NO HAY UNO ACTIVO O ESTÁ VACÍO */
+          <div className="rounded-3xl border-2 border-dashed border-[#D5CBB8] bg-white p-8 shadow-warm text-center space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-3">
+              <div className="text-left">
+                <h3 className="text-sm sm:text-base font-black text-topo-dark flex items-center gap-2">
+                  <span>🗺️ Esquema Cronológico de Ciclos y Metas</span>
+                </h3>
+                <p className="text-xs text-stone-500 font-bold mt-0.5">
+                  Visualización panorámica del año lectivo y exámenes
+                </p>
+              </div>
+              <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                Sin Ciclo Activo en Curso
+              </span>
+            </div>
+
+            <div className="py-6 max-w-lg mx-auto space-y-3">
+              <div className="w-14 h-14 rounded-3xl bg-amber-50 border-2 border-amber-200 text-amber-600 flex items-center justify-center mx-auto text-2xl shadow-sm">
+                📅
+              </div>
+              <div className="space-y-1">
+                <p className="text-base font-black text-topo-dark">
+                  No hay un calendario o ciclo lectivo activo en este momento
+                </p>
+                <p className="text-xs text-stone-600 leading-relaxed max-w-md mx-auto">
+                  {esCoordinador
+                    ? "El período anterior ha finalizado o se encuentra en receso. Como equipo de coordinación puedes iniciar el asistente para estructurar un nuevo ciclo o reactivar uno previo desde el archivo."
+                    : "El período anterior ha finalizado. El equipo de coordinación publicará las fechas y el cronograma escolar una vez aprobado el nuevo ciclo lectivo."}
+                </p>
+              </div>
+
+              {esCoordinador && (
+                <div className="pt-3 flex flex-wrap items-center justify-center gap-2.5">
+                  {onAbrirAsistenteCalendario && (
+                    <button
+                      type="button"
+                      onClick={onAbrirAsistenteCalendario}
+                      className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#7A3EBE] hover:bg-[#5C23A3] text-white font-black text-xs shadow-md transition transform active:scale-95"
+                    >
+                      <Sparkles className="w-4 h-4 text-amber-300" />
+                      <span>Crear / Programar Nuevo Calendario</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => onSeleccionarModulo("ciclos_archivo")}
+                    className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-black text-xs shadow-sm transition transform active:scale-95"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Ver Archivo / Reactivar Ciclo</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* =========================================================================
@@ -771,10 +1076,10 @@ export function MenuInicial({
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* TARJETA 5: ESTRUCTURA DEL CALENDARIO (ESTRATÉGICO) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* TARJETA 5: ASISTENTE DE PROGRAMACIÓN / NUEVO CALENDARIO (REEMPLAZA BOTÓN ESTRUCTURA) */}
             <div
-              onClick={() => onSeleccionarModulo("estructura")}
+              onClick={() => onAbrirAsistenteCalendario ? onAbrirAsistenteCalendario() : onSeleccionarModulo("estructura")}
               role="button"
               tabIndex={0}
               className="group relative rounded-3xl bg-gradient-to-r from-[#1B365D] via-[#244673] to-[#0F233D] text-white border-4 border-amber-400 hover:border-amber-300 p-6 shadow-warm hover:shadow-2xl transition-all duration-200 cursor-pointer overflow-hidden flex flex-col justify-between"
@@ -784,29 +1089,27 @@ export function MenuInicial({
               <div>
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <div className="w-14 h-14 rounded-2xl bg-amber-400 text-[#1B365D] flex items-center justify-center font-black shadow-lg shrink-0 group-hover:scale-105 transition-transform">
-                    <Settings2 className="w-8 h-8" />
+                    <Sparkles className="w-8 h-8 text-amber-300" />
                   </div>
                   <span className="px-3 py-0.5 rounded-full bg-amber-400 text-[#1B365D] text-xs font-black uppercase tracking-wider">
-                    Estratégico
+                    Asistente Coordinación
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-black text-white group-hover:text-amber-300 transition-colors">
-                  Estructura y Ciclos del Calendario
+                <h3 className="text-xl font-black text-white group-hover:text-amber-300 transition-colors">
+                  Programar / Nuevo Calendario
                 </h3>
-                <p className="text-xs sm:text-sm text-blue-100 mt-2 leading-relaxed">
-                  Configura si el año opera en <strong>1 o 2 ciclos</strong>, delimita bloques de
-                  <strong> vacaciones, clases y semanas de coordinación</strong>, programa fechas clave de
-                  <strong> exámenes UNAL e ICFES</strong> y ajusta horas maestras de inicio.
+                <p className="text-xs text-blue-100 mt-2 leading-relaxed">
+                  Asistente paso a paso para abrir un nuevo ciclo (2027 o semestral), calcular sábados lectivos y programar hitos institucionales.
                 </p>
               </div>
 
               <div className="mt-6 pt-3 border-t border-white/10 flex items-center justify-between">
                 <span className="text-xs font-bold text-amber-200">
-                  Ciclos • Vacaciones • Exámenes • Horas
+                  Asistente Oficial • Nuevos Ciclos
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-400 text-[#1B365D] font-black text-xs group-hover:bg-amber-300 transition-colors shadow-sm">
-                  <span>Configurar</span>
+                  <span>Abrir Asistente</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </span>
               </div>
@@ -831,22 +1134,112 @@ export function MenuInicial({
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-black text-white group-hover:text-emerald-300 transition-colors">
-                  Directorio y Seguimiento de Talleristas
+                <h3 className="text-xl font-black text-white group-hover:text-emerald-300 transition-colors">
+                  Directorio de Talleristas
                 </h3>
-                <p className="text-xs sm:text-sm text-blue-100 mt-2 leading-relaxed">
+                <p className="text-xs text-blue-100 mt-2 leading-relaxed">
                   Monitorea clases asignadas, días en escuela, compromisos y <strong>datos personales</strong>
-                  (teléfono, WhatsApp, correo y notas) con administración de componentes por materia.
+                  (teléfono, WhatsApp, correo) con filtro de activos vs antiguos.
                 </p>
               </div>
 
               <div className="mt-6 pt-3 border-t border-white/10 flex items-center justify-between">
                 <span className="text-xs font-bold text-emerald-200">
-                  Cargas • Teléfonos • Correos • Materias
+                  Cargas • Teléfonos • Activos
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-400 text-[#1E3557] font-black text-xs group-hover:bg-emerald-300 transition-colors shadow-sm">
                   <span>Directorio</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </div>
+            </div>
+
+            {/* TARJETA 7: ESTUDIANTES, ASISTENCIA Y PERMANENCIA */}
+            <div
+              onClick={() => onSeleccionarModulo("estudiantes" as any)}
+              role="button"
+              tabIndex={0}
+              className="group relative rounded-3xl bg-gradient-to-r from-[#0F3854] via-[#15527A] to-[#0A2639] text-white border-4 border-blue-400 hover:border-blue-300 p-6 shadow-warm hover:shadow-2xl transition-all duration-200 cursor-pointer overflow-hidden flex flex-col justify-between"
+            >
+              <div className="absolute -top-12 -right-12 w-36 h-36 bg-blue-400/10 rounded-full blur-2xl pointer-events-none" />
+
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-400 text-[#0F3854] flex items-center justify-center font-black shadow-lg shrink-0 group-hover:scale-105 transition-transform">
+                    🎒
+                  </div>
+                  <span className="px-3 py-0.5 rounded-full bg-blue-400 text-[#0F3854] text-xs font-black uppercase tracking-wider">
+                    {(estado.estudiantes || []).length} Alumnos
+                  </span>
+                </div>
+
+                <h3 className="text-xl font-black text-white group-hover:text-blue-300 transition-colors">
+                  Estudiantes y Permanencia
+                </h3>
+                <p className="text-xs text-blue-100 mt-2 leading-relaxed">
+                  Registro de asistencia por clases (0 a 4 bloques), control de <strong>lista de espera</strong>,
+                  tasa de deserción y resultados Saber 11 vinculados al calendario.
+                </p>
+              </div>
+
+              <div className="mt-6 pt-3 border-t border-white/10 flex items-center justify-between">
+                <span className="text-xs font-bold text-blue-200">
+                  Asistencia • Espera • Deserción
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-400 text-[#0F3854] font-black text-xs group-hover:bg-blue-300 transition-colors shadow-sm">
+                  <span>Estudiantes</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* GRUPO C: MEMORIA Y PERÍODOS ANTERIORES (ARCHIVADOR HISTÓRICO) */}
+        <div className="pt-2">
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h2 className="text-xl font-black text-topo-dark flex items-center gap-2">
+              <Archive className="w-5 h-5 text-stone-600" />
+              <span>📚 Períodos y Ciclos Anteriores (Histórico)</span>
+            </h2>
+            <span className="text-xs text-stone-500 font-semibold">
+              Consulta balances, asistencia, estudiantes y talleristas de años pasados
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* TARJETA ACCESO AL ARCHIVO GENERAL */}
+            <div
+              onClick={() => onSeleccionarModulo("ciclos_archivo" as any)}
+              role="button"
+              tabIndex={0}
+              className="group relative rounded-3xl bg-stone-900 hover:bg-stone-950 text-white border-4 border-stone-700 hover:border-amber-400 p-6 shadow-warm hover:shadow-2xl transition-all duration-200 cursor-pointer overflow-hidden flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <div className="w-12 h-12 rounded-2xl bg-amber-400 text-stone-950 flex items-center justify-center font-black shadow-md shrink-0">
+                  <Archive className="w-6 h-6" />
+                </div>
+                <span className="px-3 py-0.5 rounded-full bg-stone-800 text-amber-300 text-[10px] font-black uppercase tracking-wider border border-stone-700">
+                  Archivo & Memoria
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-black text-white group-hover:text-amber-300 transition-colors">
+                  Archivo de Ciclos y Memoria
+                </h3>
+                <p className="text-xs text-stone-300 mt-2 leading-relaxed">
+                  Consulta balances, memorias de 2026, reactiva períodos anteriores o gestiona los calendarios lectivos de la Escuela Popular El Topo.
+                </p>
+              </div>
+
+              <div className="mt-6 pt-3 border-t border-stone-800 flex items-center justify-between">
+                <span className="text-[11px] font-bold text-amber-200">
+                  Ciclos Finalizados y Activos
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-400 text-stone-950 font-black text-xs group-hover:bg-amber-300 transition-colors shadow-sm">
+                  <span>Abrir Archivo</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
             </div>

@@ -3,6 +3,8 @@ import {
   EventoCronograma,
   JornadaPedagogica,
   EstructuraCalendarioConfig,
+  CalendarioCicloTopo,
+  EstudianteTopo,
 } from "@/types";
 import {
   HITOS_2027_SEED,
@@ -10,13 +12,17 @@ import {
   MALLA_CURRICULAR_SEED,
   TALLERISTAS_SEED,
 } from "@/utils/seedData";
+import { CALENDARIO_2026_SEED } from "@/utils/seedData2026";
 
-// Nueva clave v3 para cargar inmediatamente las 66 jornadas cronológicas de 2027 (52 sábados + fechas específicas con tareas) y la Malla llena
-const STORAGE_KEY = "el_topo_cronograma_2027_v4";
+// Clave v7 para conectar lectura 100% directa desde Base de Datos Supabase
+const STORAGE_KEY = "el_topo_cronograma_2027_v7";
 const OLD_KEYS = [
   "el_topo_cronograma_2027",
   "el_topo_cronograma_2027_v2",
   "el_topo_cronograma_2027_v3",
+  "el_topo_cronograma_2027_v4",
+  "el_topo_cronograma_2027_v5",
+  "el_topo_cronograma_2027_v6",
 ];
 const SHEETS_URL_KEY = "el_topo_sheets_webapp_url";
 
@@ -112,16 +118,50 @@ export const ESTRUCTURA_CALENDARIO_DEFECTO: EstructuraCalendarioConfig = {
   ],
 };
 
+export const CALENDARIO_2027_SEED: CalendarioCicloTopo = {
+  id: "cal-2027-anual",
+  nombre: "2027 - Ciclo Anual (En Planeación)",
+  codigo: "2027",
+  ano: 2027,
+  estado: "activo",
+  fechaInicio: "2027-02-06",
+  fechaFin: "2027-10-09",
+  descripcion: "Ciclo formativo 2027 en planeación comunitaria. Estructura configurable por Coordinación.",
+  jornadas: [],
+  hitos: [],
+  mallaCurricular: MALLA_CURRICULAR_SEED,
+  estructuraCalendario: {
+    modalidadCiclo: "anual",
+    nombreCiclo1: "Ciclo Anual 2027",
+    horaInicioDefecto: "8:00 AM",
+    duracionBloqueMinutos: 90,
+    periodosTemporales: [],
+    fechasClaveExamenes: [],
+  },
+  estudiantes: [],
+  talleristasAsignados: TALLERISTAS_SEED,
+};
+
 export function obtenerEstadoInicialSemilla(): EstadoCronogramaTopo {
   return {
-    version: "3.0.0",
+    version: "5.0.0",
     ultimaActualizacion: new Date().toISOString(),
-    hitos: HITOS_2027_SEED,
-    jornadas: JORNADAS_2027_SEED,
+    calendarioActivoId: "cal-2027-anual",
+    calendarios: [CALENDARIO_2027_SEED, CALENDARIO_2026_SEED],
+    hitos: [],
+    jornadas: [],
     mallaCurricular: MALLA_CURRICULAR_SEED,
     talleristas: TALLERISTAS_SEED,
+    estudiantes: [],
     franjasHorarias: FRANJAS_DEFECTO_ESTRUCTURAL,
-    estructuraCalendario: ESTRUCTURA_CALENDARIO_DEFECTO,
+    estructuraCalendario: {
+      modalidadCiclo: "anual",
+      nombreCiclo1: "Ciclo Anual 2027",
+      horaInicioDefecto: "8:00 AM",
+      duracionBloqueMinutos: 90,
+      periodosTemporales: [],
+      fechasClaveExamenes: [],
+    },
   };
 }
 
@@ -159,28 +199,35 @@ export const StorageService = {
         return inicial;
       }
       const parsed = JSON.parse(guardado) as Partial<EstadoCronogramaTopo>;
+      const calendariosCargados =
+        Array.isArray(parsed.calendarios) && parsed.calendarios.length > 0
+          ? parsed.calendarios
+          : [CALENDARIO_2027_SEED, CALENDARIO_2026_SEED];
+
+      // Asegurar que exista el calendario 2026 en la lista si no estaba
+      if (!calendariosCargados.some((c) => c.id === "cal-2026-anual")) {
+        calendariosCargados.push(CALENDARIO_2026_SEED);
+      }
+
+      const calActivoId = parsed.calendarioActivoId || "cal-2027-anual";
+      const calActivo = calendariosCargados.find((c) => c.id === calActivoId) || calendariosCargados[0];
+
       return {
-        version: parsed.version || "3.0.0",
+        version: parsed.version || "5.0.0",
         ultimaActualizacion: parsed.ultimaActualizacion || new Date().toISOString(),
-        hitos:
-          Array.isArray(parsed.hitos) && parsed.hitos.length > 0
-            ? parsed.hitos
-            : HITOS_2027_SEED,
-        jornadas:
-          Array.isArray(parsed.jornadas) && parsed.jornadas.length > 0
-            ? parsed.jornadas
-            : JORNADAS_2027_SEED,
-        mallaCurricular:
-          Array.isArray(parsed.mallaCurricular) && parsed.mallaCurricular.length > 0
-            ? parsed.mallaCurricular
-            : MALLA_CURRICULAR_SEED,
+        calendarioActivoId: calActivo.id,
+        calendarios: calendariosCargados,
+        hitos: calActivo.hitos || [],
+        jornadas: calActivo.jornadas || [],
+        mallaCurricular: calActivo.mallaCurricular || MALLA_CURRICULAR_SEED,
         talleristas: Array.isArray(parsed.talleristas) ? parsed.talleristas : TALLERISTAS_SEED,
         directorioTalleristas: Array.isArray(parsed.directorioTalleristas) ? parsed.directorioTalleristas : [],
+        estudiantes: calActivo.estudiantes || [],
         franjasHorarias:
           Array.isArray(parsed.franjasHorarias) && parsed.franjasHorarias.length > 0
             ? parsed.franjasHorarias
             : FRANJAS_DEFECTO_ESTRUCTURAL,
-        estructuraCalendario: parsed.estructuraCalendario || ESTRUCTURA_CALENDARIO_DEFECTO,
+        estructuraCalendario: calActivo.estructuraCalendario || undefined,
       };
     } catch (e) {
       console.error("Error leyendo localStorage, usando datos semilla 2027:", e);

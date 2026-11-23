@@ -53,6 +53,25 @@ export function obtenerFestivoPorFechaISO(fechaISO: string): FestivoColombia | u
 }
 
 /**
+ * Revisa si una fecha dada en ISO o su lunes siguiente corresponde a puente festivo en Colombia
+ */
+export function esFestivoColombia(fechaISO: string): boolean {
+  if (FESTIVOS_COLOMBIA_2027.some((f) => f.fecha === fechaISO)) return true;
+  // Si es sábado, revisar si el lunes inmediatamente posterior es festivo (Puente Ley Emiliani)
+  const d = new Date(fechaISO + "T00:00:00");
+  if (d.getDay() === 6) {
+    const lunes = new Date(d);
+    lunes.setDate(lunes.getDate() + 2);
+    const y = lunes.getFullYear();
+    const m = String(lunes.getMonth() + 1).padStart(2, "0");
+    const day = String(lunes.getDate()).padStart(2, "0");
+    const lunesISO = `${y}-${m}-${day}`;
+    return FESTIVOS_COLOMBIA_2027.some((f) => f.fecha === lunesISO);
+  }
+  return false;
+}
+
+/**
  * Convierte "DD/MM/YYYY" o "23 de enero de 2027" a "YYYY-MM-DD"
  */
 export function ddmmyyyyToISO(fechaStr?: string): string | null {
