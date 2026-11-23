@@ -1,0 +1,1550 @@
+[
+  {
+    "id": "jornada-2026-1",
+    "numeroJornada": "1",
+    "fechaISO": "2026-01-24",
+    "fecha": "24 de enero de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "coordinacion",
+    "encargadxDelDia": "Todos",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "unificada",
+    "descripcionUnificada": "REUNIÓN DE COORDINACIÓN #1\n\nESCUELA DE FORMACIÓN #1",
+    "bloques": [
+      {
+        "id": "cal26-j1-b1",
+        "hora": "8:00 AM - 3:00 PM",
+        "componente": "REUNIÓN DE COORDINACIÓN #1\n\nESCUELA DE FORMACIÓN #1",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j1-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j1-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j1-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-2",
+    "numeroJornada": "2",
+    "fechaISO": "2026-01-31",
+    "fecha": "31 de enero de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "coordinacion",
+    "encargadxDelDia": "Todos",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "unificada",
+    "descripcionUnificada": "INAUGURACIÓN Y BIENVENIDA A FAMILIAS Y ESTUDIANTES 2026",
+    "bloques": [
+      {
+        "id": "cal26-j2-b1",
+        "hora": "8:00 AM - 12:00 M",
+        "componente": "INAUGURACIÓN\nDaniela, Tatiana, David Díaz, Óscar",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j2-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j2-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j2-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-3",
+    "numeroJornada": "3",
+    "fechaISO": "2026-02-07",
+    "fecha": "7 de febrero de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Camilo Torres",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j3-b1",
+        "hora": "8:00 AM - 9:50 AM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Sesión de bienvenida",
+        "talleristas": "Aleja, David Guáqueta"
+      },
+      {
+        "id": "cal26-j3-b2",
+        "hora": "10:10 AM - 12:00 PM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Sesión de bienvenida",
+        "talleristas": "Aleja, David Guáqueta"
+      },
+      {
+        "id": "cal26-j3-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j3-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": "Primer simulacro - 08 de febrero"
+  },
+  {
+    "id": "jornada-2026-4",
+    "numeroJornada": "4",
+    "fechaISO": "2026-02-14",
+    "fecha": "14 de febrero de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Yarid",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j4-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Introducción: ¿Para qué las Ciencias Sociales y cómo pensarnos desde ella?",
+        "talleristas": "Camilo Torres, Alexa"
+      },
+      {
+        "id": "cal26-j4-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Qué es matemáticas. Operaciones y propiedades. Jerarquía",
+        "talleristas": "Óscar, Yarid"
+      },
+      {
+        "id": "cal26-j4-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "La importancia de la lectura. La lectura como proceso",
+        "talleristas": "Camilo Torres, Miguel Fuerte"
+      },
+      {
+        "id": "cal26-j4-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 1.\nLo vivo & la vida - Biomoléculas",
+        "talleristas": "Sebastián Vélez, Johan Mejía, Nicolás Velásquez, Lesley Cortés"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-5",
+    "numeroJornada": "5",
+    "fechaISO": "2026-02-21",
+    "fecha": "21 de febrero de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "David Guáqueta",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j5-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "El inglés en la prueba Saber 11 - Introducción al inglés como lengua franca y 'universal'",
+        "talleristas": "Miguel Fuerte, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j5-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Introducción: Estados de la materia, propiedades fisicoquímicas y diagramas",
+        "talleristas": "Jairo, Lore"
+      },
+      {
+        "id": "cal26-j5-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "Instroducción geometria y Gestalt",
+        "talleristas": "Mao, David Díaz"
+      },
+      {
+        "id": "cal26-j5-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Introducción: Fenómenos físicos, variables físicas y sistemas de unidades.",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-6",
+    "numeroJornada": "6",
+    "fechaISO": "2026-02-28",
+    "fecha": "28 de febrero de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Juan Pablo Vargas",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j6-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "¿Cómo leer textos desde la filosofía?",
+        "talleristas": "Canela Rodríguez, Catalina, David Guáqueta"
+      },
+      {
+        "id": "cal26-j6-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Regla de 3 (relacionar magnitudes). Fracciones y números racionales",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j6-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Pensamiento histórico",
+        "talleristas": "Yeraldín Buitrago, Alexa"
+      },
+      {
+        "id": "cal26-j6-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Formación Post secundaria",
+        "talleristas": "Aleja, David Guáqueta, Karen"
+      }
+    ],
+    "comentarios": "Escuela de formadores #01\nDavid y Karen (Comunic. asertiva)"
+  },
+  {
+    "id": "jornada-2026-7",
+    "numeroJornada": "7",
+    "fechaISO": "2026-03-07",
+    "fecha": "7 de marzo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Lesley Cortés",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j7-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "¿Cómo leemos? Momentos y tipos de lectura",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j7-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 2. Biología molecular",
+        "talleristas": "Sebastián Vélez, Johan Mejía, Nicolás Velásquez, Lesley Cortés"
+      },
+      {
+        "id": "cal26-j7-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "INGLÉS",
+        "temaDelDia": "What do I look like? What am I like? Physical description and personality",
+        "talleristas": "Miguel Fuerte, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j7-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Estructuras atómicas, moleculares, enlaces, mol.",
+        "talleristas": "Lore, Jairo"
+      }
+    ],
+    "comentarios": "Reunión de coordinación #02"
+  },
+  {
+    "id": "jornada-2026-8",
+    "numeroJornada": "8",
+    "fechaISO": "2026-03-14",
+    "fecha": "14 de marzo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "David Díaz",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j8-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "Isometricos",
+        "talleristas": "Mao, David Díaz"
+      },
+      {
+        "id": "cal26-j8-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Clase de ejercicios (fracciones)",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j8-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Métodos de estudio y aprendizaje",
+        "talleristas": "David Guáqueta"
+      },
+      {
+        "id": "cal26-j8-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Factores de conversión, notación científica y escalas",
+        "talleristas": "Miguel Ruiz"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-9",
+    "numeroJornada": "9",
+    "fechaISO": "2026-03-21",
+    "fecha": "21 de marzo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Sebastián Vélez",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j9-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Historia universal",
+        "talleristas": "Canela Rodríguez, Yeraldín Buitrago"
+      },
+      {
+        "id": "cal26-j9-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Panorama general de la lectura. Lectura como proceso creativo",
+        "talleristas": "Miguel Fuerte"
+      },
+      {
+        "id": "cal26-j9-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "Conceptos básicos de lógica y argumentación",
+        "talleristas": "Canela Rodríguez, Catalina"
+      },
+      {
+        "id": "cal26-j9-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 3. Membranas",
+        "talleristas": "Nicolás Velásquez, Johan Mejía, Sebastián Vélez"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-10",
+    "numeroJornada": "10",
+    "fechaISO": "2026-03-28",
+    "fecha": "28 de marzo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "unificada",
+    "descripcionUnificada": "PRIMERA SALIDA PEDAGÓGICA (museos) \nMigue F, Camilo, Sebas V., Johan",
+    "bloques": [
+      {
+        "id": "cal26-j10-b1",
+        "hora": "8:00 AM - 1:00 PM",
+        "componente": "PRIMERA SALIDA PEDAGÓGICA (museos) \nMigue F, Camilo, Sebas V., Johan",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j10-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j10-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j10-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-11",
+    "numeroJornada": "11",
+    "fechaISO": "2026-04-04",
+    "fecha": "4 de abril de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "",
+    "horasJornada": "- - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j11-b1",
+        "hora": "-",
+        "componente": "SEMANA SANTA",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j11-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j11-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j11-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-12",
+    "numeroJornada": "12",
+    "fechaISO": "2026-04-11",
+    "fecha": "11 de abril de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Diego Olave",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j12-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "What's in the house? Housing vocabulary and prepositions of place",
+        "talleristas": "Kevin Quevedo, Paula Ávila, Miguel Fuerte"
+      },
+      {
+        "id": "cal26-j12-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Tabla periódica",
+        "talleristas": "Jairo"
+      },
+      {
+        "id": "cal26-j12-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "Isometricos parte 2",
+        "talleristas": "Mao, David Díaz"
+      },
+      {
+        "id": "cal26-j12-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Magnitudes Escalares y Vectoriales\nIntroducción Cinemática",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-13",
+    "numeroJornada": "13",
+    "fechaISO": "2026-04-18",
+    "fecha": "18 de abril de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Yeraldín Buitrago",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j13-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "Lógica y argumentación aplicada",
+        "talleristas": "Catalina, David Guáqueta"
+      },
+      {
+        "id": "cal26-j13-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Fundamentos de álgebra",
+        "talleristas": "Kenny"
+      },
+      {
+        "id": "cal26-j13-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Análisis geográfico",
+        "talleristas": "Alexa, Yeraldín Buitrago"
+      },
+      {
+        "id": "cal26-j13-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Preparación para los exámenes",
+        "talleristas": "Tati, Aleja"
+      }
+    ],
+    "comentarios": "Reunión de coordinación #03\nASAMBLEA DE TOPITOS (No hubo)"
+  },
+  {
+    "id": "jornada-2026-14",
+    "numeroJornada": "14",
+    "fechaISO": "2026-04-25",
+    "fecha": "25 de abril de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Alexa",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j14-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Lectura literal: ¿cómo entendemos lo que está allí?",
+        "talleristas": "Juan Pablo Vargas, Camilo Torres"
+      },
+      {
+        "id": "cal26-j14-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 4. Genética mendeliana",
+        "talleristas": "Johan Mejía, Lesley Cortés"
+      },
+      {
+        "id": "cal26-j14-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Present (simple and progressive), introduction to past simple and prepositions (place and time)",
+        "talleristas": "Paula Ávila, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j14-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Entrevista",
+        "talleristas": "Tati, Aleja, Karen, David Guáqueta"
+      }
+    ],
+    "comentarios": "Cambio de Química (Original) a orientación Vocacional (Nuevo)"
+  },
+  {
+    "id": "jornada-2026-15",
+    "numeroJornada": "15",
+    "fechaISO": "2026-05-02",
+    "fecha": "2 de mayo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Sebastián Vélez",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j15-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "ISOMETRICOS 3",
+        "talleristas": "Mao, David Díaz"
+      },
+      {
+        "id": "cal26-j15-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "Lectura crítica y análisis de argumentos",
+        "talleristas": "Canela Rodríguez, David Guáqueta"
+      },
+      {
+        "id": "cal26-j15-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Reacciones químicas, estequiometría.",
+        "talleristas": "Lore, Jairo"
+      },
+      {
+        "id": "cal26-j15-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Cinemática: MRU MRUA",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-16",
+    "numeroJornada": "16",
+    "fechaISO": "2026-05-09",
+    "fecha": "9 de mayo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Juan Pablo Vargas",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j16-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Conceptos de geografía",
+        "talleristas": "Alexa, Yeraldín Buitrago"
+      },
+      {
+        "id": "cal26-j16-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Funciones",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j16-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Lectura inferencial (i): ¿qué es inferir en la lectura?",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j16-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 5. Genética molecular",
+        "talleristas": "Lesley Cortés"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-17",
+    "numeroJornada": "17",
+    "fechaISO": "2026-05-16",
+    "fecha": "16 de mayo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Kevin Quevedo",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j17-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Past tenses (progressive and simple), prepositions of time, and possessives.",
+        "talleristas": "Paula Ávila, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j17-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Soluciones, molaridad, reacciones ácido-base.",
+        "talleristas": "Jairo"
+      },
+      {
+        "id": "cal26-j17-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "AIM 5",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j17-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Dinámica: Leyes de Newton",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": "Fotos/vídeos : https://photos.app.goo.gl/7zdUHSFjJC6QqYax7"
+  },
+  {
+    "id": "jornada-2026-18",
+    "numeroJornada": "18",
+    "fechaISO": "2026-05-23",
+    "fecha": "23 de mayo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Diego Olave",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j18-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Tips para la vida universitaria",
+        "talleristas": "Tati"
+      },
+      {
+        "id": "cal26-j18-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Geometría",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j18-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Análisis Político",
+        "talleristas": "Camilo Torres, Alexa"
+      },
+      {
+        "id": "cal26-j18-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "¿Cómo abordar la historia del pensamiento y la fliosofía? Antigua parte 1",
+        "talleristas": "Catalina, David Guáqueta"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-19",
+    "numeroJornada": "19",
+    "fechaISO": "2026-05-30",
+    "fecha": "30 de mayo de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Kevin Quevedo",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j19-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Future Simple / Going to / Progressive: What will we do in vacations?",
+        "talleristas": "Kevin Quevedo, Paula Ávila"
+      },
+      {
+        "id": "cal26-j19-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 6. Evolución\nTorneo Pókemon",
+        "talleristas": "Nicolás Velásquez, Sebastián Vélez"
+      },
+      {
+        "id": "cal26-j19-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Gases ideales",
+        "talleristas": "Jairo"
+      },
+      {
+        "id": "cal26-j19-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Ejercicios Cinemática y Dinámica",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": "Reunión de coordinación #04 (Elecciones - Gestión espacio)\nDecisiòn salida pedagògica Segundo simulacro - 31 de mayo"
+  },
+  {
+    "id": "jornada-2026-20",
+    "numeroJornada": "20",
+    "fechaISO": "2026-06-06",
+    "fecha": "6 de junio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Canela Rodríguez",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j20-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Lectura inferencial (ii)",
+        "talleristas": "Miguel Fuerte"
+      },
+      {
+        "id": "cal26-j20-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "Antigua parte 2 (Clásicos, sofistas y helenística)",
+        "talleristas": "Catalina, Canela Rodríguez, David Guáqueta"
+      },
+      {
+        "id": "cal26-j20-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Manejo de emociones",
+        "talleristas": "Aleja, David Guáqueta, Karen"
+      },
+      {
+        "id": "cal26-j20-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "Estructura organizativa Y repaso",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-21",
+    "numeroJornada": "21",
+    "fechaISO": "2026-06-13",
+    "fecha": "13 de junio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Canela Rodríguez",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j21-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Estructura del Estado",
+        "talleristas": "Alexa, Canela Rodríguez"
+      },
+      {
+        "id": "cal26-j21-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Trigonometría",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j21-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Lectura crítico intertextual (i)",
+        "talleristas": "Juan Pablo Vargas"
+      },
+      {
+        "id": "cal26-j21-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 7.\nEcosistemas & ecología",
+        "talleristas": "Sebastián Vélez, Johan Mejía"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-22",
+    "numeroJornada": "22",
+    "fechaISO": "2026-06-20",
+    "fecha": "20 de junio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Diego Olave",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j22-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Comparatives and superlatives. Wild cards",
+        "talleristas": "Miguel Fuerte, Paula Ávila, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j22-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Química orgánica, nomenclatura, hidrocarburos y compuestos",
+        "talleristas": "Lore"
+      },
+      {
+        "id": "cal26-j22-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "Estructura organizativa Y repaso",
+        "talleristas": "Mao, David Díaz"
+      },
+      {
+        "id": "cal26-j22-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Energía mecánica y trabajo",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": "Escuela de formación #02\nDidáctica y manejo de grupo - Yeral y Camilo"
+  },
+  {
+    "id": "jornada-2026-23",
+    "numeroJornada": "23",
+    "fechaISO": "2026-06-27",
+    "fecha": "27 de junio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "receso",
+    "encargadxDelDia": "",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "unificada",
+    "descripcionUnificada": "VACACIONES TOPO (Sábado de puente San Pedro)",
+    "bloques": [
+      {
+        "id": "cal26-j23-b1",
+        "hora": "8:00 AM - 12:00 M",
+        "componente": "VACACIONES TOPO",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j23-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j23-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j23-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": "Sábado de puente san Pedro"
+  },
+  {
+    "id": "jornada-2026-24",
+    "numeroJornada": "24",
+    "fechaISO": "2026-07-04",
+    "fecha": "4 de julio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Tati",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j24-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "Probabilidad y estadística",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j24-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "MADRIGUERA SOCIAL",
+        "temaDelDia": "Clase conjunta: Libertad y análisis económico",
+        "talleristas": "Catalina, Camilo Torres, David Guáqueta"
+      },
+      {
+        "id": "cal26-j24-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "MADRIGUERA SOCIAL",
+        "temaDelDia": "Clase conjunta: Libertad y análisis económico",
+        "talleristas": "Catalina, Camilo Torres, David Guáqueta"
+      },
+      {
+        "id": "cal26-j24-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "ORIENTACIÓN VOCACIONAL",
+        "temaDelDia": "Habilidades socioemocionales (SABER ICFES)",
+        "talleristas": "Tati, Karen, Aleja"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-25",
+    "numeroJornada": "25",
+    "fechaISO": "2026-07-11",
+    "fecha": "11 de julio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Kevin Quevedo",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j25-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Lectura crítico intertextual (ii)",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j25-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión compartida. Energía - Fotosíntesis",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j25-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Sesión compartida. Energía - Fotosíntesis",
+        "talleristas": "Jairo"
+      },
+      {
+        "id": "cal26-j25-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Sesión compartida. Energía - Fotosíntesis",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": "Reunión de coordinación #05"
+  },
+  {
+    "id": "jornada-2026-26",
+    "numeroJornada": "26",
+    "fechaISO": "2026-07-18",
+    "fecha": "18 de julio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "David Díaz",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j26-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "Repaso y estategias por parte del analisis de la imagen para afrontar un examen",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j26-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "Modernidad / Posmodernidad (S. XX - XXI)",
+        "talleristas": "Catalina, David Guáqueta"
+      },
+      {
+        "id": "cal26-j26-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Historia de Colombia (Enfoque económico)",
+        "talleristas": "Canela Rodríguez, Yeraldín Buitrago, Camilo Torres"
+      },
+      {
+        "id": "cal26-j26-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Club de lectura",
+        "talleristas": "Juan Pablo Vargas, Camilo Torres"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-27",
+    "numeroJornada": "27",
+    "fechaISO": "2026-07-25",
+    "fecha": "25 de julio de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Daniela",
+    "horasJornada": "- - 3:00 PM",
+    "tipoJornada": "unificada",
+    "descripcionUnificada": "SEGUNDA SALIDA PEDAGÓGICA\nTaller cuerpo, memoria\nYeral - Biología",
+    "bloques": [
+      {
+        "id": "cal26-j27-b1",
+        "hora": "-",
+        "componente": "SEGUNDA SALIDA PEDAGÓGICA\nTaller cuerpo, memoria\nYeral - Biología",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j27-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j27-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j27-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": "EXAMEN SABER 11 - 26 DE JULIO 2026"
+  },
+  {
+    "id": "jornada-2026-28",
+    "numeroJornada": "28",
+    "fechaISO": "2026-08-01",
+    "fecha": "1 de agosto de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Lesley Cortés",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j28-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "¿Financieras?",
+        "talleristas": "Kenny"
+      },
+      {
+        "id": "cal26-j28-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "Sesión 9. Biotecnología",
+        "talleristas": "Lesley Cortés"
+      },
+      {
+        "id": "cal26-j28-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Modal Verbs (advice, necessity, and obligation)",
+        "talleristas": "Paula Ávila, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j28-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Electromagnetismo",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-29",
+    "numeroJornada": "29",
+    "fechaISO": "2026-08-08",
+    "fecha": "8 de agosto de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Tati",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j29-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Conditionals (0, and 1)",
+        "talleristas": "Paula Ávila, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j29-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "QM 9 (Solución de problemas complejos)",
+        "talleristas": "Jairo"
+      },
+      {
+        "id": "cal26-j29-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "AIM 9",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j29-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "Pensamiento latinoamericano (desde Abya Yala)",
+        "talleristas": "Catalina, Canela Rodríguez"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-30",
+    "numeroJornada": "30",
+    "fechaISO": "2026-08-15",
+    "fecha": "15 de agosto de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Catalina",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j30-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Club de lectura",
+        "talleristas": "Camilo Torres"
+      },
+      {
+        "id": "cal26-j30-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Second Conditional / Karaoke",
+        "talleristas": "Kevin Quevedo, Paula Ávila"
+      },
+      {
+        "id": "cal26-j30-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "Repaso y solución ejercicios UNAL",
+        "talleristas": "Jairo, Lore"
+      },
+      {
+        "id": "cal26-j30-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Ondas",
+        "talleristas": "Diego Olave, Miguel Ruiz"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-31",
+    "numeroJornada": "31",
+    "fechaISO": "2026-08-22",
+    "fecha": "22 de agosto de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Camilo Torres",
+    "horasJornada": "- - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j31-b1",
+        "hora": "-",
+        "componente": "TERCER SIMULACRO PRESENCIAL\n\nTalleristas soporte para la logística del simulacro: Canela (organización) \n\nRoles: Yeraldin (organización)\n\nNicolás, Diego, Kevin, Catalina, Jairo, David Guáqueta (acompañamiento y digitación)",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j31-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j31-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j31-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": "Tercer simulacro presencial\nReunión de coordinación 6"
+  },
+  {
+    "id": "jornada-2026-32",
+    "numeroJornada": "32",
+    "fechaISO": "2026-08-29",
+    "fecha": "29 de agosto de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Johan Mejía",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j32-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "BIOLOGÍA",
+        "temaDelDia": "",
+        "talleristas": "Sebastián Vélez, Johan Mejía"
+      },
+      {
+        "id": "cal26-j32-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Repaso",
+        "talleristas": "Camilo Torres"
+      },
+      {
+        "id": "cal26-j32-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Repaso",
+        "talleristas": "Miguel Fuerte"
+      },
+      {
+        "id": "cal26-j32-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-33",
+    "numeroJornada": "33",
+    "fechaISO": "2026-09-05",
+    "fecha": "5 de septiembre de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Nicolás Velásquez",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j33-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "ANÁLISIS DE LA IMAGEN",
+        "temaDelDia": "Refuerzo",
+        "talleristas": "David Díaz"
+      },
+      {
+        "id": "cal26-j33-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "INGLÉS",
+        "temaDelDia": "Wasted Time - Sing Me Something New",
+        "talleristas": "Paula Ávila, Kevin Quevedo"
+      },
+      {
+        "id": "cal26-j33-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "CONTEXTO",
+        "temaDelDia": "Sesión final. Cierre",
+        "talleristas": "Camilo Torres"
+      },
+      {
+        "id": "cal26-j33-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "FILOSOFÍA",
+        "temaDelDia": "Refuerzo: Lógica y argumentación",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-34",
+    "numeroJornada": "34",
+    "fechaISO": "2026-09-12",
+    "fecha": "12 de septiembre de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "clases",
+    "encargadxDelDia": "Miguel Ruiz",
+    "horasJornada": "8:00 AM - 3:00 PM",
+    "tipoJornada": "clases",
+    "descripcionUnificada": "",
+    "bloques": [
+      {
+        "id": "cal26-j34-b1",
+        "hora": "8:00 AM - 9:30 AM",
+        "componente": "MATEMÁTICAS",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j34-b2",
+        "hora": "9:30 AM - 11:00 AM",
+        "componente": "QUÍMICA",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j34-b3",
+        "hora": "11:15 AM - 12:45 PM",
+        "componente": "FÍSICA",
+        "temaDelDia": "Refuerzos",
+        "talleristas": "Miguel Ruiz"
+      },
+      {
+        "id": "cal26-j34-b4",
+        "hora": "1:30 PM - 3:00 PM",
+        "componente": "LENGUAJE",
+        "temaDelDia": "Sesión final: club de lectura y escritura creativa",
+        "talleristas": "Miguel Fuerte, Juan Pablo Vargas, Camilo Torres"
+      }
+    ],
+    "comentarios": ""
+  },
+  {
+    "id": "jornada-2026-35",
+    "numeroJornada": "35",
+    "fechaISO": "2026-09-19",
+    "fecha": "19 de septiembre de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "receso",
+    "encargadxDelDia": "Sebastián Vélez",
+    "horasJornada": "- - 3:00 PM",
+    "tipoJornada": "unificada",
+    "descripcionUnificada": "LIBRE SIN PROGRAMACIÓN \n(POSIBLE SALIDA PEDAGÓGICA FINAL)",
+    "bloques": [
+      {
+        "id": "cal26-j35-b1",
+        "hora": "-",
+        "componente": "LIBRE SIN PROGRAMACIÓN \n(POSIBLE SALIDA PEDAGÓGICA FINAL)",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j35-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j35-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j35-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": "EXAMEN UNIVERSIDAD NACIONAL - SEPTIEMBRE 20 (Confirmado página web)"
+  },
+  {
+    "id": "jornada-2026-36",
+    "numeroJornada": "36",
+    "fechaISO": "2026-09-26",
+    "fecha": "26 de septiembre de 2026",
+    "diaSemana": "Sábado",
+    "caracter": "coordinacion",
+    "encargadxDelDia": "Todos",
+    "horasJornada": "10:00 AM - 3:00 PM",
+    "tipoJornada": "unificada",
+    "descripcionUnificada": "CIERRE DEL PROCESO FORMATIVO 2026",
+    "bloques": [
+      {
+        "id": "cal26-j36-b1",
+        "hora": "10:00 AM - 02:00 PM",
+        "componente": "CIERRE DEL PROCESO",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j36-b2",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j36-b3",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      },
+      {
+        "id": "cal26-j36-b4",
+        "hora": "",
+        "componente": "",
+        "temaDelDia": "",
+        "talleristas": ""
+      }
+    ],
+    "comentarios": ""
+  }
+]
