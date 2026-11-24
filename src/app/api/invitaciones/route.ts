@@ -28,10 +28,16 @@ export async function POST(req: Request) {
 
     const rolNormalizado = rol === "coordinador" ? "coordinador" : "tallerista";
 
+    // Determinar la URL de redirección según el entorno
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://calendario-topo.vercel.app");
+
     // 1. Enviar invitación con Supabase Auth Admin
     const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
       email.trim(),
       {
+        redirectTo: siteUrl,
         data: {
           nombre: nombre.trim(),
           rol: rolNormalizado,
@@ -47,37 +53,37 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Guardar o actualizar en la tabla perfiles_talleristas en PostgreSQL
-    const client = new Client({
-      connectionString:
-        process.env.DATABASE_URL ||
-        "postgresql://postgres:TopoCoordinacion2026@db.lwdrgduectungtsubhew.supabase.co:5432/postgres",
-    });
+    // 2. Guardar o actualizar en la tabla perfiles_talleristas vía Supabase Client (sin depender de pg directo)
+    const { data: existingProfiles, error: searchError } = await supabaseAdmin
+      .from("perfiles_talleristas")
+      .select("id")
+      .or(`email.eq.${email.trim()},nombre.ilike.${nombre.trim()}`)
+      .limit(1);
 
-    try {
-      await client.connect();
-      // Si ya existe el tallerista por nombre o email, actualizamos; sino insertamos
-      const checkExist = await client.query(
-        "SELECT id FROM perfiles_talleristas WHERE email = $1 OR nombre ILIKE $2",
-        [email.trim(), nombre.trim()]
-      );
+    if (searchError) {
+      console.warn("Aviso al consultar perfiles_talleristas:", searchError);
+    }
 
-      if (checkExist.rows.length > 0) {
-        await client.query(
-          `UPDATE perfiles_talleristas 
-           SET email = $1, rol = $2, componentes = COALESCE($3, componentes), activo = true 
-           WHERE id = $4`,
-          [email.trim(), rolNormalizado, componentes || [], checkExist.rows[0].id]
-        );
-      } else {
-        await client.query(
-          `INSERT INTO perfiles_talleristas (nombre, email, rol, componentes, activo)
-           VALUES ($1, $2, $3, $4, true)`,
-          [nombre.trim(), email.trim(), rolNormalizado, componentes || []]
-        );
-      }
-    } finally {
-      await client.end();
+    if (existingProfiles && existingProfiles.length > 0) {
+      await supabaseAdmin
+        .from("perfiles_talleristas")
+        .update({
+          email: email.trim(),
+          rol: rolNormalizado,
+          componentes: componentes || [],
+          activo: true,
+        })
+        .eq("id", existingProfiles[0].id);
+    } else {
+      await supabaseAdmin
+        .from("perfiles_talleristas")
+        .insert({
+          nombre: nombre.trim(),
+          email: email.trim(),
+          rol: rolNormalizado,
+          componentes: componentes || [],
+          activo: true,
+        });
     }
 
     return NextResponse.json({
