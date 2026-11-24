@@ -66,6 +66,41 @@ type ModuloActivo =
   | "historico_2026"
   | "ciclos_archivo";
 
+const RUTA_A_MODULO: Record<string, ModuloActivo> = {
+  "": "menu",
+  "menu": "menu",
+  "juego": "juego",
+  "planificador": "juego",
+  "calendario": "calendario",
+  "cronograma": "cronograma",
+  "matriz": "matriz",
+  "talleristas": "talleristas",
+  "estudiantes": "estudiantes",
+  "estructura": "estructura",
+  "hoja-calculo": "hoja_calculo",
+  "hoja_calculo": "hoja_calculo",
+  "bitacora": "bitacora",
+  "archivo-ciclos": "ciclos_archivo",
+  "ciclos_archivo": "ciclos_archivo",
+  "historico-2026": "historico_2026",
+  "historico_2026": "historico_2026",
+};
+
+const MODULO_A_RUTA: Record<ModuloActivo, string> = {
+  menu: "/",
+  juego: "/juego",
+  calendario: "/calendario",
+  cronograma: "/cronograma",
+  matriz: "/matriz",
+  talleristas: "/talleristas",
+  estudiantes: "/estudiantes",
+  estructura: "/estructura",
+  hoja_calculo: "/hoja-calculo",
+  bitacora: "/bitacora",
+  ciclos_archivo: "/archivo-ciclos",
+  historico_2026: "/historico-2026",
+};
+
 export default function HomePage() {
   const [estado, setEstado] = useState<EstadoCronogramaTopo>(() =>
     obtenerEstadoInicialSemilla()
@@ -103,9 +138,37 @@ export default function HomePage() {
 
   const timerDebounceBackup = useRef<NodeJS.Timeout | null>(null);
 
+  const navegarAModulo = useCallback((m: ModuloActivo) => {
+    setModuloActivo(m);
+    if (typeof window !== "undefined") {
+      const ruta = MODULO_A_RUTA[m] || "/";
+      if (window.location.pathname !== ruta) {
+        window.history.pushState({ modulo: m }, "", ruta);
+      }
+    }
+  }, []);
+
   useEffect(() => {
-    // Al abrir o recargar la aplicación:
-    // 1. Cargar lo que esté en LocalStorage como respuesta inmediata
+    // Sincronizar ruta inicial del navegador con el módulo activo
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname.replace(/^\//, "").split("/")[0] || "";
+      const moduloCorrespondiente = RUTA_A_MODULO[path];
+      if (moduloCorrespondiente) {
+        setModuloActivo(moduloCorrespondiente);
+      }
+
+      const handlePopState = () => {
+        const curPath = window.location.pathname.replace(/^\//, "").split("/")[0] || "";
+        const mod = RUTA_A_MODULO[curPath] || "menu";
+        setModuloActivo(mod);
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    }
+  }, []);
+
+  useEffect(() => {
     const local = StorageService.cargarLocal();
     setEstado(local);
     setTieneUrlSheets(Boolean(StorageService.obtenerUrlGoogleSheets()));
@@ -429,7 +492,7 @@ export default function HomePage() {
       jornadas: [...estado.jornadas, nueva],
     });
     setJornadaDestacadaId(nuevaId);
-    setModuloActivo("juego");
+    navegarAModulo("juego");
   };
 
   const handleActualizarMalla = (nuevaMalla: MallaComponente[]) => {
@@ -728,7 +791,7 @@ export default function HomePage() {
                 {/* Botón Destacado estilo Kahoot para Volver al Menú */}
                 <button
                   type="button"
-                  onClick={() => setModuloActivo("menu")}
+                  onClick={() => navegarAModulo("menu")}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white hover:bg-[#F6F2E9] border-2 border-[#D5CBB8] text-topo-dark font-black text-xs sm:text-sm shadow-sm transition transform active:scale-95 group"
                 >
                   <ArrowLeft className="w-4 h-4 text-topo-terracotta group-hover:-translate-x-1 transition-transform" />
@@ -891,7 +954,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("juego");
+                              navegarAModulo("juego");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -915,7 +978,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("calendario");
+                              navegarAModulo("calendario");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -939,7 +1002,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("cronograma");
+                              navegarAModulo("cronograma");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -963,7 +1026,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("matriz");
+                              navegarAModulo("matriz");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -987,7 +1050,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("hoja_calculo");
+                              navegarAModulo("hoja_calculo");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -1011,7 +1074,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("talleristas");
+                              navegarAModulo("talleristas");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -1035,7 +1098,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("estudiantes");
+                              navegarAModulo("estudiantes");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -1059,7 +1122,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("bitacora");
+                              navegarAModulo("bitacora");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -1083,7 +1146,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("ciclos_archivo");
+                              navegarAModulo("ciclos_archivo");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className={`flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black text-left transition ${
@@ -1129,7 +1192,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={() => {
-                              setModuloActivo("menu");
+                              navegarAModulo("menu");
                               setMenuHamburguesaAbierto(false);
                             }}
                             className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-black transition"
@@ -1163,10 +1226,10 @@ export default function HomePage() {
             usuarioActualNombre={talleristaSesion.nombre}
             onPostularEncargadx={handlePostularEncargadx}
             onLiberarEncargadx={handleLiberarEncargadx}
-            onSeleccionarModulo={(m) => setModuloActivo(m)}
+            onSeleccionarModulo={(m) => navegarAModulo(m)}
             onIrAJornada={(jId) => {
               setJornadaDestacadaId(jId);
-              setModuloActivo("juego");
+              navegarAModulo("juego");
             }}
             onAbrirAsistenteCalendario={() => setModalCrearCalendarioAbierto(true)}
             onDescargarExcel={handleDescargarExcelGlobal}
@@ -1192,7 +1255,7 @@ export default function HomePage() {
                 onCrearJornadaEnFecha={handleCrearJornadaEnFecha}
                 onIrAJornada={(jId) => {
                   setJornadaDestacadaId(jId);
-                  setModuloActivo("juego");
+                  navegarAModulo("juego");
                 }}
               />
             )}
@@ -1222,7 +1285,7 @@ export default function HomePage() {
                 onActualizarJornada={handleActualizarJornada}
                 onReemplazarJornadas={handleReemplazarJornadas}
                 onActualizarMalla={handleActualizarMalla}
-                onVolverAlMenu={() => setModuloActivo("menu")}
+                onVolverAlMenu={() => navegarAModulo("menu")}
               />
             )}
 
@@ -1230,7 +1293,7 @@ export default function HomePage() {
               <VistaHojaCalculo
                 estado={estado}
                 onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
-                onVolverAlMenu={() => setModuloActivo("menu")}
+                onVolverAlMenu={() => navegarAModulo("menu")}
               />
             )}
 
@@ -1244,9 +1307,9 @@ export default function HomePage() {
                 onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
                 onIrAJornada={(jId) => {
                   setJornadaDestacadaId(jId);
-                  setModuloActivo("juego");
+                  navegarAModulo("juego");
                 }}
-                onIrAHito={() => setModuloActivo("cronograma")}
+                onIrAHito={() => navegarAModulo("cronograma")}
               />
             )}
 
@@ -1280,7 +1343,7 @@ export default function HomePage() {
                 estado={estado}
                 jornadaIdInicial={jornadaDestacadaId}
                 onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
-                onVolverAlMenu={() => setModuloActivo("menu")}
+                onVolverAlMenu={() => navegarAModulo("menu")}
               />
             )}
 
@@ -1288,14 +1351,14 @@ export default function HomePage() {
               <EstructuraCalendario
                 estado={estado}
                 onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
-                onVolverAlMenu={() => setModuloActivo("menu")}
+                onVolverAlMenu={() => navegarAModulo("menu")}
               />
             )}
 
             {moduloActivo === "historico_2026" && (
               <DashboardPeriodoHistorico
                 anoSeleccionado={2026}
-                onVolverAlMenu={() => setModuloActivo("ciclos_archivo")}
+                onVolverAlMenu={() => navegarAModulo("ciclos_archivo")}
               />
             )}
 
@@ -1306,7 +1369,7 @@ export default function HomePage() {
                 esCoordinador={talleristaSesion.rol.toLowerCase().includes("coordinaci") || talleristaSesion.rol.toLowerCase().includes("administrador")}
                 onSeleccionarCalendario={(calId) => {
                   handleCambiarCalendario(calId);
-                  setModuloActivo("calendario");
+                  navegarAModulo("calendario");
                 }}
                 onCambiarEstadoCalendario={async (calId, nuevoEstado) => {
                   try {
@@ -1349,7 +1412,7 @@ export default function HomePage() {
                   }
                 }}
                 onAbrirAsistenteNuevo={() => setModalCrearCalendarioAbierto(true)}
-                onVerDashboard2026={() => setModuloActivo("historico_2026")}
+                onVerDashboard2026={() => navegarAModulo("historico_2026")}
               />
             )}
           </div>
@@ -1431,7 +1494,7 @@ export default function HomePage() {
           };
           persistirCambio(nuevoEstado);
           setModalCrearCalendarioAbierto(false);
-          setModuloActivo("calendario");
+          navegarAModulo("calendario");
         }}
       />
 
