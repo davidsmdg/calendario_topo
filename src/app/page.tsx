@@ -1255,6 +1255,10 @@ export default function HomePage() {
                 estudiantes={estado.estudiantes || []}
                 jornadas={estado.jornadas || []}
                 esHistorico={esHistorico}
+                esCoordinador={
+                  talleristaSesion.rol.toLowerCase().includes("coordinaci") ||
+                  talleristaSesion.rol.toLowerCase().includes("administrador")
+                }
                 nombreCalendario={calActual?.nombre || "Calendario Actual"}
                 onActualizarEstudiantes={(nuevos) => {
                   const nuevosCalendarios = (estado.calendarios || []).map((c) =>

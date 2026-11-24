@@ -25,6 +25,7 @@ interface ModuloEstudiantesProps {
   estudiantes: EstudianteTopo[];
   jornadas: JornadaPedagogica[];
   esHistorico?: boolean;
+  esCoordinador?: boolean;
   nombreCalendario?: string;
   onActualizarEstudiantes: (nuevos: EstudianteTopo[]) => void;
 }
@@ -33,6 +34,7 @@ export function ModuloEstudiantes({
   estudiantes = [],
   jornadas = [],
   esHistorico = false,
+  esCoordinador = false,
   nombreCalendario = "Ciclo Actual",
   onActualizarEstudiantes,
 }: ModuloEstudiantesProps) {
@@ -199,7 +201,7 @@ export function ModuloEstudiantes({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {!esHistorico && (
+          {!esHistorico && esCoordinador && (
             <button
               type="button"
               onClick={() => setMostrarModalNuevo(true)}
@@ -506,7 +508,7 @@ export function ModuloEstudiantes({
                         {e.puntajeSaber11 ? `${e.puntajeSaber11} pts` : "—"}
                       </td>
                       <td className="py-2.5 px-4 text-center">
-                        {!esHistorico && (
+                        {!esHistorico && esCoordinador && (
                           <div className="flex items-center justify-center gap-1.5">
                             {e.estado !== "activo" && (
                               <button
@@ -537,7 +539,11 @@ export function ModuloEstudiantes({
                             )}
                           </div>
                         )}
-                        {esHistorico && <span className="text-[10px] text-stone-400 font-bold">Cerrado</span>}
+                        {(!esCoordinador || esHistorico) && (
+                          <span className="text-[10px] text-stone-400 font-bold">
+                            {esHistorico ? "Cerrado" : e.estado}
+                          </span>
+                        )}
                       </td>
                     </tr>
                   );

@@ -718,18 +718,20 @@ export function SeguimientoTalleristas({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setModoGestionAbierto(!modoGestionAbierto)}
-              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl font-black text-xs shadow-md transition transform active:scale-95 ${
-                modoGestionAbierto
-                  ? "bg-amber-400 text-stone-900"
-                  : "bg-white/20 hover:bg-white/30 text-white border border-white/30"
-              }`}
-            >
-              <Settings className="w-4 h-4" />
-              <span>{modoGestionAbierto ? "Cerrar Panel de Edición" : "⚙️ Administrar Equipo"}</span>
-            </button>
+            {esCoordinador && (
+              <button
+                type="button"
+                onClick={() => setModoGestionAbierto(!modoGestionAbierto)}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl font-black text-xs shadow-md transition transform active:scale-95 ${
+                  modoGestionAbierto
+                    ? "bg-amber-400 text-stone-900"
+                    : "bg-white/20 hover:bg-white/30 text-white border border-white/30"
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                <span>{modoGestionAbierto ? "Cerrar Panel de Edición" : "⚙️ Administrar Equipo"}</span>
+              </button>
+            )}
 
             <div className="bg-white/10 backdrop-blur px-3.5 py-2.5 rounded-2xl border border-white/20 text-xs font-black flex items-center gap-2">
               <UserCheck className="w-4 h-4 text-emerald-300" />
@@ -1270,19 +1272,21 @@ export function SeguimientoTalleristas({
 
                   {/* Acciones y Conteo rápido */}
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {/* Botón rápido para abrir edición de este tallerista */}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setModoGestionAbierto(true);
-                        handleIniciarEdicion(p.nombre);
-                      }}
-                      className="p-1.5 rounded-xl hover:bg-amber-100 text-stone-400 hover:text-amber-900 transition"
-                      title="Editar componentes y datos de este tallerista"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
+                    {/* Botón rápido para abrir edición de este tallerista (Solo Coordinación) */}
+                    {esCoordinador && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setModoGestionAbierto(true);
+                          handleIniciarEdicion(p.nombre);
+                        }}
+                        className="p-1.5 rounded-xl hover:bg-amber-100 text-stone-400 hover:text-amber-900 transition"
+                        title="Editar componentes y datos de este tallerista"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
 
                     <span
                       title={`${p.totalClases} bloques de clase asignados`}
@@ -1346,17 +1350,19 @@ export function SeguimientoTalleristas({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setModoGestionAbierto(true);
-                      handleIniciarEdicion(perfilActivo.nombre);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-xs transition"
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                    <span>Editar Info / Componentes</span>
-                  </button>
+                  {esCoordinador && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setModoGestionAbierto(true);
+                        handleIniciarEdicion(perfilActivo.nombre);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-xs transition"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>Editar Info / Componentes</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
