@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { Client } from "pg";
+import { Resend } from "resend";
+import { generarHtmlInvitacion } from "@/services/emailTemplate";
 
 const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder-project.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://lwdrgduectungtsubhew.supabase.co";
 const serviceKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || "placeholder-service-key";
 
@@ -26,49 +27,88 @@ export async function POST(req: Request) {
       );
     }
 
+    const emailLimpio = email.trim().toLowerCase();
+    const nombreLimpio = nombre.trim();
     const rolNormalizado = rol === "coordinador" ? "coordinador" : "tallerista";
 
-    // Determinar la URL de redirección según el entorno
-    const siteUrl =
+    // 1. Determinar el dominio base de la aplicación
+    const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://calendario-topo.vercel.app");
 
-    // 1. Enviar invitación con Supabase Auth Admin
-    const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
-      email.trim(),
-      {
-        redirectTo: siteUrl,
+    // 2. Generar el link y token seguro de invitación en Supabase sin que Supabase mande el correo feo
+    // Si el usuario ya existe previamente en Auth, lo eliminamos primero para permitir reinvitar limpiamente
+    const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
+    const usuarioExistente = users?.find((u) => u.email?.toLowerCase() === emailLimpio);
+    if (usuarioExistente) {
+      await supabaseAdmin.auth.admin.deleteUser(usuarioExistente.id);
+    }
+
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: "invite",
+      email: emailLimpio,
+      options: {
         data: {
-          nombre: nombre.trim(),
+          nombre: nombreLimpio,
           rol: rolNormalizado,
         },
-      }
-    );
+      },
+    });
 
-    if (inviteError) {
-      console.error("Error invitando usuario vía Supabase Auth:", inviteError);
+    if (linkError || !linkData?.properties?.hashed_token) {
+      console.error("Error generando enlace de invitación:", linkError);
       return NextResponse.json(
-        { error: inviteError.message || "Error al enviar la invitación." },
+        { error: linkError?.message || "No se pudo generar el enlace de invitación." },
         { status: 500 }
       );
     }
 
-    // 2. Guardar o actualizar en la tabla perfiles_talleristas vía Supabase Client (sin depender de pg directo)
-    const { data: existingProfiles, error: searchError } = await supabaseAdmin
+    const hashedToken = linkData.properties.hashed_token;
+    // Enlace directo e inmutable que NO pasa por localhost ni por el site_url de Supabase:
+    const enlaceActivacion = `${baseUrl}/activar-cuenta?token_hash=${hashedToken}&type=invite`;
+
+    // 3. Enviar el correo hermoso con Resend
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      throw new Error("RESEND_API_KEY no está configurada en las variables de entorno.");
+    }
+    const resend = new Resend(resendApiKey);
+
+    const remitente = process.env.EMAIL_FROM || "Escuela Popular El Topo <onboarding@resend.dev>";
+    const htmlContenido = generarHtmlInvitacion({
+      nombre: nombreLimpio,
+      rol: rolNormalizado,
+      componentes: componentes || [],
+      enlaceActivacion,
+    });
+
+    const { data: resendData, error: resendError } = await resend.emails.send({
+      from: remitente,
+      to: [emailLimpio],
+      subject: `🌻 ¡Bienvenidx al equipo pedagógico de El Topo, ${nombreLimpio}!`,
+      html: htmlContenido,
+    });
+
+    if (resendError) {
+      console.error("Error enviando correo con Resend:", resendError);
+      return NextResponse.json(
+        { error: `Error enviando el correo: ${resendError.message}` },
+        { status: 500 }
+      );
+    }
+
+    // 4. Guardar o actualizar en la tabla perfiles_talleristas
+    const { data: existingProfiles } = await supabaseAdmin
       .from("perfiles_talleristas")
       .select("id")
-      .or(`email.eq.${email.trim()},nombre.ilike.${nombre.trim()}`)
+      .or(`email.eq.${emailLimpio},nombre.ilike.${nombreLimpio}`)
       .limit(1);
-
-    if (searchError) {
-      console.warn("Aviso al consultar perfiles_talleristas:", searchError);
-    }
 
     if (existingProfiles && existingProfiles.length > 0) {
       await supabaseAdmin
         .from("perfiles_talleristas")
         .update({
-          email: email.trim(),
+          email: emailLimpio,
           rol: rolNormalizado,
           componentes: componentes || [],
           activo: true,
@@ -78,8 +118,8 @@ export async function POST(req: Request) {
       await supabaseAdmin
         .from("perfiles_talleristas")
         .insert({
-          nombre: nombre.trim(),
-          email: email.trim(),
+          nombre: nombreLimpio,
+          email: emailLimpio,
           rol: rolNormalizado,
           componentes: componentes || [],
           activo: true,
@@ -88,8 +128,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       ok: true,
-      mensaje: `Invitación enviada con éxito a ${email}.`,
-      user: inviteData.user,
+      mensaje: `Invitación personalizada enviada con éxito a ${emailLimpio}.`,
+      emailId: resendData?.id,
+      enlaceActivacion,
     });
   } catch (error: any) {
     console.error("Error en /api/invitaciones:", error);
