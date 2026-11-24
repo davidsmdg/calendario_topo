@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Sparkles,
   Archive,
+  KeyRound,
 } from "lucide-react";
 import {
   EstadoCronogramaTopo,
@@ -48,6 +49,7 @@ import { DashboardPeriodoHistorico } from "@/components/DashboardPeriodoHistoric
 import { ModalCrearCalendario } from "@/components/ModalCrearCalendario";
 import { ModuloHistoricoCiclos } from "@/components/ModuloHistoricoCiclos";
 import { PantallaLogin } from "@/components/PantallaLogin";
+import { ModalDefinirPassword } from "@/components/ModalDefinirPassword";
 import { supabase } from "@/lib/supabaseClient";
 
 type ModuloActivo =
@@ -80,6 +82,8 @@ export default function HomePage() {
   // Estados para Sesión y Autenticación Supabase
   const [usuarioAutenticado, setUsuarioAutenticado] = useState<any>(null);
   const [comprobandoSesion, setComprobandoSesion] = useState(true);
+  const [modalPasswordAbierto, setModalPasswordAbierto] = useState(false);
+  const [esInvitacionReciente, setEsInvitacionReciente] = useState(false);
 
   // Estados para Menú Hamburguesa y Perfil de Usuario
   const [menuHamburguesaAbierto, setMenuHamburguesaAbierto] = useState(false);
@@ -141,6 +145,15 @@ export default function HomePage() {
       .finally(() => {
         setHidratado(true);
       });
+    // Detección de invitación o recuperación en la URL (#access_token=...&type=invite o type=recovery)
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash || "";
+      if (hash.includes("type=invite") || hash.includes("type=recovery")) {
+        setEsInvitacionReciente(true);
+        setModalPasswordAbierto(true);
+      }
+    }
+
     // 3. Verificar estado de autenticación en Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -162,7 +175,12 @@ export default function HomePage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setEsInvitacionReciente(false);
+        setModalPasswordAbierto(true);
+      }
+
       if (session?.user) {
         setUsuarioAutenticado(session.user);
         const meta = session.user.user_metadata || {};
@@ -207,6 +225,15 @@ export default function HomePage() {
         }).catch((err) => console.warn("Error al respaldar en disco:", err));
       }
     }, 800);
+    // Detección de invitación o recuperación en la URL (#access_token=...&type=invite o type=recovery)
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash || "";
+      if (hash.includes("type=invite") || hash.includes("type=recovery")) {
+        setEsInvitacionReciente(true);
+        setModalPasswordAbierto(true);
+      }
+    }
+
     // 3. Verificar estado de autenticación en Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -228,7 +255,12 @@ export default function HomePage() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setEsInvitacionReciente(false);
+        setModalPasswordAbierto(true);
+      }
+
       if (session?.user) {
         setUsuarioAutenticado(session.user);
         const meta = session.user.user_metadata || {};
@@ -633,7 +665,7 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        <div className="py-2.5 text-xs text-stone-600 leading-relaxed border-b border-stone-100 space-y-1">
+                        <div className="py-2.5 text-xs text-stone-600 leading-relaxed border-b border-stone-100 space-y-2">
                           <div className="flex items-center justify-between text-[11px] font-bold">
                             <span className="text-stone-500">Correo:</span>
                             <span className="text-stone-900 font-mono">{talleristaSesion.email || "Sin correo"}</span>
@@ -648,6 +680,18 @@ export default function HomePage() {
                               {talleristaSesion.rol.includes("Coordinaci") ? "Coordinación Total" : "Tallerista (Lectura y Aulas)"}
                             </span>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMenuPerfilAbierto(false);
+                              setEsInvitacionReciente(false);
+                              setModalPasswordAbierto(true);
+                            }}
+                            className="w-full mt-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 text-purple-800 hover:bg-purple-100 font-black text-[11px] transition"
+                          >
+                            <KeyRound className="w-3.5 h-3.5 text-purple-600" />
+                            <span>Cambiar mi contraseña</span>
+                          </button>
                         </div>
 
                         <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
@@ -752,7 +796,7 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        <div className="py-2.5 text-xs text-stone-600 leading-relaxed border-b border-stone-100 space-y-1">
+                        <div className="py-2.5 text-xs text-stone-600 leading-relaxed border-b border-stone-100 space-y-2">
                           <div className="flex items-center justify-between text-[11px] font-bold">
                             <span className="text-stone-500">Correo:</span>
                             <span className="text-stone-900 font-mono">{talleristaSesion.email || "Sin correo"}</span>
@@ -767,6 +811,18 @@ export default function HomePage() {
                               {talleristaSesion.rol.includes("Coordinaci") ? "Coordinación Total" : "Tallerista (Lectura y Aulas)"}
                             </span>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMenuPerfilAbierto(false);
+                              setEsInvitacionReciente(false);
+                              setModalPasswordAbierto(true);
+                            }}
+                            className="w-full mt-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 text-purple-800 hover:bg-purple-100 font-black text-[11px] transition"
+                          >
+                            <KeyRound className="w-3.5 h-3.5 text-purple-600" />
+                            <span>Cambiar mi contraseña</span>
+                          </button>
                         </div>
 
                         <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs">
@@ -1370,6 +1426,20 @@ export default function HomePage() {
           setModuloActivo("calendario");
         }}
       />
+
+      {/* MODAL CONFIGURAR / CAMBIAR CONTRASEÑA */}
+      {modalPasswordAbierto && (
+        <ModalDefinirPassword
+          esInvitacionInicial={esInvitacionReciente}
+          onCompletado={() => {
+            setModalPasswordAbierto(false);
+            setEsInvitacionReciente(false);
+            if (typeof window !== "undefined" && window.location.hash) {
+              window.history.replaceState(null, "", window.location.pathname);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

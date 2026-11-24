@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { TopoAvatar, SolMuralSVG, AbejitaMuralSVG, FlorMuralSVG } from "./TopoAvatar";
-import { Mail, KeyRound, Sparkles, AlertCircle, ArrowRight, CheckCircle2, Shield } from "lucide-react";
+import { Mail, KeyRound, Sparkles, AlertCircle, ArrowRight, CheckCircle2, Shield, Lock } from "lucide-react";
 
 interface LoginModalProps {
   onLoginExitoso: (user: any) => void;
@@ -12,7 +12,7 @@ interface LoginModalProps {
 export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [modo, setModo] = useState<"password" | "magic_link">("password");
+  const [modo, setModo] = useState<"login" | "recuperar">("login");
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
@@ -31,16 +31,13 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
     setCargando(true);
 
     try {
-      if (modo === "magic_link") {
-        const { error: magicErr } = await supabase.auth.signInWithOtp({
-          email: emailLimpio,
-          options: {
-            emailRedirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
-          },
+      if (modo === "recuperar") {
+        const { error: resetErr } = await supabase.auth.resetPasswordForEmail(emailLimpio, {
+          redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
         });
-        if (magicErr) throw magicErr;
+        if (resetErr) throw resetErr;
         setMensajeExito(
-          `¡Enlace de acceso enviado a ${emailLimpio}! Revisa tu bandeja de entrada o spam para entrar con 1 clic.`
+          `¡Enlace de recuperación enviado a ${emailLimpio}! Revisa tu bandeja de entrada o spam para restablecer tu contraseña.`
         );
       } else {
         if (!password) {
@@ -55,10 +52,9 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
         });
 
         if (authErr) {
-          // Si el usuario aún no tiene contraseña porque fue invitado
           if (authErr.message.toLowerCase().includes("invalid login credentials")) {
             throw new Error(
-              "Credenciales no válidas. Si es tu primera vez tras recibir la invitación, entra con 'Enlace Mágico' a tu correo o revisa el email de invitación."
+              "Credenciales incorrectas. Si recibiste un correo de invitación, ábrelo primero para activar tu cuenta y configurar tu contraseña."
             );
           }
           throw authErr;
@@ -99,7 +95,7 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
               Escuela Popular El Topo
             </h1>
             <p className="text-xs font-bold text-stone-500 mt-0.5">
-              Planificador Pedagógico Comunitario • Acceso Restringido
+              Planificador Pedagógico Comunitario • Acceso por Invitación
             </p>
           </div>
         </div>
@@ -133,13 +129,13 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Ingresa tu correo institucional o personal"
+                placeholder="Ingresa tu correo registrado"
                 className="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-stone-300 bg-stone-50 text-xs font-bold text-stone-900 focus:outline-none focus:border-[#7A3EBE] focus:bg-white transition"
               />
             </div>
           </div>
 
-          {modo === "password" && (
+          {modo === "login" && (
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-xs font-black uppercase text-stone-700 tracking-wider">
@@ -147,16 +143,21 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
                 </label>
                 <button
                   type="button"
-                  onClick={() => setModo("magic_link")}
+                  onClick={() => {
+                    setError(null);
+                    setMensajeExito(null);
+                    setModo("recuperar");
+                  }}
                   className="text-[11px] font-black text-[#7A3EBE] hover:underline"
                 >
-                  ¿Entrar con enlace al correo?
+                  ¿Olvidaste tu contraseña?
                 </button>
               </div>
               <div className="relative">
                 <KeyRound className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Tu contraseña personal"
@@ -166,16 +167,20 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
             </div>
           )}
 
-          {modo === "magic_link" && (
-            <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200 text-xs text-purple-950 font-medium">
-              Te enviaremos un <strong>enlace mágico directo a tu email</strong> para que entres sin recordar contraseña.
+          {modo === "recuperar" && (
+            <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 font-medium">
+              Te enviaremos un <strong>enlace de restablecimiento</strong> a tu correo para que definas una nueva contraseña.
               <div className="mt-2 text-right">
                 <button
                   type="button"
-                  onClick={() => setModo("password")}
+                  onClick={() => {
+                    setError(null);
+                    setMensajeExito(null);
+                    setModo("login");
+                  }}
                   className="text-[11px] font-black text-[#7A3EBE] hover:underline"
                 >
-                  Prefiero usar contraseña
+                  Volver a Iniciar Sesión
                 </button>
               </div>
             </div>
@@ -187,10 +192,10 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
             className="w-full py-3 px-4 rounded-2xl bg-[#7A3EBE] hover:bg-[#5C23A3] text-white font-black text-sm shadow-md transition transform active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {cargando ? (
-              <span>Verificando credenciales...</span>
-            ) : modo === "magic_link" ? (
+              <span>Procesando...</span>
+            ) : modo === "recuperar" ? (
               <>
-                <span>Enviar Enlace de Acceso</span>
+                <span>Enviar Enlace de Recuperación</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             ) : (
@@ -202,10 +207,13 @@ export function PantallaLogin({ onLoginExitoso }: LoginModalProps) {
           </button>
         </form>
 
-        <div className="pt-4 border-t border-stone-200 text-center">
+        <div className="pt-4 border-t border-stone-200 text-center space-y-1">
           <p className="text-[11px] text-stone-500 font-bold flex items-center justify-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-amber-500" />
-            Acceso exclusivo para talleristas y equipo de coordinación de El Topo
+            Acceso exclusivo por invitación del equipo de coordinación
+          </p>
+          <p className="text-[10px] text-stone-600">
+            ¿Aún no tienes cuenta? Solicita tu invitación a coordinación para activar tu usuario.
           </p>
         </div>
       </div>
