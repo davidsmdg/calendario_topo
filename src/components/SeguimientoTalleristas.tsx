@@ -469,7 +469,7 @@ export function SeguimientoTalleristas({
       if (!res.ok) {
         throw new Error(data.error || "Error al enviar la invitación.");
       }
-      notificarFeedback(`📩 ¡Invitación de Supabase enviada con éxito a ${email}!`);
+      notificarFeedback(`📩 ¡Invitación oficial de El Topo enviada con éxito a ${email}!`);
     } catch (err: any) {
       alert(`No se pudo enviar la invitación: ${err.message}`);
     } finally {
