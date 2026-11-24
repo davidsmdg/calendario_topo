@@ -11,7 +11,31 @@ export function generarHtmlInvitacion({
   componentes,
   enlaceActivacion,
 }: PlantillaEmailParams): string {
-  const rolEtiqueta = rol === "coordinador" ? "Coordinación General" : "Tallerista Pedagógicx";
+  const rolEtiqueta = rol === "coordinador" ? "Coordinación General 👑" : "Tallerista Pedagógicx 👤";
+  const descripcionRol =
+    rol === "coordinador"
+      ? `
+        <div style="margin-top:10px;padding:10px;background-color:#FEF3C7;border-left:4px solid #D97706;border-radius:8px;font-size:12px;color:#92400E;line-height:1.5;">
+          <strong>Permisos de Coordinación:</strong>
+          <ul style="margin:4px 0 0 0;padding-left:16px;">
+            <li>Administrar y modificar el equipo de talleristas.</li>
+            <li>Crear y gestionar ciclos pedagógicos y calendarios anuales.</li>
+            <li>Matricular y actualizar el estado de los estudiantes (activos, retirados, espera).</li>
+            <li>Configurar e integrar hojas de cálculo y copias de seguridad.</li>
+          </ul>
+        </div>
+      `
+      : `
+        <div style="margin-top:10px;padding:10px;background-color:#EDE9FE;border-left:4px solid #7A3EBE;border-radius:8px;font-size:12px;color:#5B21B6;line-height:1.5;">
+          <strong>Funciones de Tallerista:</strong>
+          <ul style="margin:4px 0 0 0;padding-left:16px;">
+            <li>Consultar tu cronograma personalizado de clases y jornadas.</li>
+            <li>Registrar la asistencia sabatina de estudiantes clase por clase.</li>
+            <li>Postularte como encargadx del día y diligenciar la bitácora de la sede.</li>
+          </ul>
+        </div>
+      `;
+
   const listaComponentes =
     componentes && componentes.length > 0
       ? componentes.map((c) => `<span style="display:inline-block;background-color:#EBF5FF;color:#1E40AF;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:bold;margin:2px 4px 2px 0;">${c}</span>`).join("")
@@ -78,6 +102,8 @@ export function generarHtmlInvitacion({
                     <div>
                       ${listaComponentes}
                     </div>
+
+                    ${descripcionRol}
                   </td>
                 </tr>
               </table>

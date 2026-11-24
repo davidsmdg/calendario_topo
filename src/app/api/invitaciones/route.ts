@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { generarHtmlInvitacion } from "@/services/emailTemplate";
 
 const supabaseUrl =
@@ -14,6 +14,23 @@ const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
     persistSession: false,
   },
 });
+
+function getEmailTransporter() {
+  const gmailUser = process.env.GMAIL_USER || "david930408.dd@gmail.com";
+  const gmailPassword = process.env.GMAIL_APP_PASSWORD;
+
+  if (!gmailPassword) {
+    throw new Error("GMAIL_APP_PASSWORD no está configurada en las variables de entorno.");
+  }
+
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: gmailUser,
+      pass: gmailPassword,
+    },
+  });
+}
 
 export async function POST(req: Request) {
   try {
@@ -36,14 +53,14 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_SITE_URL ||
       (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://calendario-topo.vercel.app");
 
-    // 2. Generar el link y token seguro de invitación en Supabase sin que Supabase mande el correo feo
-    // Si el usuario ya existe previamente en Auth, lo eliminamos primero para permitir reinvitar limpiamente
+    // 2. Limpiar usuario previo en Supabase Auth si existiera para generar invitación limpia
     const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
     const usuarioExistente = users?.find((u) => u.email?.toLowerCase() === emailLimpio);
     if (usuarioExistente) {
       await supabaseAdmin.auth.admin.deleteUser(usuarioExistente.id);
     }
 
+    // 3. Generar token y link seguro
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: "invite",
       email: emailLimpio,
@@ -67,14 +84,10 @@ export async function POST(req: Request) {
     // Enlace directo e inmutable que NO pasa por localhost ni por el site_url de Supabase:
     const enlaceActivacion = `${baseUrl}/activar-cuenta?token_hash=${hashedToken}&type=invite`;
 
-    // 3. Enviar el correo hermoso con Resend
-    const resendApiKey = process.env.RESEND_API_KEY;
-    if (!resendApiKey) {
-      throw new Error("RESEND_API_KEY no está configurada en las variables de entorno.");
-    }
-    const resend = new Resend(resendApiKey);
-
-    const remitente = process.env.EMAIL_FROM || "Escuela Popular El Topo <onboarding@resend.dev>";
+    // 4. Enviar el correo hermoso con Gmail SMTP (sin restricciones de destinatarios)
+    const transporter = getEmailTransporter();
+    const remitente = process.env.EMAIL_FROM || `Escuela Popular El Topo <${process.env.GMAIL_USER || "david930408.dd@gmail.com"}>`;
+    
     const htmlContenido = generarHtmlInvitacion({
       nombre: nombreLimpio,
       rol: rolNormalizado,
@@ -82,22 +95,19 @@ export async function POST(req: Request) {
       enlaceActivacion,
     });
 
-    const { data: resendData, error: resendError } = await resend.emails.send({
+    const asunto =
+      rolNormalizado === "coordinador"
+        ? `👑 ¡Bienvenidx al equipo de Coordinación de El Topo, ${nombreLimpio}!`
+        : `🌻 ¡Bienvenidx al equipo pedagógico de El Topo, ${nombreLimpio}!`;
+
+    await transporter.sendMail({
       from: remitente,
-      to: [emailLimpio],
-      subject: `🌻 ¡Bienvenidx al equipo pedagógico de El Topo, ${nombreLimpio}!`,
+      to: emailLimpio,
+      subject: asunto,
       html: htmlContenido,
     });
 
-    if (resendError) {
-      console.error("Error enviando correo con Resend:", resendError);
-      return NextResponse.json(
-        { error: `Error enviando el correo: ${resendError.message}` },
-        { status: 500 }
-      );
-    }
-
-    // 4. Guardar o actualizar en la tabla perfiles_talleristas
+    // 5. Guardar o actualizar en la tabla perfiles_talleristas
     const { data: existingProfiles } = await supabaseAdmin
       .from("perfiles_talleristas")
       .select("id")
@@ -128,8 +138,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       ok: true,
-      mensaje: `Invitación personalizada enviada con éxito a ${emailLimpio}.`,
-      emailId: resendData?.id,
+      mensaje: `Invitación oficial enviada con éxito a ${emailLimpio}.`,
       enlaceActivacion,
     });
   } catch (error: any) {
