@@ -45,6 +45,7 @@ import { TopoAvatar } from "./TopoAvatar";
 interface SeguimientoTalleristasProps {
   estado: EstadoCronogramaTopo;
   talleristaSeleccionadoInicial?: string | null;
+  esCoordinador?: boolean;
   onActualizarEstado?: (nuevo: EstadoCronogramaTopo) => void;
   onIrAJornada?: (jornadaId: string) => void;
   onIrAHito?: () => void;
@@ -123,6 +124,7 @@ function coincideNombre(nombreTallerista: string, textoABuscar: string): boolean
 export function SeguimientoTalleristas({
   estado,
   talleristaSeleccionadoInicial = null,
+  esCoordinador = false,
   onActualizarEstado,
   onIrAJornada,
   onIrAHito,
@@ -821,41 +823,43 @@ export function SeguimientoTalleristas({
                 </div>
               </div>
 
-              <div>
-                <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
-                  Rol y Permisos del Sistema:
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setNuevoTalleristaRol("tallerista")}
-                    className={`p-2.5 rounded-xl border-2 text-left transition ${
-                      nuevoTalleristaRol === "tallerista"
-                        ? "border-[#7A3EBE] bg-purple-50 text-purple-950 font-black shadow-xs"
-                        : "border-stone-200 bg-white text-stone-600 font-bold"
-                    }`}
-                  >
-                    <span className="block text-xs">👤 Tallerista</span>
-                    <span className="block text-[10px] text-stone-500 font-medium">
-                      Ver clases, postularse como encargadx y bitácora
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setNuevoTalleristaRol("coordinador")}
-                    className={`p-2.5 rounded-xl border-2 text-left transition ${
-                      nuevoTalleristaRol === "coordinador"
-                        ? "border-amber-500 bg-amber-50 text-amber-950 font-black shadow-xs"
-                        : "border-stone-200 bg-white text-stone-600 font-bold"
-                    }`}
-                  >
-                    <span className="block text-xs">👑 Coordinador/a</span>
-                    <span className="block text-[10px] text-stone-500 font-medium">
-                      Crear calendarios, editar estructura y roles
-                    </span>
-                  </button>
+              {esCoordinador && (
+                <div>
+                  <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
+                    Rol y Permisos del Sistema:
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setNuevoTalleristaRol("tallerista")}
+                      className={`p-2.5 rounded-xl border-2 text-left transition ${
+                        nuevoTalleristaRol === "tallerista"
+                          ? "border-[#7A3EBE] bg-purple-50 text-purple-950 font-black shadow-xs"
+                          : "border-stone-200 bg-white text-stone-600 font-bold"
+                      }`}
+                    >
+                      <span className="block text-xs">👤 Tallerista</span>
+                      <span className="block text-[10px] text-stone-500 font-medium">
+                        Ver clases, postularse como encargadx y bitácora
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNuevoTalleristaRol("coordinador")}
+                      className={`p-2.5 rounded-xl border-2 text-left transition ${
+                        nuevoTalleristaRol === "coordinador"
+                          ? "border-amber-500 bg-amber-50 text-amber-950 font-black shadow-xs"
+                          : "border-stone-200 bg-white text-stone-600 font-bold"
+                      }`}
+                    >
+                      <span className="block text-xs">👑 Coordinador/a</span>
+                      <span className="block text-[10px] text-stone-500 font-medium">
+                        Crear calendarios, editar estructura y roles
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
@@ -952,43 +956,45 @@ export function SeguimientoTalleristas({
                     </div>
                   </div>
 
-                  <div>
-                    <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
-                      Rol y Permisos del Sistema:
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setRolEdicion("tallerista")}
-                        className={`p-2.5 rounded-xl border-2 text-left transition ${
-                          rolEdicion === "tallerista"
-                            ? "border-[#7A3EBE] bg-purple-50 text-purple-950 font-black shadow-xs"
-                            : "border-stone-200 bg-white text-stone-600 font-bold"
-                        }`}
-                      >
-                        <span className="block text-xs">👤 Tallerista</span>
-                        <span className="block text-[10px] text-stone-500 font-medium">
-                          Rol pedagógico regular
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setRolEdicion("coordinador")}
-                        className={`p-2.5 rounded-xl border-2 text-left transition ${
-                          rolEdicion === "coordinador"
-                            ? "border-amber-500 bg-amber-50 text-amber-950 font-black shadow-xs"
-                            : "border-stone-200 bg-white text-stone-600 font-bold"
-                        }`}
-                      >
-                        <span className="block text-xs">👑 Coordinador/a</span>
-                        <span className="block text-[10px] text-stone-500 font-medium">
-                          Permiso de crear calendarios
-                        </span>
-                      </button>
+                  {esCoordinador && (
+                    <div>
+                      <label className="text-[11px] font-black uppercase text-stone-600 block mb-1">
+                        Rol y Permisos del Sistema:
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setRolEdicion("tallerista")}
+                          className={`p-2.5 rounded-xl border-2 text-left transition ${
+                            rolEdicion === "tallerista"
+                              ? "border-[#7A3EBE] bg-purple-50 text-purple-950 font-black shadow-xs"
+                              : "border-stone-200 bg-white text-stone-600 font-bold"
+                          }`}
+                        >
+                          <span className="block text-xs">👤 Tallerista</span>
+                          <span className="block text-[10px] text-stone-500 font-medium">
+                            Rol pedagógico regular
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setRolEdicion("coordinador")}
+                          className={`p-2.5 rounded-xl border-2 text-left transition ${
+                            rolEdicion === "coordinador"
+                              ? "border-amber-500 bg-amber-50 text-amber-950 font-black shadow-xs"
+                              : "border-stone-200 bg-white text-stone-600 font-bold"
+                          }`}
+                        >
+                          <span className="block text-xs">👑 Coordinador/a</span>
+                          <span className="block text-[10px] text-stone-500 font-medium">
+                            Permiso de crear calendarios
+                          </span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {correoEdicion && (
+                  {correoEdicion && esCoordinador && (
                     <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 text-xs">
                         <Mail className="w-4 h-4 text-purple-700 shrink-0" />

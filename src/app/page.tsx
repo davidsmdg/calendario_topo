@@ -1237,6 +1237,10 @@ export default function HomePage() {
             {moduloActivo === "talleristas" && (
               <SeguimientoTalleristas
                 estado={estado}
+                esCoordinador={
+                  talleristaSesion.rol.toLowerCase().includes("coordinaci") ||
+                  talleristaSesion.rol.toLowerCase().includes("administrador")
+                }
                 onActualizarEstado={(nuevo) => persistirCambio(nuevo)}
                 onIrAJornada={(jId) => {
                   setJornadaDestacadaId(jId);
